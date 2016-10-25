@@ -1,0 +1,7 @@
+{{item = pkg_item}}
+{{extend 'item/index.html'}}
+
+<h4>{{=T('Package groups')}}</h4>
+
+{{=LOAD('plugin_package', 'view_package_groups.load', args=[pkg_item.id], user_signature=True, ajax=True, target='groups')}}
+{{=LOAD('plugin_package', 'create_group_form.load', args=[pkg_item.id], user_signature=True, ajax=True, target='group-form')}}

@@ -1,0 +1,42 @@
+{{if 'in_all_items' in globals().keys():}}
+  {{remove_item = False}}
+{{else:}}
+  {{remove_item = True}}
+{{pass}}
+
+<div id="preview{{=item.id}}" class="panel panel-default">
+  <div class="panel-heading">
+
+    <div class="container-fluid">
+
+
+
+    </div>
+
+  </div>
+  <div class="panel-body">
+    <h4>
+      {{=item.headline}}
+    </h4>
+    <hr>
+    {{=CT_REG[item.item_type].preview(item)}}
+  </div>
+
+  <div class="panel-footer">
+    {{if auth.has_permission('owner', db.item, record_id=item.id):}}
+    <abbr title="{{=T('This item was created by you')}}"><i class="fa fa-user"></i></abbr>
+    {{pass}}
+    {{if auth.has_permission('collaborator', db.item, record_id=item.id):}}
+    <abbr title="{{=T('This item is shared with you')}}"><i class="fa fa-users"></i></abbr>
+    {{pass}}
+    {{if CT_REG[item.item_type].is_translation(item):}}
+    <abbr title="{{=T('This item is a translation')}}"><i class="fa fa-language"></i></abbr>
+    {{pass}}
+
+    <span class="pull-right small">
+      {{author = db.auth_user(item.created_by)}}
+      <i class="fa fa-user"></i> {{=author.first_name}} {{=author.last_name}}
+      <i class="fa fa-calendar"></i> {{=item.created_on}}
+    </span>
+  </div>
+</div>

@@ -1,0 +1,3 @@
+{{extend 'item/full_text.txt'}}
+{{=text_content.byline}}
+{{=text_content.body}}

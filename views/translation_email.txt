@@ -1,0 +1,12 @@
+{{=t_user.first_name}} {{=t_user.last_name}}, {{=T('has created a translation of the
+item')}}:
+
+{{=t_item.headline}}
+
+{{=T('You can access to the translation with this link')}}:
+
+{{=URL('item', 'index', args=[t_target.id],scheme=True, host=True)}}
+
+--
+{{=T('See you on eNews')}}.
+{{=URL('default', 'index', scheme=True, host=True)}}

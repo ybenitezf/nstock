@@ -1,0 +1,4 @@
+{{extend 'item/full_text.txt'}}
+{{=pic_info.credit_line}}
+{{=pic_info.description}}
+{{=pic_info.caption}}

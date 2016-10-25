@@ -1,0 +1,30 @@
+{{for grp in p_content.groups:}}
+{{group = db.plugin_package_groups(grp)}}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{=group.group_role}}</h3>
+  </div>
+
+  {{if group.group_items:}}
+  <div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>{{=T('Type')}}</th> <th>{{=T('Headline')}}</th> <th>{{=T('Language')}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{for g_item_id in group.group_items:}}
+      {{g_item = db.item(g_item_id)}}
+      <tr>
+        <th scope="row"> <i class="fa {{=CT_REG[g_item.item_type].get_item_icon(g_item)}}"></i> </th>
+        <td>{{=g_item.headline}}</td>
+        <td>{{=g_item.language_tag}}</td>
+      </tr>
+      {{pass}}
+    </tbody>
+  </table>
+  </div>
+  {{pass}}
+</div>
+{{pass}}

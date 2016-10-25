@@ -1,0 +1,10 @@
+{{=item.headline}}
+{{=item.slugline}}
+{{for k in item.keywords:}}
+{{=k}}
+{{pass}}
+{{=item.genre}}
+{{=item.provider}}
+{{u = CT_REG[item.item_type].db.auth_user(item.created_by)}}
+{{=u.first_name}} {{=u.last_name}}
+{{include}}

@@ -1,0 +1,11 @@
+{{left_sidebar_enabled=True}}
+{{right_sidebar_enabled=False}}
+
+{{extend 'layout.html'}}
+
+{{block left_sidebar}}
+  {{=dashboard_sidemenu}}
+  {{=add_items}}
+{{end}}
+
+{{=LOAD(url=URL('dashboard', 'load_items.load', args=[current_dash.id], user_signature=True), ajax=True, user_signature=True,target='main')}}
