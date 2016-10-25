@@ -1,9 +1,9 @@
-{{=user.first_name}} {{=user.last_name}}, has share the item:
+{{=user.first_name}} {{=user.last_name}}, {{=T('has share the item')}}:
 
 {{=item.headline}}
 [{{=URL('item', 'index', args=[item.id], scheme=True, host=True)}}]
 
-With {{=t_user.first_name}} {{=t_user.last_name}}.
+{{=T('With')}} {{=t_user.first_name}} {{=t_user.last_name}}.
 
 --
 {{=T('See you on eNews')}}.

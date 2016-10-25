@@ -1,9 +1,8 @@
-{{=user.first_name}} {{=user.last_name}}, has made changes to the meta-data of
-the item:
+{{=user.first_name}} {{=user.last_name}}, {{=T('has made changes to the meta-data of the item')}}:
 
 {{=item.headline}}
 
-You can see the changes on:
+{{=T('You can see the changes on')}}:
 
 {{=URL('item', 'changelog', args=[item.id], scheme=True, host=True)}}
 
