@@ -4,8 +4,8 @@
 
 {{=T('You can access to the translation with this link')}}:
 
-{{=URL('item', 'index', args=[t_target.id],scheme=True, host=True)}}
+{{=URL('item', 'index.html', args=[t_target.id],scheme=True, host=True)}}
 
 --
 {{=T('See you on eNews')}}.
-{{=URL('default', 'index', scheme=True, host=True)}}
+{{=URL('default', 'index.html', scheme=True, host=True)}}
