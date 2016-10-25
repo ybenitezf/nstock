@@ -230,6 +230,14 @@ def share():
             # create new share
             CT_REG[item.item_type].share_item(item, u)
             # send an email to all the users who has access to this item
+            mail.send(to=[u.email],
+                sender=auth.user.email,
+                subject=T("Share of %s") % (item.headline,),
+                message=response.render(
+                    'share_with_you.txt',
+                    dict(item=item, user=auth.user, t_user=u)
+                )
+            )
             for ou in rows:
                 if ou != auth.user:
                     mail.send(to=[ou.email],
