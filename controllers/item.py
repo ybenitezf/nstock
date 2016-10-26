@@ -239,7 +239,7 @@ def share():
                 )
             )
             for ou in rows:
-                if ou != auth.user:
+                if ou.id != auth.user.id:
                     mail.send(to=[ou.email],
                         sender=auth.user.email,
                         subject=T("Share of %s") % (item.headline,),
