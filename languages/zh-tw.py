@@ -90,6 +90,7 @@
 'Config.ini': 'Config.ini',
 'Content': 'Content',
 'Content changelog': 'Content changelog',
+'Content changes': 'Content changes',
 'Content differences': 'Content differences',
 'Controller': '控件',
 'Controllers': '控件',

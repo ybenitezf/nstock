@@ -90,6 +90,7 @@
 'contains': 'contiene',
 'Content': 'Content',
 'Content changelog': 'Content changelog',
+'Content changes': 'Content changes',
 'Content differences': 'Content differences',
 'Controller': 'Controller',
 'Copyright': 'Copyright',

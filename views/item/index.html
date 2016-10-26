@@ -48,6 +48,15 @@
 
 {{end}}
 
+<ol class="breadcrumb">
+    <li>
+        <a href="{{=URL('default', 'index.html')}}">{{=T('CAST')}}</a>
+    </li>
+    <li class="active">
+        {{=item.slugline}}
+    </li>
+</ol>
+
 {{include}}
 
 {{=plugin_comment(item.id)}}

@@ -79,6 +79,7 @@
 'Config.ini': 'Config.ini',
 'Content': 'Content',
 'Content changelog': 'Content changelog',
+'Content changes': 'Content changes',
 'Content differences': 'Content differences',
 'Controller': 'Denetçi',
 'Copyright': 'Telif',

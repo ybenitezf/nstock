@@ -129,6 +129,7 @@
 'contains': 'conté',
 'Content': 'Content',
 'Content changelog': 'Content changelog',
+'Content changes': 'Content changes',
 'Content differences': 'Content differences',
 'Controller': 'Controlador',
 'Controllers': 'Controladors',
