@@ -217,6 +217,11 @@ def share():
 
     rows = db(query).select(db.auth_user.ALL, distinct=True)
 
+    # build the email list
+    email_list = []
+    for row in rows:
+        email_list.append(row.email)
+
     fld_email = Field('email', 'string', default='')
     fld_email.requires = IS_EMAIL()
     form = SQLFORM.factory(fld_email,
@@ -231,23 +236,21 @@ def share():
             CT_REG[item.item_type].share_item(item, u)
             # send an email to all the users who has access to this item
             mail.send(to=[u.email],
-                sender=auth.user.email,
                 subject=T("Share of %s") % (item.headline,),
                 message=response.render(
                     'share_with_you.txt',
                     dict(item=item, user=auth.user, t_user=u)
                 )
             )
-            for ou in rows:
-                if ou.id != auth.user.id:
-                    mail.send(to=[ou.email],
-                        sender=auth.user.email,
-                        subject=T("Share of %s") % (item.headline,),
-                        message=response.render(
-                            'share_email.txt',
-                            dict(item=item, user=auth.user, t_user=db.auth_user(email=form.vars.email))
-                        )
-                    )
+            # for ou in rows:
+            #     if ou.id != auth.user.id:
+            mail.send(to=email_list,
+                subject=T("Share of %s") % (item.headline,),
+                message=response.render(
+                    'share_email.txt',
+                    dict(item=item, user=auth.user, t_user=db.auth_user(email=form.vars.email))
+                )
+            )
         # --
         else:
             # no user with that email
