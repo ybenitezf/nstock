@@ -2,6 +2,7 @@
 import csv
 import os.path
 from gluon import IS_IN_SET
+from mail import item_notify_users
 
 class ContentPlugin(object):
 
@@ -88,17 +89,12 @@ class ContentPlugin(object):
                 t_item=item,
                 t_target=db.item(target_id),
                 t_user=auth.user,
-                t_owner=owner
             )
-            self.mail.send(to=[owner.email],
-                subject=subject,
-                # If reply_to is omitted, then mail.settings.sender is used
-                reply_to=auth.user.email,
-                sender=auth.user.email,
-                message=self.response.render(
-                    'translation_email.txt',
-                    context
-                ))
+            message=self.response.render(
+                'translation_email.txt',
+                context
+            )
+            item_notify_users(item.id, subject=subject, message=message)
         # make content translation
         self.create_content_translation(item, db.item(target_id))
         # indicate that the original item has a new translation

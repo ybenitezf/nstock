@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from mail import item_notify_users
+
 @auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
                 auth.has_permission('collaborator', db.item, record_id=request.args(0)))
 def index():
@@ -34,25 +36,12 @@ def meta():
     if form.process().accepted:
         session.flash = "Done !"
         # send an email to all the users who has access to this item
-        # i need all user who have some permission over current item
-        query  = (db.auth_permission.record_id == item.id)
-        query &= (db.auth_permission.table_name == db.item)
-        query &= (db.auth_permission.group_id == db.auth_membership.group_id)
-        query &= (db.auth_user.id == db.auth_membership.user_id)
-        query &= (db.auth_user.id != item.created_by)
-
-        collaborators = db(query).select(db.auth_user.ALL, distinct=True)
-        for u in collaborators:
-            if u != auth.user:
-                mail.send(to=[u.email],
-                    sender=auth.user.email,
-                    subject=T("Changes on %s") % (item.headline,),
-                    message=response.render(
-                        'changes_email.txt',
-                        dict(item=item, user=auth.user, t_user=u)
-                    )
-                )
-        # --
+        message = response.render(
+            'changes_email.txt',
+            dict(item=item, user=auth.user)
+        )
+        subject=T("Changes on %s") % (item.headline,)
+        item_notify_users(item.id, subject=subject, message=message)
         # with an alert about the new changes
         Whoosh().add_to_index(item.id, CT_REG[item.item_type].get_full_text(db.item(item.id),CT_REG))
         redirect(CT_REG[item.item_type].get_item_url(item))

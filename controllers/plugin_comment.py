@@ -19,4 +19,6 @@ def index():
     if form.process().accepted:
         response.flash = T('Comment posted')
         response.js = "jQuery('#%s').get(0).reload();" % request.cid
+        # send notifications to the users, except the current one
+        
     return dict(form=form, comments=rows)
