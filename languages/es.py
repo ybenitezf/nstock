@@ -660,7 +660,7 @@
 'XML export of columns shown': 'XML export of columns shown',
 'YES': 'SÍ',
 'You are successfully running web2py': 'Usted está ejecutando web2py exitosamente',
-'You can access to the translation with this link': 'You can access to the translation with this link',
+'You can access to the translation with this link': 'Puedes acceder a la traducción con el siguiente enlace',
 'You can modify this application and adapt it to your needs': 'Usted puede modificar esta aplicación y adaptarla a sus necesidades',
 'You can see the changes on': 'Puedes ver los cambios en',
 'You must activate some dashboard first': 'Debe activar primero un tablero',
