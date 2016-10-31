@@ -70,6 +70,7 @@
 'Color space': 'Color space',
 'Comment': 'Comment',
 'Comment posted': 'Comment posted',
+'Comments on %s': 'Comments on %s',
 'Community': 'المجتمع',
 'Components and Plugins': 'العناصر والإضافات',
 'Config.ini': 'Config.ini',

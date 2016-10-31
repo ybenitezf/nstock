@@ -89,6 +89,7 @@
 'Color space': 'Color space',
 'Comment': 'Comment',
 'Comment posted': 'Comment posted',
+'Comments on %s': 'Comments on %s',
 'Community': 'Спільнота',
 'Components and Plugins': 'Компоненти та втулки',
 'Config.ini': 'Config.ini',

@@ -109,6 +109,7 @@
 'Color space': 'Color space',
 'Comment': 'Comment',
 'Comment posted': 'Comment posted',
+'Comments on %s': 'Comments on %s',
 'Community': 'Komunitas',
 'Compile': 'Kompilasi',
 'compiled application removed': 'aplikasi yang dikompilasi dihapus',

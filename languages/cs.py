@@ -120,6 +120,7 @@
 'Color space': 'Color space',
 'Comment': 'Comment',
 'Comment posted': 'Comment posted',
+'Comments on %s': 'Comments on %s',
 'Community': 'Komunita',
 'Compile': 'Zkompilovat',
 'compiled application removed': 'zkompilovaná aplikace smazána',

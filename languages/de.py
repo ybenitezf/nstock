@@ -71,6 +71,7 @@
 'Color space': 'Color space',
 'Comment': 'Comment',
 'Comment posted': 'Comment posted',
+'Comments on %s': 'Comments on %s',
 'Community': 'Community',
 'Components and Plugins': 'Komponenten und Plugins',
 'Config.ini': 'Config.ini',

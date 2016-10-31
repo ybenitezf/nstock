@@ -71,6 +71,7 @@
 'Comment Create': 'Comment Create',
 'Comment posted': 'Comment posted',
 'Comment Select': 'Comment Select',
+'Comments on %s': 'Comments on %s',
 'Community': 'Community',
 'Components and Plugins': 'Components and Plugins',
 'Config.ini': 'Config.ini',

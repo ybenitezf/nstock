@@ -115,6 +115,7 @@
 'Color space': 'Color space',
 'Comment': 'Comment',
 'Comment posted': 'Comment posted',
+'Comments on %s': 'Comments on %s',
 'Community': 'Comunitate',
 'compile': 'compilare',
 'compiled application removed': 'aplicația compilată a fost ștearsă',

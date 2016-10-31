@@ -121,6 +121,7 @@
 'Comma-separated export of visible columns. Fields from other tables are exported as they appear on-screen but this may be slow for many rows': 'Comma-separated export of visible columns. Fields from other tables are exported as they appear on-screen but this may be slow for many rows',
 'Comment': 'Comment',
 'Comment posted': 'Comment posted',
+'Comments on %s': 'Comments on %s',
 'Community': 'Comunitat',
 'compile': 'compilar',
 'compiled application removed': 'aplicació compilada eliminada',

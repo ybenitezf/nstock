@@ -74,6 +74,7 @@
 'Color space': 'Color space',
 'Comment': 'Comment',
 'Comment posted': 'Comment posted',
+'Comments on %s': 'Comments on %s',
 'Community': 'Topluluk',
 'Components and Plugins': 'Bileşenler ve Eklentiler',
 'Config.ini': 'Config.ini',
