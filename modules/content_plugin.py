@@ -4,6 +4,7 @@ import os.path
 from gluon import IS_IN_SET
 from mail import item_notify_users
 
+
 class ContentPlugin(object):
 
     def __init__(self, db, T, response, request, auth, mail=None):
@@ -30,13 +31,17 @@ class ContentPlugin(object):
         db = self.db
         request = self.request
 
-        f_name = os.path.join(request.folder,
+        f_name = os.path.join(
+            request.folder,
             os.path.join('private', 'language-codes.csv'))
         with open(f_name) as lang_codes:
             reader = csv.DictReader(lang_codes)
-            required_names = [(row['alpha2'], row['English']) for row in reader]
-            required_names.sort(cmp=lambda x,y: cmp(x[1], y[1]))
-            db.item.language_tag.requires = IS_IN_SET(required_names, zero=None)
+            required_names = [
+                (row['alpha2'], row['English']) for row in reader
+            ]
+            required_names.sort(cmp=lambda x, y: cmp(x[1], y[1]))
+            db.item.language_tag.requires = IS_IN_SET(
+                required_names, zero=None)
 
     def preview(self, item):
         """
@@ -70,7 +75,8 @@ class ContentPlugin(object):
         # assign new language tag
         flds['language_tag'] = lt
         # remove administrative metadata
-        hidde = ['created_by', 'created_on', 'modified_on', 'modified_by',
+        hidde = [
+            'created_by', 'created_on', 'modified_on', 'modified_by',
             'is_active']
         for name in hidde:
             del flds[name]
@@ -81,7 +87,7 @@ class ContentPlugin(object):
         # perms to the original author
         if auth.user.id != item.created_by:
             g_id = auth.user_group(item.created_by)
-            owner  = db.auth_user(item.created_by)
+            # owner = db.auth_user(item.created_by)
             auth.add_permission(g_id, 'collaborator', db.item, target_id)
             # send an email to the creator of the original item
             subject = self.T("Translation of %s") % (item.headline,)
@@ -90,7 +96,7 @@ class ContentPlugin(object):
                 t_target=db.item(target_id),
                 t_user=auth.user,
             )
-            message=self.response.render(
+            message = self.response.render(
                 'translation_email.txt',
                 context
             )
@@ -132,7 +138,8 @@ class ContentPlugin(object):
         auth = self.auth
 
         gid = auth.user_group(user.id)
-        if not auth.has_permission('owner', db.item, record_id=item.id, user_id=user.id):
+        if not auth.has_permission(
+                'owner', db.item, record_id=item.id, user_id=user.id):
             auth.add_permission(gid, 'collaborator', db.item, item.id)
             self.on_share(item, user)
 

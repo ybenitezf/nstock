@@ -264,20 +264,16 @@ def share():
                     dict(item=item, user=auth.user, t_user=u)
                 )
             )
-            # for ou in rows:
-            #     if ou.id != auth.user.id:
-            mail.send(
-                to=email_list,
-                subject=T("Share of %s") % (item.headline,),
-                message=response.render(
-                    'share_email.txt',
-                    dict(
-                        item=item,
-                        user=auth.user,
-                        t_user=db.auth_user(email=form.vars.email)
-                    )
+            subject = T("Share of %s", (item.headline,))
+            message = response.render(
+                'share_email.txt',
+                dict(
+                    item=item,
+                    user=auth.user,
+                    t_user=db.auth_user(email=form.vars.email)
                 )
             )
+            item_notify_users(item.id, subject=subject, message=message)
         # --
         else:
             # no user with that email
