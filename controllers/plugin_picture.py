@@ -1,10 +1,21 @@
 # -*- coding: utf-8 -*-
+from perms import isOwnerOrCollaborator, isOwner
 from PIL import Image
 from tempfile import NamedTemporaryFile
 import os
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+if False:
+    from gluon import SQLFORM, CAT, A, SPAN, URL, IS_IMAGE
+    from gluon import current, redirect
+    request = current.request
+    response = current.response
+    T = current.T
+    from db import db, auth
+    from dc import CT_REG
+    from z_whoosh import Whoosh
+
+
+@auth.requires(isOwnerOrCollaborator())
 def index():
     """
     Edit content
@@ -16,22 +27,24 @@ def index():
     db.plugin_picture_info.renditions.readable = False
     db.plugin_picture_info.renditions.writable = False
 
-
     content = db.plugin_picture_info(item_id=item.id)
 
-    form = SQLFORM(db.plugin_picture_info,
+    form = SQLFORM(
+        db.plugin_picture_info,
         record=content,
         showid=False,
         submit_button=T('Save'))
 
     if form.process().accepted:
-        Whoosh().add_to_index(item.id, CT_REG.picture.get_full_text(db.item(item.id),CT_REG))
+        Whoosh().add_to_index(
+            item.id,
+            CT_REG.picture.get_full_text(db.item(item.id), CT_REG))
         response.flash = T('Done')
 
     return dict(form=form, item=item, content=content)
 
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) )
+@auth.requires(isOwner(request.args(0)))
 def delete_rendition():
     item = db.item(request.args(0))
     content = db.plugin_picture_info(item_id=item.id)
@@ -48,8 +61,8 @@ def delete_rendition():
 
     return CAT('')
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-                auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def diff():
     item = db.item(request.args(0))
     content = db.plugin_picture_info(item_id=item.id)
@@ -69,13 +82,15 @@ def diff():
             fields_archived.append(db.plugin_picture_info_archive[f.name])
 
     # build two readonly forms
-    form_actual = SQLFORM.factory(*fields,
+    form_actual = SQLFORM.factory(
+        *fields,
         record=content,
         readonly=True,
         showid=False,
         formstyle='divs'
         )
-    form_archive = SQLFORM.factory(*fields,
+    form_archive = SQLFORM.factory(
+        *fields,
         record=archive,
         readonly=True,
         showid=False,
@@ -83,8 +98,8 @@ def diff():
 
     return locals()
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def changelog():
     item = db.item(request.args(0))
     pic_info = db.plugin_picture_info(item_id=item.id)
@@ -94,13 +109,16 @@ def changelog():
     db.plugin_picture_info_archive.modified_on.readable = True
     db.plugin_picture_info_archive.modified_by.label = T('User')
     db.plugin_picture_info_archive.modified_by.readable = True
-    fields = [db.plugin_picture_info_archive.modified_on,
+    fields = [
+        db.plugin_picture_info_archive.modified_on,
         db.plugin_picture_info_archive.modified_by
     ]
 
     def gen_links(row):
-        diff = A(SPAN(_class="glyphicon glyphicon-random"),
-            _href=URL('diff',
+        diff = A(
+            SPAN(_class="glyphicon glyphicon-random"),
+            _href=URL(
+                'diff',
                 args=[item.id, row.id]),
             _class="btn btn-default",
             _title=T("Differences"),
@@ -110,7 +128,8 @@ def changelog():
 
     links = [dict(header='', body=gen_links)]
 
-    changes = SQLFORM.grid(query,
+    changes = SQLFORM.grid(
+        query,
         orderby=[~db.plugin_picture_info_archive.modified_on],
         fields=fields,
         args=request.args[:1],
@@ -122,18 +141,19 @@ def changelog():
 
     return locals()
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def add_rendition():
     item = db.item(request.args(0))
-    content = db.plugin_picture_info(item_id = item.id)
+    content = db.plugin_picture_info(item_id=item.id)
 
     form = SQLFORM(db.plugin_picture_rendition)
 
     if form.process().accepted:
         r_id = form.vars.id
         rend = db.plugin_picture_rendition(r_id)
-        (filename, stream) = db.plugin_picture_rendition.picture.retrieve(rend.picture)
+        (filename, stream) = db.plugin_picture_rendition.picture.retrieve(
+            rend.picture)
         filename = stream.name
         im = Image.open(filename)
         # update rendition with image info
@@ -149,10 +169,11 @@ def add_rendition():
 
     return locals()
 
+
 @auth.requires_login()
 def create():
 
-    fields=[]
+    fields = []
     # i need the input of the based item fields
     fdl_headline = db.item.headline
     fields.append(fdl_headline)
@@ -164,7 +185,7 @@ def create():
     # picture_info fields
     fld_description = db.plugin_picture_info.description
     fld_caption = db.plugin_picture_info.caption
-    fields.extend( [fld_description, fld_caption] )
+    fields.extend([fld_description, fld_caption])
 
     # and the image for the first redition
     fld_redition = db.plugin_picture_rendition.picture
@@ -177,8 +198,9 @@ def create():
     fld_redition.requires = IS_IMAGE()
     fields.append(fld_redition)
 
-    form = SQLFORM.factory(*fields,
-        table_name='plugin_picture_rendition' # to allow the correct form name
+    form = SQLFORM.factory(
+        *fields,
+        table_name='plugin_picture_rendition'  # to allow the correct form name
     )
 
     if form.process(dbio=False).accepted:
@@ -191,7 +213,8 @@ def create():
         form.vars.renditions = [rend_id]
         # generate the thumbnail
         rend = db.plugin_picture_rendition(rend_id)
-        (filename, stream) = db.plugin_picture_rendition.picture.retrieve(rend.picture)
+        (filename, stream) = db.plugin_picture_rendition.picture.retrieve(
+            rend.picture)
         filename = stream.name
         im = Image.open(filename)
         # update rendition with image info
@@ -205,15 +228,18 @@ def create():
         fl = NamedTemporaryFile(suffix=".jpg", delete=True)
         fl.close()
         im.save(fl.name, "JPEG")
-        form.vars.thumbnail = db.plugin_picture_info.thumbnail.store(open(fl.name, 'rb'),fl.name)
-        os.unlink(fl.name) # cleanup
+        form.vars.thumbnail = db.plugin_picture_info.thumbnail.store(
+            open(fl.name, 'rb'), fl.name)
+        os.unlink(fl.name)  # cleanup
         # create the picture main content
         form.vars.item_id = item_id
         info_id = db.plugin_picture_info.insert(
             **db.plugin_picture_info._filter_fields(form.vars)
         )
         # register document for search
-        Whoosh().add_to_index(item_id, CT_REG.picture.get_full_text(db.item(item_id),CT_REG))
+        Whoosh().add_to_index(
+            item_id,
+            CT_REG.picture.get_full_text(db.item(item_id), CT_REG))
         # --
         # redirect to the item
         redirect(URL('default', 'index'))

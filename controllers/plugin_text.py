@@ -1,8 +1,18 @@
 # -*- coding: utf-8 -*-
+from perms import isOwnerOrCollaborator
+
+if False:
+    from gluon import SQLFORM, URL, A, SPAN, CAT
+    from gluon import current, redirect
+    request = current.request
+    response = current.response
+    T = current.T
+    from db import db, auth
+    from dc import CT_REG
+    from z_whoosh import Whoosh
 
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+@auth.requires(isOwnerOrCollaborator())
 def index():
     """
     Edit content
@@ -11,21 +21,23 @@ def index():
 
     content = db.plugin_text_text(item_id=item.id)
 
-    form = SQLFORM(db.plugin_text_text,
+    form = SQLFORM(
+        db.plugin_text_text,
         record=content,
         showid=False,
         submit_button=T('Save'))
 
     if form.process().accepted:
-        Whoosh().add_to_index(item.id, CT_REG.text.get_full_text(db.item(item.id),CT_REG))
-        redirect( URL('index', args=[item.id]) )
+        Whoosh().add_to_index(
+            item.id,
+            CT_REG.text.get_full_text(db.item(item.id), CT_REG))
+        redirect(URL('index', args=[item.id]))
         response.flash = T('Done')
 
     return dict(form=form, item=item, content=content)
 
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-                auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+@auth.requires(isOwnerOrCollaborator())
 def diff():
     item = db.item(request.args(0))
     content = db.plugin_text_text(item_id=item.id)
@@ -45,13 +57,15 @@ def diff():
             fields_archived.append(db.plugin_text_text_archive[f.name])
 
     # build two readonly forms
-    form_actual = SQLFORM.factory(*fields,
+    form_actual = SQLFORM.factory(
+        *fields,
         record=content,
         readonly=True,
         showid=False,
         formstyle='divs'
         )
-    form_archive = SQLFORM.factory(*fields,
+    form_archive = SQLFORM.factory(
+        *fields,
         record=archive,
         readonly=True,
         showid=False,
@@ -59,8 +73,8 @@ def diff():
 
     return locals()
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-                auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def changelog():
     """
     Show item change log over the time
@@ -73,13 +87,16 @@ def changelog():
     db.plugin_text_text_archive.modified_on.readable = True
     db.plugin_text_text_archive.modified_by.label = T('User')
     db.plugin_text_text_archive.modified_by.readable = True
-    fields = [db.plugin_text_text_archive.modified_on,
+    fields = [
+        db.plugin_text_text_archive.modified_on,
         db.plugin_text_text_archive.modified_by
     ]
 
     def gen_links(row):
-        diff = A(SPAN(_class="glyphicon glyphicon-random"),
-            _href=URL('diff',
+        diff = A(
+            SPAN(_class="glyphicon glyphicon-random"),
+            _href=URL(
+                'diff',
                 args=[item.id, row.id]),
             _class="btn btn-default",
             _title=T("Differences"),
@@ -89,7 +106,8 @@ def changelog():
 
     links = [dict(header='', body=gen_links)]
 
-    changes = SQLFORM.grid(query,
+    changes = SQLFORM.grid(
+        query,
         orderby=[~db.plugin_text_text_archive.modified_on],
         fields=fields,
         args=request.args[:1],
@@ -101,13 +119,15 @@ def changelog():
 
     return locals()
 
+
 @auth.requires_login()
 def create():
     """
     Show the creation form of the text item.
     """
 
-    fields = [db.item.headline,
+    fields = [
+        db.item.headline,
         db.item.keywords,
         db.item.genre,
         db.item.item_type,
@@ -122,9 +142,12 @@ def create():
     if form.process().accepted:
         item_id = CT_REG.text.create_item(form.vars)
         form.vars.item_id = item_id
-        db.plugin_text_text.insert(**db.plugin_text_text._filter_fields(form.vars))
+        db.plugin_text_text.insert(
+            **db.plugin_text_text._filter_fields(form.vars))
         # register document for search
-        Whoosh().add_to_index(item_id, CT_REG.text.get_full_text(db.item(item_id),CT_REG))
+        Whoosh().add_to_index(
+            item_id,
+            CT_REG.text.get_full_text(db.item(item_id), CT_REG))
         # --
         redirect(URL('index', args=[item_id]))
 

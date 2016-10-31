@@ -2,6 +2,10 @@
 from gluon.storage import Storage
 from slugify import slugify
 
+if False:
+    from gluon import Field, T, IS_NOT_EMPTY, IS_IN_SET, LOAD
+    from db import db, auth
+
 # each content plugin must register here, for example for a text plugin:
 # CT_REG.text = ContentPlugin()
 #
@@ -10,15 +14,17 @@ from slugify import slugify
 CT_REG = Storage()
 
 PUB_STATUS = (
-    'canceled', # canceled
-    'usable', # usable
-    'withheld', # withheld
+    'canceled',  # canceled
+    'usable',  # usable
+    'withheld',  # withheld
 )
+
 
 def _get_slugline(f):
     f['slugline'] = slugify(f['headline'])
 
     return None
+
 
 def _update_slugline(s, f):
     if 'headline' in f.keys():
@@ -26,7 +32,9 @@ def _update_slugline(s, f):
 
     return None
 
-db.define_table('item',
+
+db.define_table(
+    'item',
     # content metadata
     Field('headline', 'string', length=512, default=''),
     Field('slugline', 'string', length=512, default=''),
@@ -45,7 +53,7 @@ db.define_table('item',
     # copyright info.
     Field('copyright_holder', 'string', length=100, default=''),
     Field('copyright_url', 'string', length=512, default=''),
-    Field('copyright_notice','text', default=''),
+    Field('copyright_notice', 'text', default=''),
     # the item_type will be of use for searching the actions asociate with a
     # item in CONTENT_TYPE_REG, it should not be readed or writed by users
     # and should be writen only one, in the creation of the item.
@@ -66,9 +74,10 @@ db.item.headline.requires = IS_NOT_EMPTY()
 db.item.language_tag.label = T('Language')
 db.item.keywords.label = T("Keywords")
 db.item.located.label = T("Located")
-db.item.located.comment = T("""
-    It can be the name of a city or may contain details, for example: HAVANA, CUBA
-""")
+db.item.located.comment = T(
+    """
+    It can be the name of a city or may contain details, for example: HAVANA,
+    CUBA""")
 db.item.genre.label = T('Genre')
 db.item.provider.label = T("Provider")
 db.item.provider.comment = T("""
@@ -81,33 +90,39 @@ this package.
 """)
 db.item.copyright_notice.label = T("Copyright Notice")
 db.item.copyright_holder.label = T("Copyright Holder")
-db.item.embargoed.comment = T("""
-News organisations often use an embargo to release information in advance, on the
-strict understanding that it may not be released into the public domain until
-after the embargo time has expired, or until some other form of permission has
-been given.
-""")
+db.item.embargoed.comment = T(
+    """
+    News organisations often use an embargo to release information in advance,
+    on the strict understanding that it may not be released into the public
+    domain until after the embargo time has expired, or until some other form
+    of permission has been given.
+    """)
 
 db.item._enable_record_versioning()
 
 # translation table, indicates with item translate another
-db.define_table('translations',
-    Field('item_id', 'reference item'), # original item
-    Field('trans_id', 'reference item'), # tranlation
-    Field('language_tag', 'string', length=2), # language of the translation
+db.define_table(
+    'translations',
+    Field('item_id', 'reference item'),  # original item
+    Field('trans_id', 'reference item'),  # tranlation
+    Field('language_tag', 'string', length=2),  # language of the translation
     )
 
 # dashboard's
-db.define_table('dashboard',
+db.define_table(
+    'dashboard',
     Field('name', 'string', length=20, label=T('Dashboard name')),
     Field('item_list', 'list:reference item'),
     auth.signature,
 )
 db.dashboard.name.requires = IS_NOT_EMPTY()
 
-is_in_board = lambda item, board: item.id in board.item_list
+
+def is_in_board(item, board):
+    return item.id in board.item_list
+
 # side links for items
-# item_tools = lambda item_id: LOAD('item', 'tools.load', args=[item_id], ajax=True)
 add_items = LOAD('item', 'add_items.load', ajax=True)
 
-dashboard_sidemenu = LOAD('dashboard', 'side_menu.load', ajax=True, target='dashboard_cmp')
+dashboard_sidemenu = LOAD(
+    'dashboard', 'side_menu.load', ajax=True, target='dashboard_cmp')

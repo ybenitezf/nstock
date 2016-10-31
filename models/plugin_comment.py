@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
-
+if False:
+    from gluon import Field, LOAD, IS_NOT_EMPTY
+    from gluon import current
+    T = current.T
+    from db import db, auth
 """
 Define the tables for the editorials commentary system
 """
 
+
 def _():
-    tbl = db.define_table('plugin_comment_comment',
+    tbl = db.define_table(
+        'plugin_comment_comment',
         Field('body', 'text', label=T('Your comment')),
         Field('item_id', 'reference item'),
         auth.signature,
@@ -14,6 +20,7 @@ def _():
     tbl.item_id.writable = False
     tbl.body.requires = IS_NOT_EMPTY()
 
-    return lambda item_id: LOAD('plugin_comment', 'index.load', args=[item_id], ajax=True)
+    return lambda item_id: LOAD(
+        'plugin_comment', 'index.load', args=[item_id], ajax=True)
 
 plugin_comment = _()

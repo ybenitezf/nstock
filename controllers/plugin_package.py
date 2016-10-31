@@ -1,8 +1,19 @@
 # -*- coding: utf-8 -*-
+from perms import isOwnerOrCollaborator
+
+if False:
+    from gluon import CAT, SQLFORM, A, SPAN, URL
+    from gluon import current, redirect
+    request = current.request
+    response = current.response
+    session = current.session
+    T = current.T
+    from db import db, auth
+    from dc import CT_REG
+    from z_whoosh import Whoosh
 
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+@auth.requires(isOwnerOrCollaborator())
 def index():
     """
     Edit/Show package content
@@ -12,8 +23,8 @@ def index():
 
     return locals()
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def view_group():
     """
     Show a concrete package group
@@ -23,8 +34,8 @@ def view_group():
     group = db.plugin_package_groups(request.args(1))
     return locals()
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def delete_group():
     """Delete a group from the package"""
     item = db.item(request.args(0))
@@ -45,8 +56,8 @@ def delete_group():
 
     return CAT('')
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def move_item():
     """Move item between groups"""
     item = db.item(request.args(0))
@@ -66,8 +77,8 @@ def move_item():
 
     return CAT('')
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def create_group_form():
     item = db.item(request.args(0))
     content = db.plugin_package_content(item_id=item)
@@ -75,8 +86,9 @@ def create_group_form():
     db.plugin_package_groups.group_items.default = []
     db.plugin_package_groups.group_items.writable = False
     db.plugin_package_groups.group_items.readable = False
-    form = SQLFORM(db.plugin_package_groups,
-        submit_button = T('Create new group'),
+    form = SQLFORM(
+        db.plugin_package_groups,
+        submit_button=T('Create new group'),
         _class="form-inline"
         )
 
@@ -88,8 +100,8 @@ def create_group_form():
 
     return locals()
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-                auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def diff():
     item = db.item(request.args(0))
     content = db.plugin_package_content(item_id=item.id)
@@ -97,23 +109,26 @@ def diff():
     return locals()
 
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+@auth.requires(isOwnerOrCollaborator())
 def changelog():
     item = db.item(request.args(0))
     pkg_content = db.plugin_package_content(item_id=item.id)
-    query = (db.plugin_package_content_archive.current_record == pkg_content.id)
+    query = (
+        db.plugin_package_content_archive.current_record == pkg_content.id)
     db.plugin_package_content_archive.modified_on.label = T('Date & Time')
     db.plugin_package_content_archive.modified_on.readable = True
     db.plugin_package_content_archive.modified_by.label = T('User')
     db.plugin_package_content_archive.modified_by.readable = True
-    fields = [db.plugin_package_content_archive.modified_on,
+    fields = [
+        db.plugin_package_content_archive.modified_on,
         db.plugin_package_content_archive.modified_by
     ]
 
     def gen_links(row):
-        diff = A(SPAN(_class="glyphicon glyphicon-random"),
-            _href=URL('diff',
+        diff = A(SPAN(
+            _class="glyphicon glyphicon-random"),
+            _href=URL(
+                'diff',
                 args=[item.id, row.id]),
             _class="btn btn-default",
             _title=T("Differences"),
@@ -123,7 +138,8 @@ def changelog():
 
     links = [dict(header='', body=gen_links)]
 
-    changes = SQLFORM.grid(query,
+    changes = SQLFORM.grid(
+        query,
         orderby=[~db.plugin_package_content_archive.modified_on],
         fields=fields,
         args=request.args[:1],
@@ -135,12 +151,13 @@ def changelog():
 
     return locals()
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def view_package_groups():
     pkg_item = db.item(request.args(0))
     pkg_content = db.plugin_package_content(item_id=pkg_item)
     return locals()
+
 
 @auth.requires_login()
 def create():
@@ -156,7 +173,7 @@ def create():
     # get the headline form the first item in the list
     first_item = db.item(dash.item_list[0])
 
-    fields=[]
+    fields = []
     # i need the input of the based item fields
     fdl_headline = db.item.headline
     fdl_headline.default = first_item.headline
@@ -176,8 +193,9 @@ def create():
     fdl_item_type.readable = False
     fdl_item_type.default = 'package'
 
-    form = SQLFORM.factory(*fields,
-        table_name='plugin_package_item' # to allow the correct file name
+    form = SQLFORM.factory(
+        *fields,
+        table_name='plugin_package_item'  # to allow the correct file name
     )
 
     if form.process(dbio=False).accepted:
@@ -193,7 +211,8 @@ def create():
             item_id=item_id,
             groups=[main_g_id]
         )
-        Whoosh().add_to_index(item_id, CT_REG.package.get_full_text(db.item(item_id),CT_REG))
+        Whoosh().add_to_index(
+            item_id, CT_REG.package.get_full_text(db.item(item_id), CT_REG))
         redirect(URL('default', 'index'))
 
     return locals()

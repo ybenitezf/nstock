@@ -1,18 +1,33 @@
 # -*- coding: utf-8 -*-
 
-@auth.requires(auth.has_permission('owner', db.dashboard, record_id=request.args(0)))
+if False:
+    from gluon import SQLFORM, URL, CAT, IS_NOT_EMPTY
+    from gluon import current, redirect, Field
+    from db import db, auth
+    from z_whoosh import Whoosh
+    request = current.request
+    response = current.response
+    session = current.session
+    cache = current.cache
+    T = current.T
+
+
+@auth.requires(auth.has_permission(
+    'owner', db.dashboard, record_id=request.args(0)))
 def index():
     """Show the item list of this dashboard"""
     dash = db.dashboard(request.args(0))
     session.dashboard = dash.id
 
-    query =  (db.item.id > 0)
-    query &= (auth.accessible_query('collaborator', db.item) |
+    query = (db.item.id > 0)
+    query &= (
+        auth.accessible_query('collaborator', db.item) |
         auth.accessible_query('owner', db.item))
     query &= db.dashboard.item_list.contains(db.item.id)
     query &= (db.dashboard.id == dash.id)
 
-    grid = SQLFORM.grid(query, args=request.args[:1],
+    grid = SQLFORM.grid(
+        query, args=request.args[:1],
         orderby=[~db.item.created_on],
         create=False,
         csv=False,
@@ -23,7 +38,9 @@ def index():
 
     return dict(grid=grid, current_dash=dash)
 
-@auth.requires(auth.has_permission('owner', db.dashboard, record_id=request.args(0)))
+
+@auth.requires(auth.has_permission(
+    'owner', db.dashboard, record_id=request.args(0)))
 def load_items():
     """Show the item list of this dashboard"""
     dash = db.dashboard(request.args(0))
@@ -36,12 +53,14 @@ def load_items():
     else:
         query = (db.item.id > 0)
 
-    query &= (auth.accessible_query('collaborator', db.item) |
+    query &= (
+        auth.accessible_query('collaborator', db.item) |
         auth.accessible_query('owner', db.item))
     query &= db.dashboard.item_list.contains(db.item.id)
     query &= (db.dashboard.id == dash.id)
 
-    grid = SQLFORM.grid(query, args=request.args[:1],
+    grid = SQLFORM.grid(
+        query, args=request.args[:1],
         orderby=[~db.item.created_on],
         create=False,
         csv=False,
@@ -49,11 +68,13 @@ def load_items():
     )
 
     response.title = dash.name
-    response.js =  "jQuery('#dashboard_cmp').get(0).reload();"
+    response.js = "jQuery('#dashboard_cmp').get(0).reload();"
 
     return dict(grid=grid, current_dash=dash)
 
-@auth.requires(auth.has_permission('owner', db.dashboard, record_id=request.args(0)))
+
+@auth.requires(auth.has_permission(
+    'owner', db.dashboard, record_id=request.args(0)))
 def delete():
     dash = db.dashboard(request.args(0))
 
@@ -63,11 +84,13 @@ def delete():
     redirect(URL('default', 'index'))
     return CAT()
 
+
 @auth.requires_login()
 def create():
     fld_name = db.dashboard.name
     fld_name.requires = IS_NOT_EMPTY()
-    fld_activate = Field('activate',
+    fld_activate = Field(
+        'activate',
         'boolean',
         default=True,
         label=T('Activate?'))
@@ -85,7 +108,9 @@ def create():
         redirect(URL('index', args=[session.dashboard]))
     return dict(form=form)
 
-@auth.requires(auth.has_permission('owner', db.dashboard, record_id=request.args(0)))
+
+@auth.requires(auth.has_permission(
+    'owner', db.dashboard, record_id=request.args(0)))
 def edit():
     dash = db.dashboard(request.args(0))
     db.dashboard.item_list.readable = False
@@ -98,7 +123,9 @@ def edit():
 
     return locals()
 
-@auth.requires(auth.has_permission('owner', db.dashboard, record_id=request.args(0)))
+
+@auth.requires(auth.has_permission(
+    'owner', db.dashboard, record_id=request.args(0)))
 def toogle_pin():
     dash = db.dashboard(request.args(0))
     item = db.item(request.args(1))
@@ -116,20 +143,21 @@ def toogle_pin():
         new_list.append(item.id)
     dash.update_record(item_list=new_list)
 
-    response.js +=  "jQuery('#dashboard_cmp').get(0).reload();"
+    response.js += "jQuery('#dashboard_cmp').get(0).reload();"
 
     return CAT('')
 
+
 @auth.requires_login()
 def side_menu():
-    query  = (db.dashboard.id > 0)
+    query = (db.dashboard.id > 0)
     query &= (db.dashboard.created_by == auth.user.id)
     dash_list = db(query).select(db.dashboard.ALL)
 
     if not dash_list:
         # crear board por defecto y ponerlo como activo
         d_id = db.dashboard.insert(name='My Dashboard', item_list=[])
-        query  = (db.dashboard.id > 0)
+        query = (db.dashboard.id > 0)
         query &= (db.dashboard.created_by == auth.user.id)
         dash_list = db(query).select(db.dashboard.ALL)
         auth.add_permission(0, 'owner', db.dashboard, d_id)

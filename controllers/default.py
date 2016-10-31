@@ -1,4 +1,13 @@
 # -*- coding: utf-8 -*-
+if False:
+    from gluon import current
+    request = current.request
+    response = current.response
+    session = current.session
+    cache = current.cache
+    T = current.T
+    from db import db, auth, service
+
 
 @auth.requires_login()
 def index():
@@ -36,10 +45,10 @@ def user():
         @auth.requires_membership('group name')
         @auth.requires_permission('read','table name',record_id)
     to decorate functions that need access control
-    also notice there is http://..../[app]/appadmin/manage/auth to allow administrator to manage users
+    also notice there is http://..../[app]/appadmin/manage/auth
+    to allow administrator to manage users
     """
     form = auth()
-    # print dir(form)
     return dict(form=form)
 
 

@@ -2,42 +2,53 @@
 from gluon.storage import Storage
 from PIL import Image
 from tempfile import NamedTemporaryFile
+from perms import isOwnerOrCollaborator, isOwner
 import os
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+if False:
+    from gluon import URL, IMG, CAT, SQLFORM, A, SPAN
+    from gluon import current, redirect
+    T = current.T
+    request = current.request
+    response = current.response
+    session = current.session
+    from db import db, auth
+    from dc import CT_REG
+    from z_whoosh import Whoosh
+
+
+@auth.requires(isOwnerOrCollaborator())
 def index():
     item = db.item(request.args(0))
     content = db.plugin_photoset_content(item_id=item.id)
 
     return locals()
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def view_photoset():
     item = db.item(request.args(0))
     content = db.plugin_photoset_content(item_id=item.id)
     photos = content.photoset
     return locals()
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def preview_photo():
     item = db.item(request.args(0))
-    content = db.plugin_photoset_content(item_id=item.id)
-    photo = db.plugin_photoset_photo( request.args(1) )
+    photo = db.plugin_photoset_photo(request.args(1))
     return IMG(
         _src=URL('default', 'download', args=[photo.picture]),
         _class="img-responsive center-block",
         _alt=item.slugline,
     )
-    # return locals()
 
-@auth.requires(auth.has_permission('owner', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwner(request.args(0)))
 def delete_photo():
     item = db.item(request.args(0))
     content = db.plugin_photoset_content(item_id=item.id)
-    photo = db.plugin_photoset_photo( request.args(1) )
+    photo = db.plugin_photoset_photo(request.args(1))
 
     content.photoset.remove(photo.id)
     del db.plugin_photoset_photo[photo.id]
@@ -45,8 +56,8 @@ def delete_photo():
 
     return CAT('')
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-    auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def edit_form():
     item = db.item(request.args(0))
     content = db.plugin_photoset_content(item_id=item.id)
@@ -56,20 +67,22 @@ def edit_form():
     db.plugin_photoset_content.item_id.readable = False
     db.plugin_photoset_content.item_id.writable = False
 
-    form = SQLFORM(db.plugin_photoset_content,
+    form = SQLFORM(
+        db.plugin_photoset_content,
         record=content,
         showid=False,
         submit_button=T('Save')
     )
 
     if form.process().accepted:
-        Whoosh().add_to_index(item.id, CT_REG.photoset.get_full_text(item, CT_REG))
+        Whoosh().add_to_index(
+            item.id, CT_REG.photoset.get_full_text(item, CT_REG))
         response.flash = T('Saved')
 
     return form
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-                auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+
+@auth.requires(isOwnerOrCollaborator())
 def changelog():
     """
     Show item change log over the time
@@ -82,13 +95,16 @@ def changelog():
     db.plugin_photoset_content_archive.modified_on.readable = True
     db.plugin_photoset_content_archive.modified_by.label = T('User')
     db.plugin_photoset_content_archive.modified_by.readable = True
-    fields = [db.plugin_photoset_content_archive.modified_on,
+    fields = [
+        db.plugin_photoset_content_archive.modified_on,
         db.plugin_photoset_content_archive.modified_by
     ]
 
     def gen_links(row):
-        diff = A(SPAN(_class="glyphicon glyphicon-random"),
-            _href=URL('diff',
+        diff = A(
+            SPAN(_class="glyphicon glyphicon-random"),
+            _href=URL(
+                'diff',
                 args=[item.id, row.id]),
             _class="btn btn-default",
             _title=T("Differences"),
@@ -98,7 +114,8 @@ def changelog():
 
     links = [dict(header='', body=gen_links)]
 
-    changes = SQLFORM.grid(query,
+    changes = SQLFORM.grid(
+        query,
         orderby=[~db.plugin_photoset_content_archive.modified_on],
         fields=fields,
         args=request.args[:1],
@@ -111,8 +128,7 @@ def changelog():
     return locals()
 
 
-@auth.requires( auth.has_permission('owner', db.item, record_id=request.args(0)) or
-                auth.has_permission('collaborator', db.item, record_id=request.args(0)))
+@auth.requires(isOwnerOrCollaborator())
 def diff():
     item = db.item(request.args(0))
     content = db.plugin_photoset_content(item_id=item.id)
@@ -132,19 +148,22 @@ def diff():
             fields_archived.append(db.plugin_photoset_content_archive[f.name])
 
     # build two readonly forms
-    form_actual = SQLFORM.factory(*fields,
+    form_actual = SQLFORM.factory(
+        *fields,
         record=content,
         readonly=True,
         showid=False,
         formstyle='divs'
         )
-    form_archive = SQLFORM.factory(*fields,
+    form_archive = SQLFORM.factory(
+        *fields,
         record=archive,
         readonly=True,
         showid=False,
         formstyle='divs')
 
     return locals()
+
 
 @auth.requires_login()
 def create():
@@ -160,8 +179,9 @@ def create():
     fdl_item_type.readable = False
     fdl_item_type.default = 'photoset'
 
-    form = SQLFORM.factory(*fields,
-        table_name='plugin_photo_set' # to allow the correct form name
+    form = SQLFORM.factory(
+        *fields,
+        table_name='plugin_photo_set'  # to allow the correct form name
     )
 
     if form.process(dbio=False).accepted:
@@ -174,7 +194,8 @@ def create():
                 form.vars
             )
         )
-        Whoosh().add_to_index(item_id, CT_REG.photoset.get_full_text(db.item(item_id),CT_REG))
+        Whoosh().add_to_index(
+            item_id, CT_REG.photoset.get_full_text(db.item(item_id), CT_REG))
         session.plugin_photoset = None
         redirect(URL('index', args=[item_id]))
 
@@ -189,7 +210,7 @@ def upload_photo():
         session.plugin_photoset.photos = []
 
     for r in request.vars:
-        if r=="qqfile":
+        if r == "qqfile":
             filename = request.vars.qqfile
             photo_id = db.plugin_photoset_photo.insert(
                 picture=db.plugin_photoset_photo.picture.store(
@@ -198,7 +219,9 @@ def upload_photo():
             )
             # generate the thumbnail
             photo = db.plugin_photoset_photo(photo_id)
-            (filename, stream) = db.plugin_photoset_photo.picture.retrieve(photo.picture)
+            (filename, stream) = db.plugin_photoset_photo.picture.retrieve(
+                photo.picture
+            )
             filename = stream.name
             im = Image.open(filename)
             # --------------------------------
@@ -207,9 +230,10 @@ def upload_photo():
             fl = NamedTemporaryFile(suffix=".jpg", delete=True)
             fl.close()
             im.save(fl.name, "JPEG")
-            thumb = db.plugin_photoset_photo.thumbnail.store(open(fl.name, 'rb'),fl.name)
+            thumb = db.plugin_photoset_photo.thumbnail.store(
+                open(fl.name, 'rb'), fl.name)
             photo.update_record(thumbnail=thumb)
-            os.unlink(fl.name) # cleanup
+            os.unlink(fl.name)  # cleanup
             # if a photoset is given add this photo to the set
             if request.args(0):
                 item = db.item(request.args(0))
@@ -217,13 +241,13 @@ def upload_photo():
                 photoset.photoset.append(photo_id)
                 photoset.update_record()
                 # update translations set
-                for row in db( db.translations.item_id == item.id ).select():
+                for row in db(db.translations.item_id == item.id).select():
                     t_item = db.item(row.trans_id)
                     t_photoset = db.plugin_photoset_content(item_id=t_item.id)
-                    t_photoset.photoset.append( photo_id )
+                    t_photoset.photoset.append(photo_id)
                     t_photoset.update_record()
             else:
                 # in the create stage, i guess
                 session.plugin_photoset.photos.append(photo_id)
 
-            return response.json({'success':'true'})
+            return response.json({'success': 'true'})
