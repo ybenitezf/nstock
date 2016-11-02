@@ -73,3 +73,11 @@ body { padding-bottom: 70px; }
 	padding-left: 5px;
 	padding-right: 5px;
 }
+
+.left-sidebar {
+	width: 240px;
+}
+
+.left-sidebar > .affix, .left-sidebar > .affix-bottom {
+	width: 230px;
+}
