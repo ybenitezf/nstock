@@ -12,12 +12,33 @@ if False:
     T = current.T
 
 
-@auth.requires(auth.has_permission(
-    'owner', db.dashboard, record_id=request.args(0)))
+def activeDashboard(dash_id):
+    dash = db.dashboard(dash_id)
+
+    if dash:
+        session.dashboard = dash.id
+
+
+def isOwner(dash_id=None):
+    dash_id = dash_id or request.args(0)
+    return auth.has_permission(
+        'owner', db.dashboard, record_id=dash_id)
+
+
+@auth.requires_login()
+def toogle_on():
+    dash = db.dashboard(request.args(0))
+    activeDashboard(dash.id)
+    response.js = "jQuery('#dashboard_cmp').get(0).reload();"
+    response.js += "jQuery('#main').get(0).reload();"
+    return CAT('')
+
+
+@auth.requires(isOwner())
 def index():
     """Show the item list of this dashboard"""
     dash = db.dashboard(request.args(0))
-    session.dashboard = dash.id
+    activeDashboard(request.args(0))
 
     query = (db.item.id > 0)
     query &= (
@@ -39,12 +60,11 @@ def index():
     return dict(grid=grid, current_dash=dash)
 
 
-@auth.requires(auth.has_permission(
-    'owner', db.dashboard, record_id=request.args(0)))
+@auth.requires(isOwner())
 def load_items():
     """Show the item list of this dashboard"""
     dash = db.dashboard(request.args(0))
-    session.dashboard = dash.id
+    # session.dashboard = dash.id
 
     request.vars.q = None if request.vars.q == '' else request.vars.q
     if request.vars.q is not None:
@@ -73,8 +93,7 @@ def load_items():
     return dict(grid=grid, current_dash=dash)
 
 
-@auth.requires(auth.has_permission(
-    'owner', db.dashboard, record_id=request.args(0)))
+@auth.requires(isOwner())
 def delete():
     dash = db.dashboard(request.args(0))
 
@@ -109,8 +128,7 @@ def create():
     return dict(form=form)
 
 
-@auth.requires(auth.has_permission(
-    'owner', db.dashboard, record_id=request.args(0)))
+@auth.requires(isOwner())
 def edit():
     dash = db.dashboard(request.args(0))
     db.dashboard.item_list.readable = False
@@ -124,8 +142,7 @@ def edit():
     return locals()
 
 
-@auth.requires(auth.has_permission(
-    'owner', db.dashboard, record_id=request.args(0)))
+@auth.requires(isOwner())
 def toogle_pin():
     dash = db.dashboard(request.args(0))
     item = db.item(request.args(1))
@@ -164,7 +181,7 @@ def side_menu():
 
     if not session.dashboard:
         dash = db(db.dashboard.created_by == auth.user.id).select().first()
-        session.dashboard = dash.id
+        activeDashboard(dash.id)
 
     alinks = request.vars.alinks
     return dict(dash_list=dash_list, alinks=alinks)

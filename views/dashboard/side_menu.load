@@ -38,29 +38,55 @@
   </div>
 
       <div class="list-group">
-        <a id="all_items" class="list-group-item" href="#">
-          {{=T('CAST')}}
-        </a>
+        <li class="list-group-item clearfix">
+          <a id="all_items" class="" href="#">
+            {{=T('CAST')}}
+          </a>
+        </li>
         {{for dash in dash_list:}}
-        <a id="db{{=dash.id}}" class="list-group-item" href="#">
-          {{if dash.id == session.dashboard:}}
-            <i class="fa fa-toggle-on"></i>
-          {{else:}}
-            <i class="fa fa-toggle-off"></i>
-          {{pass}}
-          {{=dash.name}} <span class="badge">{{=len(dash.item_list)}}</span>
-        </a>
-        <script>
-        $( "#db{{=dash.id}}" ).click(function( e ) {
-          e.preventDefault();
-          Pace.start();
-          web2py_component(
-            '{{=URL('dashboard', 'load_items.load', args=[dash.id], user_signature=True)}}',
-            target='main'
-          );
-          Pace.stop();
-        });
-        </script>
+        <li class="list-group-item clearfix">
+          <div class="container-fluid" style="padding:0px;">
+            <div clas="row">
+              <div class="col-xs-2 text-center">
+                {{if dash.id == session.dashboard:}}
+                    <i class="fa fa-toggle-on"></i>
+                {{else:}}
+                  <a id="toggle_dash{{=dash.id}}" class="" href="#">
+                    <i class="fa fa-toggle-off"></i>
+                  </a>
+                {{pass}}
+              </div>
+              <div class="col-xs-8 text-left">
+                <a id="db{{=dash.id}}" class=" " href="#">
+                  {{=dash.name}}
+                </a>
+              </div>
+              <div class="col-xs-2 text-center">
+                <span class="badge">{{=len(dash.item_list)}}</span>
+              </div>
+            </div>
+          </div>
+          <script>
+          $( "#db{{=dash.id}}" ).click(function( e ) {
+            e.preventDefault();
+            Pace.start();
+            web2py_component(
+              '{{=URL('dashboard', 'load_items.load', args=[dash.id], user_signature=True)}}',
+              target='main'
+            );
+            Pace.stop();
+          });
+          $( "#toggle_dash{{=dash.id}}" ).click(function( e ) {
+            e.preventDefault();
+            Pace.start();
+            web2py_component(
+              '{{=URL('dashboard', 'toogle_on.load', args=[dash.id], user_signature=True)}}',
+              target='hidethis_global'
+            );
+            Pace.stop();
+          });
+          </script>
+        </li>
         {{pass}}
       </div>
 

@@ -42,12 +42,12 @@
       </div>
     </div>
     {{pass}}
-    <div class="row">
+    <div class="row item-rows">
         {{for r in rows:}}
         {{item = r.item}}
-        <div class="col-xs-12 col-sm-12 col-md-6">
+        <!-- <div class="col-xs-12 col-sm-12 col-md-6"> -->
           {{include 'item/preview.html'}}
-        </div>
+        <!-- </div> -->
         {{pass}}
     </div>
     {{ if len(grid.components) == 3: }}

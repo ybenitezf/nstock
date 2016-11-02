@@ -25,6 +25,13 @@ body {
 	color: #333333;
 }
 
+.item-rows {
+ -moz-column-width: 25em;
+ -webkit-column-width: 25em;
+ -moz-column-gap: .5em;
+ -webkit-column-gap: .5em;
+}
+
 .item-preview {
 	cursor: pointer;
 	cursor: hand;
@@ -34,7 +41,10 @@ body {
 	box-shadow: 0 1px 1px rgba(0,0,0,0.05);
 	border-color: #dddddd;
 	padding: 10px;
-	margin-bottom: 5px;
+	/*margin-bottom: 5px;*/
+	display: inline-block;
+	margin:  .5em;
+	width: 98%;
 }
 
 .item-preview:hover {
@@ -76,6 +86,14 @@ body { padding-bottom: 70px; }
 
 .left-sidebar {
 	width: 240px;
+}
+
+.left-sidebar a {
+	color: #555555;
+}
+
+.left-sidebar a:hover, .left-sidebar a:focus {
+	text-decoration: none;
 }
 
 .left-sidebar > .affix, .left-sidebar > .affix-bottom {
