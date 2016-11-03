@@ -2,7 +2,9 @@
   {{if photoset_content.description:}}
   <div class="row">
     <!-- show description here -->
-    {{=MARKMIN(photoset_content.description)}}
+    <div class="text-preview">
+      {{=XML(photoset_content.description)}}
+    </div>
   </div>
   {{pass}}
   <div class="row">

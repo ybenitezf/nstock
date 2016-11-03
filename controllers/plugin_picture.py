@@ -182,11 +182,6 @@ def create():
     fdl_item_type.readable = False
     fdl_item_type.default = 'picture'
 
-    # picture_info fields
-    fld_description = db.plugin_picture_info.description
-    fld_caption = db.plugin_picture_info.caption
-    fields.extend([fld_description, fld_caption])
-
     # and the image for the first redition
     fld_redition = db.plugin_picture_rendition.picture
     fld_redition.uploadfolder = os.path.join(request.folder, 'uploads')

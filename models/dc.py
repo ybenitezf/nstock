@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
 from gluon.storage import Storage
+from gluon import current
 from slugify import slugify
 
 if False:
     from gluon import Field, T, IS_NOT_EMPTY, IS_IN_SET, LOAD
-    from db import db, auth
+    from db import db, auth, mail, myconf
+
+
+# configure global context
+def _():
+    current.auth = auth
+    current.db = db
+    current.mail = mail
+    current.conf = myconf
+_()
 
 # each content plugin must register here, for example for a text plugin:
 # CT_REG.text = ContentPlugin()

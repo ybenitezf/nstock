@@ -128,8 +128,6 @@ def create():
 
     fields = [
         db.item.headline,
-        db.item.keywords,
-        db.item.genre,
         db.item.item_type,
         db.plugin_text_text.body
     ]

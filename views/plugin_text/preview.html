@@ -1,5 +1,6 @@
-{{#=MARKMIN(p_content.body[0:400] + '...')}}
-{{=MARKMIN(p_content.body)}}
+<div class="text-preview">
+{{=XML(p_content.body)}}
+</div>
 <span class="small text-muted">
   {{=p_content.byline}}
 </span>

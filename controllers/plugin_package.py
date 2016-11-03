@@ -178,16 +178,16 @@ def create():
     fdl_headline = db.item.headline
     fdl_headline.default = first_item.headline
     fields.append(fdl_headline)
-    fdl_keywords = db.item.keywords
-    keywords_list = []
-    for item_id in dash.item_list:
-        _item = db.item(item_id)
-        keywords_list.extend(_item.keywords)
-    keywords_list = list(set(keywords_list))
-    fdl_keywords.default = keywords_list
-    fields.append(fdl_keywords)
-    fields.append(db.item.genre)
-    fields.append(db.item.located)
+    # fdl_keywords = db.item.keywords
+    # keywords_list = []
+    # for item_id in dash.item_list:
+    #     _item = db.item(item_id)
+    #     keywords_list.extend(_item.keywords)
+    # keywords_list = list(set(keywords_list))
+    # fdl_keywords.default = keywords_list
+    # fields.append(fdl_keywords)
+    # fields.append(db.item.genre)
+    # fields.append(db.item.located)
     fdl_item_type = db.item.item_type
     fdl_item_type.writable = False
     fdl_item_type.readable = False

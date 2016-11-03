@@ -1,21 +1,39 @@
 # -*- coding: utf-8 -*-
 from content_plugin import ContentPlugin
 from gluon import Field, URL, IS_NOT_EMPTY, XML, CAT, I, IS_IMAGE
+from plugin_ckeditor import CKEditor
+
 
 class ContentPicture(ContentPlugin):
 
     def define_tables(self):
         db = self.db
         T = self.T
+        editor = CKEditor(db=db)
 
         if not hasattr(db, 'plugin_picture_rendition'):
-            tbl = db.define_table('plugin_picture_rendition',
-                Field('picture', 'upload', uploadseparate=True, autodelete=True),
+            tbl = db.define_table(
+                'plugin_picture_rendition',
+                Field(
+                    'picture', 'upload', uploadseparate=True, autodelete=True
+                ),
                 Field('purpose', 'string', length=50, default='raw'),
-                Field('height', 'integer', default=0, readable=False, writable=False),
-                Field('width', 'integer', default=0, readable=False, writable=False),
-                Field('color', 'string', length=20, readable=False, writable=False),
-                Field('format', 'string', length=10, readable=False, writable=False)
+                Field(
+                    'height', 'integer', default=0, readable=False,
+                    writable=False
+                ),
+                Field(
+                    'width', 'integer', default=0, readable=False,
+                    writable=False
+                ),
+                Field(
+                    'color', 'string', length=20, readable=False,
+                    writable=False
+                ),
+                Field(
+                    'format', 'string', length=10, readable=False,
+                    writable=False
+                )
             )
             tbl.purpose.comment = T('''
             It may contain any value but it is recommended to use one of the
@@ -32,24 +50,32 @@ class ContentPicture(ContentPlugin):
 
         if not hasattr(db, 'plugin_picture_info'):
             # definimos la BD
-            tbl = db.define_table('plugin_picture_info',
+            tbl = db.define_table(
+                'plugin_picture_info',
                 Field('credit_line', 'string', length=250, default=''),
-                Field('description', 'text',
+                Field(
+                    'description', 'text',
                     label=T('Description'),
-                    default=''),
-                Field('caption', 'string',
+                    default=''
+                ),
+                Field(
+                    'caption', 'string',
                     length=250,
-                    default=''),
-                Field('thumbnail', 'upload',
+                    default=''
+                ),
+                Field(
+                    'thumbnail', 'upload',
                     uploadseparate=True,
                     autodelete=True,
-                    default=None),
+                    default=None
+                ),
                 Field('renditions', 'list:reference plugin_picture_rendition'),
                 Field('item_id', 'reference item'),
                 self.auth.signature,
             )
             tbl.credit_line.label = T("Credit line")
             tbl.description.label = T('Description')
+            tbl.description.widget = editor.widget
             tbl.caption.label = T("Caption")
             tbl.renditions.label = T("Renditions")
             tbl.item_id.readable = False
@@ -59,9 +85,10 @@ class ContentPicture(ContentPlugin):
             tbl._enable_record_versioning()
 
     def create_item_url(self):
-        return (URL('plugin_picture', 'create.html'),
+        return (
+            URL('plugin_picture', 'create.html'),
             CAT(I(_class='fa fa-picture-o'), ' ', self.T('Picture'))
-            )
+        )
 
     def get_item_url(self, item):
         return URL('plugin_picture', 'index.html', args=[item.id])
@@ -80,7 +107,8 @@ class ContentPicture(ContentPlugin):
         flds = db.plugin_picture_info._filter_fields(content)
         flds['item_id'] = target_item.id
         # remove administrative metadata
-        hidde = ['created_by', 'created_on', 'modified_on', 'modified_by',
+        hidde = [
+            'created_by', 'created_on', 'modified_on', 'modified_by',
             'is_active']
         for name in hidde:
             del flds[name]
@@ -94,14 +122,17 @@ class ContentPicture(ContentPlugin):
     def get_full_text(self, item, CT_REG):
         """Return full text document, mean for plugins"""
         pic_info = self.db.plugin_picture_info(item_id=item.id)
-        output = self.response.render('plugin_picture/full_text.txt',
+        output = self.response.render(
+            'plugin_picture/full_text.txt',
             dict(pic_info=pic_info, item=item, CT_REG=CT_REG))
-        return unicode( output.decode( 'utf-8' ) )
+        return unicode(output.decode('utf-8'))
 
     def get_changelog_url(self, item):
         return URL('plugin_picture', 'changelog', args=[item.id])
 
     def preview(self, item):
         info = self.db.plugin_picture_info(item_id=item.id)
-        return XML(self.response.render('plugin_picture/preview.html',
-            dict(item=item,info=info)))
+        return XML(
+            self.response.render(
+                'plugin_picture/preview.html',
+                dict(item=item, info=info)))

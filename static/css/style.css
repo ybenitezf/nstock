@@ -99,3 +99,7 @@ body { padding-bottom: 70px; }
 .left-sidebar > .affix, .left-sidebar > .affix-bottom {
 	width: 230px;
 }
+
+.text-preview {
+	font-size: 90%;
+}

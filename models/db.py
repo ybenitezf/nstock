@@ -105,7 +105,7 @@ mail.settings.ssl = myconf.get('smtp.ssl') or False
 # -------------------------------------------------------------------------
 # configure auth policy
 # -------------------------------------------------------------------------
-auth.settings.registration_requires_verification = False
+auth.settings.registration_requires_verification = not request.is_local
 auth.settings.registration_requires_approval = False
 auth.settings.reset_password_requires_verification = True
 
@@ -130,8 +130,3 @@ auth.settings.reset_password_requires_verification = True
 # after defining tables, uncomment below to enable auditing
 # -------------------------------------------------------------------------
 # auth.enable_record_versioning(db)
-
-from gluon import current
-current.auth = auth
-current.db = db
-current.mail = mail

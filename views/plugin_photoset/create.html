@@ -7,6 +7,10 @@
 
 {{=form}}
 <hr>
+<div class="alert alert-info">
+  <strong>{{=T("Warning!")}}</strong>
+  {{=T("Upload the photos before submiting the form.")}}
+</div>
 <div id="file-uploader">
   <noscript><p>{{=T('Please enable JavaScript to use file uploader.')}}</p></noscript>
 </div>
@@ -40,7 +44,7 @@ $(document).ready(function() {
             onLeave: "{{=T('The files are being uploaded, if you leave now the upload will be cancelled.')}}"
         },
         showMessage: function(message){ alert(message); },
-        uploadButtonText: '{{=T("Upload photos")}}',
+        uploadButtonText: '{{=T("Select and upload photos")}}',
         template: '<div class="qq-uploader">' +
           '<div class="qq-upload-drop-area"><span>{dragText}</span></div>' +
           '<div class="qq-upload-button">{uploadButtonText}</div>' +

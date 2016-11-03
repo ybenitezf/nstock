@@ -115,7 +115,7 @@ $(document).ready(function() {
             onLeave: "{{=T('The files are being uploaded, if you leave now the upload will be cancelled.')}}"
         },
         showMessage: function(message){ alert(message); },
-        uploadButtonText: '{{=T("Upload more photos")}}',
+        uploadButtonText: '{{=T("Select and upload more photos")}}',
         template: '<div class="qq-uploader">' +
           '<div class="qq-upload-drop-area"><span>{dragText}</span></div>' +
           '<div class="qq-upload-button">{uploadButtonText}</div>' +

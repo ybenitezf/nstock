@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from content_plugin import ContentPlugin
-from gluon import Field, URL, IS_NOT_EMPTY, XML, CAT, I
+from gluon import Field, URL, XML, CAT, I
+from plugin_ckeditor import CKEditor
+
 
 class ContentPhotoset(ContentPlugin):
     """
@@ -10,36 +12,47 @@ class ContentPhotoset(ContentPlugin):
     def define_tables(self):
         db = self.db
         T = self.T
+        editor = CKEditor(db)
 
         if not hasattr(db, 'plugin_photoset_photo'):
-            db.define_table('plugin_photoset_photo',
-                Field('thumbnail', 'upload',
+            db.define_table(
+                'plugin_photoset_photo',
+                Field(
+                    'thumbnail', 'upload',
                     uploadseparate=True,
                     autodelete=True,
-                    default=None),
-                Field('picture', 'upload',
+                    default=None
+                ),
+                Field(
+                    'picture', 'upload',
                     uploadseparate=True,
-                    autodelete=True),
+                    autodelete=True
+                ),
             )
 
         if not hasattr(db, 'plugin_photoset_content'):
-            tbl = db.define_table('plugin_photoset_content',
+            tbl = db.define_table(
+                'plugin_photoset_content',
                 Field('credit_line', 'string', length=250, default=''),
-                Field('description', 'text',
+                Field(
+                    'description', 'text',
                     label=T('Description'),
-                    default=''),
+                    default=''
+                ),
                 Field('photoset', 'list:reference plugin_photoset_photo'),
                 Field('item_id', 'reference item'),
                 self.auth.signature,
             )
             tbl.credit_line.label = T("Credit line")
             tbl.description.label = T('Description')
+            tbl.description.widget = editor.widget
             tbl._enable_record_versioning()
 
     def create_item_url(self):
-        return (URL('plugin_photoset', 'create.html'),
+        return (
+            URL('plugin_photoset', 'create.html'),
             CAT(I(_class="fa fa-object-group"), ' ', self.T('Photo Set'))
-            )
+        )
 
     def get_item_url(self, item):
         return URL('plugin_photoset', 'index.html', args=[item.id])
@@ -58,7 +71,8 @@ class ContentPhotoset(ContentPlugin):
         flds = db.plugin_photoset_content._filter_fields(content)
         flds['item_id'] = target_item.id
         # remove administrative metadata
-        hidde = ['created_by', 'created_on', 'modified_on', 'modified_by',
+        hidde = [
+            'created_by', 'created_on', 'modified_on', 'modified_by',
             'is_active']
         for name in hidde:
             del flds[name]
@@ -75,11 +89,15 @@ class ContentPhotoset(ContentPlugin):
     def get_full_text(self, item, CT_REG):
         """Return full text document, mean for plugins"""
         photoset_content = self.db.plugin_photoset_content(item_id=item.id)
-        output = self.response.render('plugin_photoset/full_text.txt',
+        output = self.response.render(
+            'plugin_photoset/full_text.txt',
             dict(photoset_content=photoset_content, item=item, CT_REG=CT_REG))
-        return unicode( output.decode( 'utf-8' ) )
+        return unicode(output.decode('utf-8'))
 
     def preview(self, item):
         photoset_content = self.db.plugin_photoset_content(item_id=item.id)
-        return XML(self.response.render('plugin_photoset/preview.html',
-            dict(item=item, photoset_content=photoset_content)))
+        return XML(
+            self.response.render(
+                'plugin_photoset/preview.html',
+                dict(item=item, photoset_content=photoset_content))
+        )

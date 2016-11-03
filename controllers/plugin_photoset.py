@@ -30,6 +30,8 @@ def view_photoset():
     item = db.item(request.args(0))
     content = db.plugin_photoset_content(item_id=item.id)
     photos = content.photoset
+    if not photos:
+        photos = []
     return locals()
 
 
@@ -170,10 +172,11 @@ def create():
     fields = []
 
     fld_headline = db.item.headline
-    fld_keywords = db.item.keywords
-    fields.extend([fld_headline, fld_keywords])
-    fields.append(db.item.located)
-    fields.append(db.plugin_photoset_content.description)
+    # fld_keywords = db.item.keywords
+    # fields.extend([fld_headline, fld_keywords])
+    fields.extend([fld_headline])
+    # fields.append(db.item.located)
+    # fields.append(db.plugin_photoset_content.description)
     fdl_item_type = db.item.item_type
     fdl_item_type.writable = False
     fdl_item_type.readable = False
@@ -189,6 +192,8 @@ def create():
         form.vars.item_id = item_id
         if session.plugin_photoset:
             form.vars.photoset = session.plugin_photoset.photos
+        else:
+            form.vars.phoset = []
         db.plugin_photoset_content.insert(
             **db.plugin_photoset_content._filter_fields(
                 form.vars
