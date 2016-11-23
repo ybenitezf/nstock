@@ -1,0 +1,62 @@
+<div id="hiddethis" class="hidden">
+
+</div>
+
+{{rows = grid.rows}}
+
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li><a href="{{=URL('default', 'index.html')}}">CAST</a></li>
+          <li class="active">{{=current_dash.name}}</li>
+        </ol>
+      </div>
+    </div>
+    <form id="mysearch" class="form" method="GET" enctype="multipart/form-data">
+    <div class="row">
+            <div class="col-md-8">
+                    <div class="form-group">
+                        {{if request.vars.q:}}
+                        <input id="w2p_keywords" name="q" type="text" class="form-control" id="searchImput" value="{{=request.vars.q}}">
+                        {{else:}}
+                        <input id="w2p_keywords" name="q" type="text" class="form-control" id="searchImput" placeholder="Type text to search">
+                        {{pass}}
+                    </div>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">{{=T('Search')}}</button>
+                {{if request.vars.q:}}
+                <input class="btn btn-default" value="{{=T('Reset')}}" type="submit" onclick="$( '#w2p_keywords' ).val('');">
+                {{pass}}
+            </div>
+    </div>
+     <hr />
+    </form>
+    {{ if len(grid.components) == 3: }}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          {{=grid.components[2]}}
+        </div>
+      </div>
+    </div>
+    {{pass}}
+    <div class="row item-rows">
+        {{for r in rows:}}
+        {{item = r.item}}
+        <!-- <div class="col-xs-12 col-sm-12 col-md-6"> -->
+          {{include 'item/preview.html'}}
+        <!-- </div> -->
+        {{pass}}
+    </div>
+    {{ if len(grid.components) == 3: }}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          {{=grid.components[2]}}
+        </div>
+      </div>
+    </div>
+    {{pass}}
+</div>

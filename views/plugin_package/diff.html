@@ -1,0 +1,111 @@
+{{left_sidebar_enabled=False}}
+{{right_sidebar_enabled=False}}
+
+{{extend 'layout.html'}}
+
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{=URL('default', 'index')}}">{{=T('CAST')}}</a>
+            </li>
+            <li>
+                <a href="{{=CT_REG[item.item_type].get_item_url(item)}}">{{=item.slugline}}</a>
+            </li>
+            <li>
+                <a href="{{=URL('item', 'changelog', args=[item.id])}}">
+                {{=T('Changes')}}
+                </a>
+            </li>
+            <li class="active">
+                {{=T("Content differences")}}
+            </li>
+        </ol>
+    </div>
+
+  <!-- Diff in groups -->
+  <div class="col-md-6">
+    <!-- Before -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{=T('Before')}}</h3>
+      </div>
+      <div class="panel-body">
+        {{for grp in archive.groups:}}
+        {{group = db.plugin_package_groups(grp)}}
+          {{if group:}}
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">{{=group.group_role}}</h3>
+              </div>
+
+              {{if group.group_items:}}
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>{{=T('Type')}}</th> <th>{{=T('Headline')}}</th> <th>{{=T('Language')}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{for g_item_id in group.group_items:}}
+                  {{g_item = db.item(g_item_id)}}
+                  <tr>
+                    <th scope="row"> <i class="fa {{=CT_REG[g_item.item_type].get_item_icon(g_item)}}"></i> </th>
+                    <td>{{=g_item.headline}}</td>
+                    <td>{{=g_item.language_tag}}</td>
+                  </tr>
+                  {{pass}}
+                </tbody>
+              </table>
+              {{pass}}
+            </div>
+          {{pass}}
+        {{pass}}
+      </div>
+    </div>
+    <!-- Before -->
+  </div>
+
+  <div class="col-md-6">
+    <!-- Current -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{=T('Current')}}</h3>
+      </div>
+      <div class="panel-body">
+        {{for grp in content.groups:}}
+        {{group = db.plugin_package_groups(grp)}}
+          {{if group:}}
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">{{=group.group_role}}</h3>
+              </div>
+
+              {{if group.group_items:}}
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>{{=T('Type')}}</th> <th>{{=T('Headline')}}</th> <th>{{=T('Language')}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{for g_item_id in group.group_items:}}
+                  {{g_item = db.item(g_item_id)}}
+                  <tr>
+                    <th scope="row"> <i class="fa {{=CT_REG[g_item.item_type].get_item_icon(g_item)}}"></i> </th>
+                    <td>{{=g_item.headline}}</td>
+                    <td>{{=g_item.language_tag}}</td>
+                  </tr>
+                  {{pass}}
+                </tbody>
+              </table>
+              {{pass}}
+            </div>
+          {{pass}}
+        {{pass}}
+      </div>
+    </div>
+    <!-- Current -->
+  </div>
+
+</div>

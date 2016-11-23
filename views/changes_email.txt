@@ -1,0 +1,11 @@
+{{=user.first_name}} {{=user.last_name}}, {{=T('has made changes to the meta-data of the item')}}:
+
+{{=item.headline}}
+
+{{=T('You can see the changes on')}}:
+
+{{=URL('item', 'changelog', args=[item.id], scheme=True, host=True)}}
+
+--
+{{=T('See you on eNews')}}.
+{{=URL('default', 'index', scheme=True, host=True)}}

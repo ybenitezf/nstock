@@ -1,0 +1,62 @@
+{{left_sidebar_enabled=True}}
+{{right_sidebar_enabled=False}}
+{{def _():}}
+  {{
+  item_actions = []
+  item_actions.extend([
+    (CAT(I(_class="fa fa-newspaper-o"), ' ', T('Content')), False, CT_REG[item.item_type].get_item_url(item), []),
+    (CAT(I(_class="fa fa-bars"), ' ', T('META')), False, URL('item', 'meta', args=[item.id]), []),
+    (CAT(I(_class="fa fa-language"), ' ', T('Translate')), False, URL('item', 'translate', args=[item.id]), []),
+    (CAT(I(_class="fa fa-share-alt"), ' ', T('Share')), False, URL('item', 'share', args=[item.id]), []),
+    (CAT(I(_class="fa fa-history"), ' ', T('Changelog')), False, URL('item', 'changelog', args=[item.id]), []),
+  ])
+  response.menu += [(T('Item'), False, "#", item_actions)]
+  }}
+{{pass}}
+{{_()}}
+
+{{response.title = "eNews - {}".format(item.headline)}}
+{{extend 'layout.html'}}
+
+{{block left_sidebar}}
+  <div class="panel panel-default">
+      <div class="list-group">
+              <a href="{{=CT_REG[item.item_type].get_item_url(item)}}" class="list-group-item {{='active' if request.function in  CT_REG[item.item_type].get_item_url(item) else ''}}">
+                  <i class="fa fa-newspaper-o"></i> {{=T('Content')}}
+              </a>
+              <a href="{{=URL('item', 'meta', args=[item.id])}}" class="list-group-item {{='active' if request.function == 'meta' else ''}}">
+                  <i class="fa fa-bars"></i> {{=T('META')}}
+              </a>
+              <a href="{{=URL('item', 'translate', args=[item.id])}}" class="list-group-item {{='active' if request.function == 'translate' else ''}}">
+                  <i class="fa fa-language"></i> {{=T('Translate')}}
+              </a>
+              <a href="{{=URL('item', 'share', args=[item.id])}}" class="list-group-item {{='active' if request.function == 'share' else ''}}">
+                  <i class="fa fa-share-alt"></i> {{=T('Share')}}
+              </a>
+              <a href="{{=URL('item', 'changelog', args=[item.id])}}" class="list-group-item {{='active' if request.function == 'changelog' else ''}}">
+                  <i class="fa fa-history"></i> {{=T('Changelog')}}
+              </a>
+      </div>
+  </div>
+
+  {{=add_items}}
+
+{{end}}
+
+{{block right_sidebar}}
+
+
+{{end}}
+
+<ol class="breadcrumb">
+    <li>
+        <a href="{{=URL('default', 'index.html')}}">{{=T('CAST')}}</a>
+    </li>
+    <li class="active">
+        {{=item.slugline}}
+    </li>
+</ol>
+
+{{include}}
+
+{{=plugin_comment(item.id)}}

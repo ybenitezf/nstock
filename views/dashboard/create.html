@@ -1,0 +1,23 @@
+{{left_sidebar_enabled=True}}
+{{right_sidebar_enabled=False}}
+
+{{extend 'layout.html'}}
+
+{{block left_sidebar}}
+  {{=dashboard_sidemenu}}
+  {{=add_items}}
+{{end}}
+
+<div id="hiddethis" class="hidden">
+
+</div>
+
+<div id="main">
+  <div class="panel panel-default">
+
+    <div class="panel-body">
+      {{=form}}
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,74 @@
+{{if 'in_all_items' in globals().keys():}}
+  {{remove_item = False}}
+{{else:}}
+  {{remove_item = True}}
+{{pass}}
+
+<div id="item-{{=item.id}}" class="media item-preview">
+  <div class="media-left">
+      <ul class="list-group item-status-bar">
+        <li class="list-group-item text-center">
+          <i class="fa {{=CT_REG[item.item_type].get_item_icon(item)}}"></i>
+        </li>
+        {{if auth.has_permission('owner', db.item, record_id=item.id):}}
+        <li class="list-group-item text-center">
+          <abbr title="{{=T('This item was created by you')}}"><i class="fa fa-user"></i></abbr>
+        </li>
+        {{pass}}
+        {{if auth.has_permission('collaborator', db.item, record_id=item.id):}}
+        <li class="list-group-item text-center">
+          <abbr title="{{=T('This item is shared with you')}}"><i class="fa fa-users"></i></abbr>
+        </li>
+        {{pass}}
+        {{if CT_REG[item.item_type].is_translation(item):}}
+        <li class="list-group-item text-center">
+          <abbr title="{{=T('This item is a translation')}}"><i class="fa fa-language"></i></abbr>
+        </li>
+        {{pass}}
+      </ul>
+  </div>
+  <div class="media-body">
+    <div class="">
+      {{author = db.auth_user(item.created_by)}}
+      <strong class="small text-muted">{{=author.first_name}} {{=author.last_name}}</strong>
+      <span class="small text-muted">
+        --
+        {{=item.created_on}}
+      </span>
+
+
+      <div class="pull-right">
+        {{if session.dashboard:}}
+          {{dash = db.dashboard(session.dashboard)}}
+          <button id="toggle{{=item.id}}" class="btn btn-default {{='active' if is_in_board(item, dash) else ''}}" title="{{=T('Toogle pin to dashboard')}}">
+            <i class="fa fa-map-pin"></i>
+          </button>
+
+          <script>
+          $(function() {
+
+            $('#toggle{{=item.id}}').click(function(e) {
+              e.stopPropagation();
+              Pace.start();
+              web2py_component("{{=URL('dashboard', 'toogle_pin.load', vars=dict(remove_item=remove_item), args=[dash.id, item.id])}}", target='hiddethis');
+              $( this ).toggleClass( 'active' );
+              Pace.stop();
+            });
+
+          });
+          </script>
+
+        {{pass}}
+      </div>
+
+    </div>
+    <h5>{{=item.headline}}</h5>
+    {{=CT_REG[item.item_type].preview(item)}}
+  </div>
+</div>
+
+<script>
+$( "#item-{{=item.id}}" ).click(function( e ) {
+    window.location.href = "{{=CT_REG[item.item_type].get_item_url(item)}}";
+});
+</script>

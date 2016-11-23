@@ -1,0 +1,49 @@
+{{left_sidebar_enabled=False}}
+{{right_sidebar_enabled=False}}
+
+{{extend 'layout.html'}}
+
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{=URL('default', 'index')}}">{{=T('CAST')}}</a>
+            </li>
+            <li>
+                <a href="{{=CT_REG[item.item_type].get_item_url(item)}}">{{=item.slugline}}</a>
+            </li>
+            <li>
+                <a href="{{=URL('item', 'changelog', args=[item.id])}}">
+                {{=T('Changes')}}
+                </a>
+            </li>
+            <li class="active">
+                {{=T("Differences")}}
+            </li>
+        </ol>
+    </div>
+    <div class="col-md-6">
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{=T('Before')}}</h3>
+        </div>
+        <div class="panel-body">
+          {{=form_archive}}
+        </div>
+      </div>
+
+    </div>
+    <div class="col-md-6">
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">{{=T('Currrent')}}</h3>
+          </div>
+          <div class="panel-body">
+            {{=form_actual}}
+          </div>
+        </div>
+
+    </div>
+</div>

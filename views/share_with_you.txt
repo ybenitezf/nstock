@@ -1,0 +1,10 @@
+{{=user.first_name}} {{=user.last_name}}, {{=T('has share the item')}}:
+
+{{=item.headline}}
+[{{=URL('item', 'index.html', args=[item.id], scheme=True, host=True)}}]
+
+{{=T('With you')}}.
+
+--
+{{=T('See you on eNews')}}.
+{{=URL('default', 'index.html', scheme=True, host=True)}}

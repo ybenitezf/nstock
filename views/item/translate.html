@@ -1,0 +1,57 @@
+{{extend 'item/index.html'}}
+
+{{if CT_REG[item.item_type].is_translation(item):}}
+ <div class="panel panel-default">
+   <div class="panel-heading">
+     <h3 class="panel-title">{{=item.headline}}</h3>
+   </div>
+   <div class="panel-body">
+     {{orig = db.item(CT_REG[item.item_type].is_translation(item).item_id)}}
+     {{=T('This item is a translation of')}}
+     <a href="{{=URL('index', args=[orig.id])}}">
+       <em>{{=orig.headline}}</em>
+     </a>
+   </div>
+ </div>
+{{else:}}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{=item.headline}}</h3>
+  </div>
+  <div class="panel-body">
+    {{=form}}
+  </div>
+
+</div>
+
+  {{if trans:}}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <p>
+          <em>{{=item.headline}}</em>
+          {{=T('has been translated into the fallowing languages')}}:
+        </p>
+      </div>
+
+      <div class="list-group">
+        {{for t in trans:}}
+        <a href="{{=URL('index', args=[t.trans_id])}}" class="list-group-item">
+          <h4 class="list-group-item-heading"><i class="fa fa-language"></i> {{=lang_reg[t.language_tag]}}</h4>
+          <p class="list-group-item-text">{{=db.item(t.trans_id).headline}}</p>
+        </a>
+      {{pass}}
+      </div>
+
+    </div>
+  {{else:}}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <p>
+          <em>{{=item.headline}}</em>
+          {{=T('has not been translated')}}. {{=T('Current language is')}}
+          <strong>{{=lang_reg[item.language_tag]}}</strong>
+        </p>
+      </div>
+    </div>
+  {{pass}}
+{{pass}}

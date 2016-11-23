@@ -1,0 +1,30 @@
+<div class="container-fluid">
+  {{if photoset_content.description:}}
+  <div class="row">
+    <!-- show description here -->
+    <div class="text-preview">
+      {{=XML(photoset_content.description)}}
+    </div>
+  </div>
+  {{pass}}
+  <div class="row">
+    <!-- show thumbnails here -->
+    {{for _p_id in photoset_content.photoset:}}
+    {{_photo = db.plugin_photoset_photo(_p_id)}}
+    {{if _photo:}}
+    <div class="col-md-3">
+          <img src="{{=URL('default', 'download', args=[_photo.thumbnail])}}" alt="" class="img-thumbnail">
+    </div>
+    {{pass}}
+    {{pass}}
+  </div>
+  {{if photoset_content.credit_line:}}
+  <div class="row">
+    <div class="col-md-12">
+      <span class="small text-muted">
+        {{=photoset_content.credit_line}}
+      </span>
+    </div>
+  </div>
+  {{pass}}
+</div>
