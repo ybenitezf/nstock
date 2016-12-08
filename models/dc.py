@@ -51,6 +51,7 @@ db.define_table(
     Field('keywords', 'list:string', default=''),
     Field('located', 'string', length=200, default=''),
     Field('genre', 'string', length=100, default=''),
+    Field('section_page', 'string', length=100, default=''),
     # language of the item it self not the lenguage of the content
     Field('language_tag', 'string', default='en', length=2),
 
@@ -83,6 +84,9 @@ db.item.headline.comment = T('Headline or descriptive title')
 db.item.headline.requires = IS_NOT_EMPTY()
 db.item.language_tag.label = T('Language')
 db.item.keywords.label = T("Keywords")
+db.item.section_page.label = T("Section")
+db.item.section_page.comment = T(
+    "Section or page in with this item is intended to be used")
 db.item.located.label = T("Located")
 db.item.located.comment = T(
     """

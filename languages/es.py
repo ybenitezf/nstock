@@ -502,6 +502,7 @@
 'Saved': 'Guardado',
 'Saved file hash:': 'Hash del archivo guardado:',
 'Search': 'Buscar',
+'Section': 'Section',
 'See': 'Ver',
 'See you on eNews': 'Nos vemos en eNews',
 'Select and upload more photos': 'Seleccionar y subir más fotos',
