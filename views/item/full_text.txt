@@ -5,6 +5,7 @@
 {{pass}}
 {{=item.genre}}
 {{=item.provider}}
+{{=item.section_page}}
 {{u = CT_REG[item.item_type].db.auth_user(item.created_by)}}
 {{=u.first_name}} {{=u.last_name}}
 {{include}}

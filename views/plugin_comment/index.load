@@ -20,7 +20,7 @@
   </div>
 
   <div class="panel-footer">
-    <h5>Post a new comment:</h5>
+    <h5>{{=T('Post a new comment')}}:</h5>
     {{=form.custom.begin}}
     <div class="form-group" id="plugin_comment_comment_body__row">
       <textarea class="text form-control" id="plugin_comment_comment_body" name="body"></textarea>
