@@ -197,6 +197,7 @@
 'META': 'META',
 'META changelog': 'META changelog',
 'Mode': 'Mode',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'My Sites',
 'Name': 'Nom',
 'New Record': 'Nouvel enregistrement',

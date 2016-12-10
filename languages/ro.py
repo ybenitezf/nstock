@@ -310,6 +310,7 @@
 'models': 'modele',
 'Modules': 'Module',
 'modules': 'module',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'Site-urile mele',
 'Name': 'Nume',
 'New': 'Nou',

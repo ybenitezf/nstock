@@ -184,6 +184,7 @@
 'META': 'META',
 'META changelog': 'META changelog',
 'Mode': 'Mode',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'My Sites',
 'New Record': 'नया रेकॉर्ड',
 'new record inserted': 'नया रेकॉर्ड डाला',

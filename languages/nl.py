@@ -313,6 +313,7 @@
 'Modified On': 'Aangepast Op',
 'Modules': 'Modules',
 'modules': 'modules',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'Mijn Sites',
 'Name': 'Naam',
 'New': 'Nieuw',

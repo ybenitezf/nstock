@@ -184,6 +184,7 @@
 'META': 'META',
 'META changelog': 'META changelog',
 'Mode': 'Mode',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'My Sites',
 'Name': 'Meno',
 'New password': 'Nové heslo',

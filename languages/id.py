@@ -273,6 +273,7 @@
 'models': 'model',
 'Modules': 'Modul',
 'modules': 'modul',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'Situs Saya',
 'New': 'Baru',
 'new application "%s" created': 'aplikasi baru "%s" dibuat',

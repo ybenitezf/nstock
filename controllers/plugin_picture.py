@@ -177,6 +177,8 @@ def create():
     # i need the input of the based item fields
     fdl_headline = db.item.headline
     fields.append(fdl_headline)
+    fields.append(db.item.keywords)
+    fields.append(db.item.genre)
     fdl_item_type = db.item.item_type
     fdl_item_type.writable = False
     fdl_item_type.readable = False

@@ -236,6 +236,7 @@
 'Modified On': 'ပြင်ဆင်မွမ်းမံသည့် အချိန်',
 'Modules': 'Modules',
 'modules': 'modules',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'ကျွန်ုပ်၏ Site များ',
 'Name': 'အမည်',
 'New application wizard': 'New application wizard',

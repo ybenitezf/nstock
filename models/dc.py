@@ -14,6 +14,8 @@ def _():
     current.db = db
     current.mail = mail
     current.conf = myconf
+    # set the language with dont need translation
+    T.set_current_languages('en', 'en-en')
 _()
 
 # each content plugin must register here, for example for a text plugin:
@@ -79,11 +81,13 @@ db.item.item_type.writable = False
 db.item.copyright_url.label = T('Copyright URL')
 db.item.pubstatus.requires = IS_IN_SET(PUB_STATUS, zero=None)
 db.item.pubstatus.label = T('Status')
+db.item.headline.requires = IS_NOT_EMPTY()
 db.item.headline.label = T('Headline')
 db.item.headline.comment = T('Headline or descriptive title')
 db.item.headline.requires = IS_NOT_EMPTY()
 db.item.language_tag.label = T('Language')
 db.item.keywords.label = T("Keywords")
+db.item.keywords.requires = IS_NOT_EMPTY()
 db.item.section_page.label = T("Section")
 db.item.section_page.comment = T(
     "Section or page in with this item is intended to be used")
@@ -93,6 +97,7 @@ db.item.located.comment = T(
     It can be the name of a city or may contain details, for example: HAVANA,
     CUBA""")
 db.item.genre.label = T('Genre')
+db.item.genre.requires = IS_NOT_EMPTY()
 db.item.provider.label = T("Provider")
 db.item.provider.comment = T("""
 It can be a descriptive name for the news provider or URL associated with it.

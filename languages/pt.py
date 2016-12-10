@@ -199,6 +199,7 @@
 'Mode': 'Mode',
 'Modified By': 'Modified By',
 'Modified On': 'Modified On',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'My Sites',
 'Name': 'Name',
 'New Record': 'Novo Registo',

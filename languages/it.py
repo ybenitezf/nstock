@@ -230,6 +230,7 @@
 'Mode': 'Mode',
 'Modified By': 'Modificato da',
 'Modified On': 'Modificato il',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'My Sites',
 'Name': 'Nome',
 'New': 'Nuovo',

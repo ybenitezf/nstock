@@ -236,6 +236,7 @@
 'Modified By': 'Modified By',
 'Modified On': 'Modified On',
 'Modules': '程式模組',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'My Sites',
 'Name': '名字',
 'New Record': '新紀錄',

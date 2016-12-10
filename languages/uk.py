@@ -223,6 +223,7 @@
 'Mode': 'Mode',
 'Modified By': 'Зміни провадив(ла)',
 'Modified On': 'Змінено в',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'Сайт (усі додатки)',
 'Name': "Ім'я",
 'New password': 'Новий пароль',

@@ -174,7 +174,7 @@ def create():
     fld_headline = db.item.headline
     # fld_keywords = db.item.keywords
     # fields.extend([fld_headline, fld_keywords])
-    fields.extend([fld_headline])
+    fields.extend([fld_headline, db.item.keywords, db.item.genre])
     # fields.append(db.item.located)
     # fields.append(db.plugin_photoset_content.description)
     fdl_item_type = db.item.item_type

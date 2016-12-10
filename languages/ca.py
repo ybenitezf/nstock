@@ -357,6 +357,7 @@
 'modules': 'mòduls',
 'must be YYYY-MM-DD HH:MM:SS!': '¡debe ser DD/MM/YYYY HH:MM:SS!',
 'must be YYYY-MM-DD!': '¡debe ser DD/MM/YYYY!',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'Els Meus Llocs',
 'Name': 'Nombre',
 'New': 'Nuevo',

@@ -172,8 +172,9 @@ def side_menu():
     dash_list = db(query).select(db.dashboard.ALL)
 
     if not dash_list:
-        # crear board por defecto y ponerlo como activo
-        d_id = db.dashboard.insert(name='My Dashboard', item_list=[])
+        # make a new dashboard
+        d_id = db.dashboard.insert(
+            name=T('My Dashboard', lazy=False), item_list=[])
         query = (db.dashboard.id > 0)
         query &= (db.dashboard.created_by == auth.user.id)
         dash_list = db(query).select(db.dashboard.ALL)

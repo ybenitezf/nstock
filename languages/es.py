@@ -388,6 +388,7 @@
 'modules': 'módulos',
 'must be YYYY-MM-DD HH:MM:SS!': '¡debe ser DD/MM/YYYY HH:MM:SS!',
 'must be YYYY-MM-DD!': '¡debe ser DD/MM/YYYY!',
+'My Dashboard': 'Mi carpeta',
 'My Sites': 'Mis Sitios',
 'Name': 'Nombre',
 'New': 'Nuevo',

@@ -207,6 +207,7 @@
 'Mode': 'Mode',
 'Modified By': 'Değiştiren',
 'Modified On': 'Değiştirilme tarihi',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'Sitelerim',
 'Name': 'İsim',
 'New password': 'Yeni parola',

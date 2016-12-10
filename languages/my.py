@@ -243,6 +243,7 @@
 'models': 'model',
 'Modules': 'Modul',
 'modules': 'modul',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'Laman Saya',
 'New': 'Baru',
 'New password': 'Kata laluan baru',

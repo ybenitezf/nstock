@@ -199,6 +199,7 @@
 'Mode': 'Mode',
 'Modified By': 'Verändert von',
 'Modified On': 'Verändert am',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'Meine Seiten',
 'Name': 'Name',
 'New Record': 'Neuer Eintrag',

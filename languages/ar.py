@@ -197,6 +197,7 @@
 'Mode': 'Mode',
 'Modified By': 'عًدلت بواسطة',
 'Modified On': 'عُدلت في',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'موقعي',
 'Name': 'الأسم',
 'New Record': 'New Record',

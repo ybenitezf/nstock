@@ -190,6 +190,7 @@
 'META': 'META',
 'META changelog': 'META changelog',
 'Mode': 'Mode',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'Meus sites',
 'Name': 'Nome',
 'New Record': 'Novo Registro',

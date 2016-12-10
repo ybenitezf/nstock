@@ -359,6 +359,7 @@
 'Modified On': 'Změněno - kdy',
 'Modules': 'Moduly',
 'modules': 'moduly',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'Správa aplikací',
 'Name': 'Jméno',
 'new application "%s" created': 'nová aplikace "%s" vytvořena',

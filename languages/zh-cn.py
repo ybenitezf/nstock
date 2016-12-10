@@ -236,6 +236,7 @@
 'Modified By': '修改者',
 'Modified On': '修改时间',
 'Modules': '程序模块',
+'My Dashboard': 'My Dashboard',
 'My Sites': 'My Sites',
 'Name': '名字',
 'New Record': '新记录',
