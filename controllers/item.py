@@ -45,6 +45,20 @@ def meta():
     else:
         CT_REG[item.item_type].prepare_language_field()
 
+    # issue #5 hidde some fields from metadata
+    db.item.provider.readable = False
+    db.item.provider.writable = False
+    db.item.provider_service.readable = False
+    db.item.provider_service.writable = False
+    db.item.copyright_holder.readable = False
+    db.item.copyright_holder.writable = False
+    db.item.copyright_url.readable = False
+    db.item.copyright_url.writable = False
+    db.item.copyright_notice.readable = False
+    db.item.copyright_notice.writable = False
+    db.item.pubstatus.readable = False
+    db.item.pubstatus.writable = False
+
     form = SQLFORM(db.item, record=item)
 
     if form.process().accepted:

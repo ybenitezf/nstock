@@ -20,6 +20,7 @@ class ContentText(ContentPlugin):
                 Field('item_id', 'reference item'),
                 self.auth.signature,
             )
+            tbl.byline.label = self.T('By line')
             tbl.item_id.readable = False
             tbl.item_id.writable = False
             tbl.body.requires = IS_NOT_EMPTY()

@@ -109,6 +109,7 @@ this package.
 """)
 db.item.copyright_notice.label = T("Copyright Notice")
 db.item.copyright_holder.label = T("Copyright Holder")
+db.item.embargoed.label = T('Embargoed')
 db.item.embargoed.comment = T(
     """
     News organisations often use an embargo to release information in advance,
