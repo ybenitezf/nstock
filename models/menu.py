@@ -29,6 +29,7 @@ response.google_analytics_id = None
 # ----------------------------------------------------------------------------------------------------------------------
 response.menu = []
 
+
 # prepare dashboard menu
 def _():
     query  = (db.dashboard.id > 0)
@@ -36,9 +37,11 @@ def _():
     dash_list = db(query).select(db.dashboard.ALL)
 
     if not dash_list:
-        # crear board por defecto y ponerlo como activo
-        d_id = db.dashboard.insert(name='My Dashboard', item_list=[])
-        query  = (db.dashboard.id > 0)
+        # make a new dashboard
+        name = T('My Dashboard', lazy=False)
+        d_id = db.dashboard.insert(
+            name=name, item_list=[])
+        query = (db.dashboard.id > 0)
         query &= (db.dashboard.created_by == auth.user.id)
         dash_list = db(query).select(db.dashboard.ALL)
         auth.add_permission(0, 'owner', db.dashboard, d_id)

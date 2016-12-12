@@ -12,22 +12,8 @@ if False:
 @auth.requires_login()
 def index():
     """
-    Show user items list
+    LOAD all components with ajax
     """
-    # accessible_query(name, table, user_id=None)
-    # query =  (db.item.id > 0)
-    # query &= (auth.accessible_query('collaborator', db.item) |
-    #     auth.accessible_query('owner', db.item))
-    # grid = SQLFORM.grid(query,
-    #     orderby=[~db.item.modified_on],
-    #     create=False,
-    #     csv=False,
-    #     paginate=1,
-    # )
-
-    response.title = T('eNews - CAST')
-
-    # return dict(grid=grid)
     return locals()
 
 

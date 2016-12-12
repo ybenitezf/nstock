@@ -171,18 +171,22 @@ def side_menu():
     query &= (db.dashboard.created_by == auth.user.id)
     dash_list = db(query).select(db.dashboard.ALL)
 
-    if not dash_list:
-        # make a new dashboard
-        d_id = db.dashboard.insert(
-            name=T('My Dashboard', lazy=False), item_list=[])
-        query = (db.dashboard.id > 0)
-        query &= (db.dashboard.created_by == auth.user.id)
-        dash_list = db(query).select(db.dashboard.ALL)
-        auth.add_permission(0, 'owner', db.dashboard, d_id)
+    # if not dash_list:
+    #     # make a new dashboard: as this is LOADED we need to force the
+    #     # language
+    #     # to the one being used by the user.
+    #     T.force(request.cookies['language'].value)
+    #     name = T('My Dashboard', lazy=False)
+    #     d_id = db.dashboard.insert(
+    #         name=name, item_list=[])
+    #     query = (db.dashboard.id > 0)
+    #     query &= (db.dashboard.created_by == auth.user.id)
+    #     dash_list = db(query).select(db.dashboard.ALL)
+    #     auth.add_permission(0, 'owner', db.dashboard, d_id)
 
-    if not session.dashboard:
-        dash = db(db.dashboard.created_by == auth.user.id).select().first()
-        activeDashboard(dash.id)
+    # if not session.dashboard:
+    #     dash = db(db.dashboard.created_by == auth.user.id).select().first()
+    #     activeDashboard(dash.id)
 
     alinks = request.vars.alinks
     return dict(dash_list=dash_list, alinks=alinks)
