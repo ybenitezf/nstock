@@ -270,24 +270,24 @@ def share():
             # create new share
             CT_REG[item.item_type].share_item(item, u)
             # send an email to all the users who has access to this item
-            mail.send(
-                to=[u.email],
-                subject=T("Share of %s") % (item.headline,),
-                message=response.render(
-                    'share_with_you.txt',
-                    dict(item=item, user=auth.user, t_user=u)
-                )
-            )
-            subject = T("Share of %s", (item.headline,))
-            message = response.render(
-                'share_email.txt',
-                dict(
-                    item=item,
-                    user=auth.user,
-                    t_user=db.auth_user(email=form.vars.email)
-                )
-            )
-            item_notify_users(item.id, subject=subject, message=message)
+            # mail.send(
+            #     to=[u.email],
+            #     subject=T("Share of %s") % (item.headline,),
+            #     message=response.render(
+            #         'share_with_you.txt',
+            #         dict(item=item, user=auth.user, t_user=u)
+            #     )
+            # )
+            # subject = T("Share of %s", (item.headline,))
+            # message = response.render(
+            #     'share_email.txt',
+            #     dict(
+            #         item=item,
+            #         user=auth.user,
+            #         t_user=db.auth_user(email=form.vars.email)
+            #     )
+            # )
+            # item_notify_users(item.id, subject=subject, message=message)
         # --
         else:
             # no user with that email
