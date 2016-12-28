@@ -69,6 +69,7 @@
     <script>
       $('#metaModal').on('hidden.bs.modal', function (e) {
         $('#metaModalBody').html("");
+        jQuery('#main').get(0).reload();
       });
     </script>
 </div>

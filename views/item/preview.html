@@ -75,6 +75,18 @@
         {{pass}}
       </p>
       <p><strong>{{=T("Genre")}}</strong>: {{=item.genre}}</p>
+      {{if item.located:}}
+        <p><strong>{{=T("Located")}}</strong>: {{=item.located}}</p>
+      {{pass}}
+      {{if item.section_page:}}
+        <p><strong>{{=T("Section")}}</strong>: {{=item.section_page}}</p>
+      {{pass}}
+      {{if item.language_tag:}}
+        <p><strong>{{=T("Language")}}</strong>: {{=item.language_tag}}</p>
+      {{pass}}
+      {{if item.embargoed:}}
+        <p><strong>{{=T("Embargoed")}}</strong>: {{=item.embargoed.strftime("%Y-%m-%d %-I:%M %p")}}</p>
+      {{pass}}
       {{=contentType.preview(item)}}
       {{author = db.auth_user(item.created_by)}}
       <p>

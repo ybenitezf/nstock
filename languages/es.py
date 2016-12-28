@@ -219,7 +219,7 @@
 'DESIGN': 'DISEÑO',
 'Design': 'Design',
 'Design for': 'Diseño por',
-'Details': 'Details',
+'Details': 'Detalles',
 'detecting': 'detectando',
 'Differences': 'Diferencias',
 'DISK': 'DISCO',
