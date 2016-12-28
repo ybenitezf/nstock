@@ -91,3 +91,6 @@ class Application(object):
         c = "plugin_{}".format(item.item_type)
         f = "index.html"
         return URL(c=c, f=f, args=[item.unique_id])
+
+    def notifyCollaborators(self, item_id, subject, message):
+        pass
