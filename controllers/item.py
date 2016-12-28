@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-# from mail import item_notify_users
-# from perms import isOwnerOrCollaborator, isOwner
-
 if False:
     from gluon import redirect, current, Field, HTTP
     from gluon import A, CAT, SPAN, SQLFORM, URL
@@ -64,12 +61,17 @@ def meta():
     if form.process().accepted:
         # session.flash = "Done !"
         # send an email to all the users who has access to this item
-        # message = response.render(
-        #     'changes_email.txt',
-        #     dict(item=item, user=auth.user)
-        # )
-        # subject = T("Changes on %s") % (item.headline,)
+        message = response.render(
+            'changes_email.txt',
+            dict(item=item, user=auth.user)
+        )
+        subject = T("Changes on %s") % (item.headline,)
         # item_notify_users(item.id, subject=subject, message=message)
+        application.notifyCollaborators(
+            item.unique_id,
+            subject,
+            message
+        )
         # with an alert about the new changes
         # Whoosh().add_to_index(
         #     item.id,

@@ -41,7 +41,8 @@ class ContentPlugin(object):
             ]
             required_names.sort(cmp=lambda x, y: cmp(x[1], y[1]))
             db.item.language_tag.requires = IS_IN_SET(
-                required_names, zero=None)
+                required_names,
+                zero=self.T.accepted_language)
 
     def preview(self, item):
         """

@@ -57,7 +57,7 @@ db.define_table(
     Field('genre', 'string', length=100, default=''),
     Field('section_page', 'string', length=100, default=''),
     # language of the item it self not the lenguage of the content
-    Field('language_tag', 'string', default='en', length=2),
+    Field('language_tag', 'string', default=T.accepted_language, length=2),
 
     # item metadata
     Field('provider', 'string', length=100, default=''),
