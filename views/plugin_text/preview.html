@@ -1,6 +1,14 @@
-<div class="text-preview">
-{{=XML(p_content.body)}}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    {{=T("Text")}}
+  </div>
+  <div class="panel-body">
+    {{=XML(p_content.body)}}
+  </div>
 </div>
-<span class="small text-muted">
-  {{=p_content.byline}}
-</span>
+{{if p_content.byline:}}
+  <p>
+    <strong>{{=T("By line")}}</strong>:
+    {{=p_content.byline}}
+  </p>
+{{pass}}

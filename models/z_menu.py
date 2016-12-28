@@ -4,19 +4,20 @@ if False:
     response = current.response
     request = current.request
     T = current.T
-    from dc import CT_REG
+    from dc import application
     from db import auth
 
 
 def _():
     # add items menu
     create_items = []
-    for ct in CT_REG:
-        url, title = CT_REG[ct].create_item_url()
+    registry = application.registry
+    for content_type in registry:
+        url, title = registry[content_type].create_item_url()
         create_items.append(
             (title, False, url, [])
         )
-    response.menu += [(T('Create Items'), False, "#", create_items)]
+    response.menu += [(T('Add Items'), False, "#", create_items)]
 
 if auth.user:
     _()

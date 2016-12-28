@@ -19,7 +19,7 @@
 <ul class="list-group">
 {{for u in rows:}}
     <li class="list-group-item">
-        {{if auth.has_permission('owner', db.item, record_id=request.args(0)): }}
+        {{if auth.has_permission('owner', db.item, record_id=item.id): }}
         {{=A('X', _href=URL('item', 'unshare', args=[item.id, auth.user_group(u.id)]), cid=request.cid, _class="badge")}}
         {{pass}}
         {{=u.first_name}} {{=u.last_name}}

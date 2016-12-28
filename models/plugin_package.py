@@ -10,4 +10,4 @@ if False:
     from db import db, auth
     from dc import CT_REG
 
-CT_REG.package = ContentPackage(db, T, response, request, auth)
+# CT_REG.package = ContentPackage(db, T, response, request, auth)

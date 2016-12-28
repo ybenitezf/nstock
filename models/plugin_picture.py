@@ -10,4 +10,4 @@ if False:
     from db import db, auth
     from dc import CT_REG
 
-CT_REG.picture = ContentPicture(db, T, response, request, auth)
+# CT_REG.picture = ContentPicture(db, T, response, request, auth)

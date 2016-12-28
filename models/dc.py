@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+from app import Application
 from gluon.storage import Storage
 from gluon import current
 from slugify import slugify
+import uuid
 
 if False:
     from gluon import Field, T, IS_NOT_EMPTY, IS_IN_SET, LOAD
-    from db import db, auth, mail, myconf
+    from db import db, auth, mail, myconf, plugins
 
 
 # configure global context
@@ -71,6 +73,10 @@ db.define_table(
     # item in CONTENT_TYPE_REG, it should not be readed or writed by users
     # and should be writen only one, in the creation of the item.
     Field('item_type', 'string', length='100', default='text'),
+    Field(
+        'unique_id', 'string', length=64, default=uuid.uuid4(),
+        writable=False, readable=False
+    ),
 )
 db.item._before_insert.append(_get_slugline)
 db.item._before_update.append(_update_slugline)
@@ -146,3 +152,7 @@ add_items = LOAD('item', 'add_items.load', ajax=True)
 
 dashboard_sidemenu = LOAD(
     'dashboard', 'side_menu.load', ajax=True, target='dashboard_cmp')
+
+# register content type plugins
+application = Application()
+plugins.text.app = application

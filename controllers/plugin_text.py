@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
-from perms import isOwnerOrCollaborator
-
 if False:
     from gluon import SQLFORM, URL, A, SPAN, CAT
-    from gluon import current, redirect
+    from gluon import current, redirect, HTTP
     request = current.request
     response = current.response
     T = current.T
     from db import db, auth
-    from dc import CT_REG
+    # from dc import CT_REG
+    from dc import application
     from z_whoosh import Whoosh
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwner(request.args(0)))
 def index():
     """
     Edit content
     """
-    item = db.item(request.args(0))
+    item = application.getItemByUUID(request.args(0))
+    if item is None:
+        raise HTTP(404)
 
-    content = db.plugin_text_text(item_id=item.id)
+    content = db.plugin_text_text(item_id=item.unique_id)
 
     form = SQLFORM(
         db.plugin_text_text,
@@ -28,16 +29,16 @@ def index():
         submit_button=T('Save'))
 
     if form.process().accepted:
-        Whoosh().add_to_index(
-            item.id,
-            CT_REG.text.get_full_text(db.item(item.id), CT_REG))
-        redirect(URL('index', args=[item.id]))
+        # Whoosh().add_to_index(
+        #     item.id,
+        #     CT_REG.text.get_full_text(db.item(item.id), CT_REG))
+        redirect(application.getItemURL(item.unique_id))
         response.flash = T('Done')
 
     return dict(form=form, item=item, content=content)
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def diff():
     item = db.item(request.args(0))
     content = db.plugin_text_text(item_id=item.id)
@@ -74,7 +75,7 @@ def diff():
     return locals()
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def changelog():
     """
     Show item change log over the time
@@ -140,15 +141,18 @@ def create():
     form = SQLFORM.factory(*fields)
 
     if form.process().accepted:
-        item_id = CT_REG.text.create_item(form.vars)
+        # ct = application.getContentType('text')
+        # item_id = ct.create_item(form.vars)
+        item_id = application.createItem('text', form.vars)
         form.vars.item_id = item_id
         db.plugin_text_text.insert(
             **db.plugin_text_text._filter_fields(form.vars))
         # register document for search
-        Whoosh().add_to_index(
-            item_id,
-            CT_REG.text.get_full_text(db.item(item_id), CT_REG))
+        # Whoosh().add_to_index(
+        #     item_id,
+        #     CT_REG.text.get_full_text(db.item(item_id), CT_REG))
         # --
-        redirect(URL('index', args=[item_id]))
+        # redirect(URL('index', args=[item_id]))
+        redirect(URL('default', 'index.html'))
 
     return locals()

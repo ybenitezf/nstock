@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from mail import item_notify_users
-from perms import isOwnerOrCollaborator
+# from mail import item_notify_users
+# from perms import isOwnerOrCollaborator, isOwner
 
 if False:
-    from gluon import redirect, current, Field
+    from gluon import redirect, current, Field, HTTP
     from gluon import A, CAT, SPAN, SQLFORM, URL
     from gluon import IS_IN_SET, IS_EMAIL
     request = current.request
@@ -11,39 +11,39 @@ if False:
     session = current.session
     cache = current.cache
     T = current.T
-    from db import auth, db, mail
-    from dc import CT_REG
+    # from db import auth, db, mail
+    from db import auth, db
+    from dc import CT_REG, application
     from z_whoosh import Whoosh
     # from menu import *
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def index():
     """
     Default view for all items, the item/index view requires a var
     named item, all content types templates must exteds the layout of this view
     """
 
-    item = db.item(request.args(0))
     # We never will have a pure item, so we redirect to the apropiate C/T
     # plugin
-    redirect(CT_REG[item.item_type].get_item_url(item))
+    redirect(application.getItemURL(request.args(0)))
 
     return None
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwner(request.args(0)))
 def meta():
     """
     Edit/Show item metadata info
     """
-    item = db.item(request.args(0))
+    item = application.getItemByUUID(request.args(0))
 
-    if CT_REG[item.item_type].is_translation(item):
-        db.item.language_tag.writable = False
-        db.item.language_tag.readable = False
-    else:
-        CT_REG[item.item_type].prepare_language_field()
+    if item is None:
+        raise HTTP(404)
+
+    contentType = application.getContentType(item.item_type)
+    contentType.prepare_language_field()
 
     # issue #5 hidde some fields from metadata
     db.item.provider.readable = False
@@ -62,27 +62,33 @@ def meta():
     form = SQLFORM(db.item, record=item)
 
     if form.process().accepted:
-        session.flash = "Done !"
+        # session.flash = "Done !"
         # send an email to all the users who has access to this item
-        message = response.render(
-            'changes_email.txt',
-            dict(item=item, user=auth.user)
-        )
-        subject = T("Changes on %s") % (item.headline,)
-        item_notify_users(item.id, subject=subject, message=message)
+        # message = response.render(
+        #     'changes_email.txt',
+        #     dict(item=item, user=auth.user)
+        # )
+        # subject = T("Changes on %s") % (item.headline,)
+        # item_notify_users(item.id, subject=subject, message=message)
         # with an alert about the new changes
-        Whoosh().add_to_index(
-            item.id,
-            CT_REG[item.item_type].get_full_text(
-                db.item(item.id),
-                CT_REG)
-            )
-        redirect(CT_REG[item.item_type].get_item_url(item))
+        # Whoosh().add_to_index(
+        #     item.id,
+        #     CT_REG[item.item_type].get_full_text(
+        #         db.item(item.id),
+        #         CT_REG)
+        #     )
+        if request.ajax:
+            response.js = "$('#metaModal').modal('hide');"
+        else:
+            redirect(application.getItemURL(item.unique_id))
+
+    if request.ajax:
+        return form
 
     return locals()
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def changelog():
     """
     Show item change log over the time
@@ -127,7 +133,7 @@ def changelog():
     return dict(item=item, changes=changes)
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def diff():
     """
     Show the diff betwen the actual item and the archive one
@@ -180,7 +186,7 @@ def unshare():
     return CAT('')
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def translate():
     item = db.item(request.args(0))
 
@@ -235,12 +241,14 @@ def translate():
     return dict(item=item, trans=trans, form=form, lang_reg=lang_reg)
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwner(request.args(0)))
 def share():
     """
     Show the user's who has access to this item
     """
-    item = db.item(request.args(0))
+    item = application.getItemByUUID(request.args(0))
+    if item is None:
+        raise HTTP(404)
 
     # i need all user who have some permission over current item
     query = (db.auth_permission.record_id == item.id)

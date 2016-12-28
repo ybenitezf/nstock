@@ -11,4 +11,4 @@ if False:
     from dc import CT_REG
 
 
-CT_REG.photoset = ContentPhotoset(db, T, response, request, auth)
+# CT_REG.photoset = ContentPhotoset(db, T, response, request, auth)

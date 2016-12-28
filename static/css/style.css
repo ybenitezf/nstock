@@ -33,8 +33,8 @@ body {
 }
 
 .item-preview {
-	cursor: pointer;
-	cursor: hand;
+	/*cursor: pointer;*/
+	/*cursor: hand;*/
 	border: 1px solid transparent;
 	border-radius: 4px;
 	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.05);
@@ -102,4 +102,13 @@ body { padding-bottom: 70px; }
 
 .text-preview {
 	font-size: 90%;
+}
+
+.modal-dialog{
+    overflow-y: initial !important
+}
+
+.modal-body{
+    height: 450px;
+    overflow-y: auto;
 }

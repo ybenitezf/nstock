@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">{{=T('Create Items')}}</h3>
+      <h3 class="panel-title">{{=T('Add Items')}}</h3>
     </div>
     <div class="list-group">
         <!-- get all registered content-types -->

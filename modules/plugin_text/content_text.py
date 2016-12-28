@@ -1,33 +1,9 @@
 # -*- coding: utf-8 -*-
 from content_plugin import ContentPlugin
-from gluon import Field, URL, IS_NOT_EMPTY, XML, CAT, I
-from plugin_ckeditor import CKEditor
+from gluon import URL, XML, CAT, I
 
 
 class ContentText(ContentPlugin):
-
-    def define_tables(self):
-        db = self.db
-
-        if not hasattr(db, 'plugin_text_text'):
-            # configure ckeditor
-            editor = CKEditor(db=db)
-            # definimos la BD
-            tbl = db.define_table(
-                'plugin_text_text',
-                Field('byline', 'string', length=250, default=''),
-                Field('body', 'text', label=self.T('Content')),
-                Field('item_id', 'reference item'),
-                self.auth.signature,
-            )
-            tbl.byline.label = self.T('By line')
-            tbl.item_id.readable = False
-            tbl.item_id.writable = False
-            tbl.body.requires = IS_NOT_EMPTY()
-            tbl.body.widget = editor.widget
-
-            # enable record  versioning
-            tbl._enable_record_versioning()
 
     def create_item_url(self):
         return (
@@ -35,7 +11,7 @@ class ContentText(ContentPlugin):
             CAT(I(_class="fa fa-file-text-o"), ' ', self.T('Text')))
 
     def get_item_url(self, item):
-        return URL('plugin_text', 'index.html', args=[item.id])
+        return URL('plugin_text', 'index.html', args=[item.unique_id])
 
     def get_item_icon(self, item):
         return 'fa-file-text-o'
@@ -75,7 +51,7 @@ class ContentText(ContentPlugin):
         return unicode(output.decode('utf-8'))
 
     def preview(self, item):
-        content = self.db.plugin_text_text(item_id=item.id)
+        content = self.db.plugin_text_text(item_id=item.unique_id)
         return XML(self.response.render(
             'plugin_text/preview.html',
             dict(item=item, p_content=content)))

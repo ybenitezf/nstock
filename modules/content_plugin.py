@@ -7,19 +7,19 @@ from mail import item_notify_users
 
 class ContentPlugin(object):
 
-    def __init__(self, db, T, response, request, auth, mail=None):
-        self.T = T
-        self.db = db
-        self.response = response
-        self.request = request
-        self.auth = auth
-        if not mail:
-            from gluon import current
-            self.mail = current.mail
-        self.define_tables()
+    def __init__(self):
+        super(ContentPlugin, self).__init__()
+        self.configured = False
 
-    def define_tables(self):
-        raise NotImplementedError
+    def setController(self, app):
+        self.app = app
+        self.T = app.T
+        self.db = app.db
+        self.response = app.response
+        self.request = app.request
+        self.auth = app.auth
+        self.mail = app.mail
+        self.configured = True
 
     def get_item_url(self, item):
         raise NotImplementedError
@@ -121,16 +121,16 @@ class ContentPlugin(object):
     def get_item_icon(self, item):
         return 'fa-file-o'
 
-    def create_item(self, values):
-        """
-        Insert a new item into the db and return the item ID
-        """
-        db = self.db
-        auth = self.auth
-        item_id = db.item.insert(**db.item._filter_fields(values))
-        # give owner perm to the item
-        auth.add_permission(0, 'owner', db.item, item_id)
-        return item_id
+    # def create_item(self, values):
+    #     """
+    #     Insert a new item into the db and return the item ID
+    #     """
+    #     db = self.db
+    #     auth = self.auth
+    #     item_id = db.item.insert(**db.item._filter_fields(values))
+    #     # give owner perm to the item
+    #     auth.add_permission(0, 'owner', db.item, item_id)
+    #     return item_id
 
     def share_item(self, item, user):
         """Share ITEM with USER"""
