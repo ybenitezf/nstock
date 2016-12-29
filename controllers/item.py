@@ -95,7 +95,9 @@ def changelog():
     """
     Show item change log over the time
     """
-    item = db.item(request.args(0))
+    item = application.getItemByUUID(request.args(0))
+    if item is None:
+        raise HTTP(404)
 
     query = (db.item_archive.current_record == item.id)
     db.item_archive.modified_on.label = T('Date & Time')
@@ -112,7 +114,7 @@ def changelog():
             SPAN(_class="glyphicon glyphicon-random"),
             _href=URL(
                 'diff',
-                args=[item.id, row.id]),
+                args=[item.unique_id, row.id]),
             _class="btn btn-default",
             _title=T("Differences"),
         )
@@ -140,7 +142,9 @@ def diff():
     """
     Show the diff betwen the actual item and the archive one
     """
-    item = db.item(request.args(0))
+    item = application.getItemByUUID(request.args(0))
+    if item is None:
+        raise HTTP(404)
     item_archive = db.item_archive(request.args(1))
 
     fields = []

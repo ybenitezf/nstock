@@ -40,8 +40,10 @@ def index():
 
 @auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def diff():
-    item = db.item(request.args(0))
-    content = db.plugin_text_text(item_id=item.id)
+    item = application.getItemByUUID(request.args(0))
+    if item is None:
+        raise HTTP(404)
+    content = db.plugin_text_text(item_id=item.unique_id)
     archive = db.plugin_text_text_archive(request.args(1))
 
     fields = []
@@ -80,8 +82,10 @@ def changelog():
     """
     Show item change log over the time
     """
-    item = db.item(request.args(0))
-    content = db.plugin_text_text(item_id=item.id)
+    item = application.getItemByUUID(request.args(0))
+    if item is None:
+        raise HTTP(404)
+    content = db.plugin_text_text(item_id=item.unique_id)
 
     query = (db.plugin_text_text_archive.current_record == content.id)
     db.plugin_text_text_archive.modified_on.label = T('Date & Time')
@@ -98,7 +102,7 @@ def changelog():
             SPAN(_class="glyphicon glyphicon-random"),
             _href=URL(
                 'diff',
-                args=[item.id, row.id]),
+                args=[item.unique_id, row.id]),
             _class="btn btn-default",
             _title=T("Differences"),
         )

@@ -92,5 +92,11 @@ class Application(object):
         f = "index.html"
         return URL(c=c, f=f, args=[item.unique_id])
 
+    def getContentChangesURL(self, unique_id):
+        item = self.getItemByUUID(unique_id)
+        c = "plugin_{}".format(item.item_type)
+        f = "changelog.html"
+        return URL(c=c, f=f, args=[item.unique_id])
+
     def notifyCollaborators(self, item_id, subject, message):
         pass

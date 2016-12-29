@@ -13,10 +13,10 @@
                 <a href="{{=URL('default', 'index')}}">{{=T('CAST')}}</a>
             </li>
             <li>
-                <a href="{{=CT_REG[item.item_type].get_item_url(item)}}">{{=item.slugline}}</a>
+                <a href="{{=application.getItemURL(item.unique_id)}}">{{=item.slugline}}</a>
             </li>
             <li>
-                <a href="{{=URL('item', 'changelog', args=[item.id])}}">
+                <a href="{{=URL('item', 'changelog', args=[item.unique_id])}}">
                 {{=T('Changes')}}
                 </a>
             </li>

@@ -3,7 +3,7 @@
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">
-      {{=item.headline}} <small>{{=T('META changelog')}}</small>
+      {{=T('META changelog')}} <small>{{=item.headline}}</small>
     </h3>
   </div>
   <div class="panel-body">
@@ -22,8 +22,8 @@
     {{=changes}}
   {{pass}}
   <div class="panel-footer">
-    {{if CT_REG[item.item_type].get_changelog_url(item):}}
-        <a class="btn btn-default" href="{{=CT_REG[item.item_type].get_changelog_url(item)}}">
+    {{if application.getContentChangesURL(item.unique_id):}}
+        <a class="btn btn-default" href="{{=application.getContentChangesURL(item.unique_id)}}">
             {{=T('Content changes')}}
         </a>
     {{pass}}

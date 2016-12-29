@@ -57,6 +57,12 @@
                   </script>
                 </li>
               {{pass}}
+              <li role="separator" class="divider"></li>
+              <li>
+                <a href="{{=URL('item', 'changelog.html', args=[item.unique_id])}}">
+                  <i class="fa fa-history"></i> {{=T('Changelog')}}
+                </a>
+              </li>
               <li>
                 <!-- View item comments -->
                 <a href="#" data-toggle="modal" data-target="#cmtModal{{=item.id}}">
