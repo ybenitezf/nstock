@@ -51,13 +51,26 @@
                   </a>
                   <script type="text/javascript">
                     $('#itemDetails{{=item.id}}').click(function (e) {
+                      $('#metaModalLabel').html('{{=T("Details")}}');
                       $('#metaModal').modal('show');
                       web2py_component("{{=URL('item', 'meta.load', args=[item.unique_id])}}","metaModalBody");
                     });
                   </script>
                 </li>
+                <li>
+                  <a id="itemSend{{=item.id}}" href="#">
+                    <i class="fa fa-send"></i> {{=T('Send')}}
+                  </a>
+                  <script type="text/javascript">
+                    $('#itemSend{{=item.id}}').click(function (e) {
+                      $('#metaModalLabel').html('{{=T("Send")}} / {{=T("Share")}}');
+                      $('#metaModal').modal('show');
+                      web2py_component("{{=URL('item','share.load', args=[item.unique_id])}}","metaModalBody");
+                    });
+                  </script>
+                </li>
+                <li role="separator" class="divider"></li>
               {{pass}}
-              <li role="separator" class="divider"></li>
               <li>
                 <a href="{{=URL('item', 'changelog.html', args=[item.unique_id])}}">
                   <i class="fa fa-history"></i> {{=T('Changelog')}}

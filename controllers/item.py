@@ -256,20 +256,6 @@ def share():
     if item is None:
         raise HTTP(404)
 
-    # i need all user who have some permission over current item
-    query = (db.auth_permission.record_id == item.id)
-    query &= (db.auth_permission.table_name == db.item)
-    query &= (db.auth_permission.group_id == db.auth_membership.group_id)
-    query &= (db.auth_user.id == db.auth_membership.user_id)
-    query &= (db.auth_user.id != item.created_by)
-
-    rows = db(query).select(db.auth_user.ALL, distinct=True)
-
-    # build the email list
-    email_list = []
-    for row in rows:
-        email_list.append(row.email)
-
     fld_email = Field('email', 'string', default='')
     fld_email.requires = IS_EMAIL()
     form = SQLFORM.factory(
@@ -282,32 +268,28 @@ def share():
         u = db.auth_user(email=form.vars.email)
         if u is not None:
             # create new share
-            CT_REG[item.item_type].share_item(item, u)
-            # send an email to all the users who has access to this item
-            # mail.send(
-            #     to=[u.email],
-            #     subject=T("Share of %s") % (item.headline,),
-            #     message=response.render(
-            #         'share_with_you.txt',
-            #         dict(item=item, user=auth.user, t_user=u)
-            #     )
-            # )
-            # subject = T("Share of %s", (item.headline,))
-            # message = response.render(
-            #     'share_email.txt',
-            #     dict(
-            #         item=item,
-            #         user=auth.user,
-            #         t_user=db.auth_user(email=form.vars.email)
-            #     )
-            # )
-            # item_notify_users(item.id, subject=subject, message=message)
-        # --
+            subject = T("Share of %s", (item.headline,))
+            message = response.render(
+                'share_email.txt',
+                dict(
+                    item=item,
+                    user=auth.user,
+                    t_user=db.auth_user(email=form.vars.email)
+                )
+            )
+            application.notifyCollaborators(
+                item.unique_id,
+                subject,
+                message
+            )
+            application.shareItem(item.unique_id, u)
+            # --
+            # close the dialog
+            response.js = "$('#metaModal').modal('hide');"
         else:
             # no user with that email
             response.flash = T("The user don't exists on this system")
-
-        response.js = '$( "#{}" ).get(0).reload();'.format(request.cid)
+            form.errors.email = T("The user don't exists on this system")
 
     return locals()
 

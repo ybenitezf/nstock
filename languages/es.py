@@ -520,6 +520,7 @@
 'Select and upload photos': 'Seleccionar y subir fotos',
 'Select the first rendition of the picture': 'Seleccionar primera entrega de la fotografía.',
 'Semantic': 'Semántica',
+'Send': 'Enviar',
 'Services': 'Servicios',
 'session expired': 'sesión expirada',
 'Share': 'Compartir',

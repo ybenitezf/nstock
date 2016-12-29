@@ -3,41 +3,21 @@
 {{def _():}}
   {{
   item_actions = []
+
   item_actions.extend([
     (CAT(I(_class="fa fa-newspaper-o"), ' ', T('Content')), False, application.getItemURL(item.unique_id), []),
     (CAT(I(_class="fa fa-cog"), ' ', T('Details')), False, URL('item', 'meta', args=[item.unique_id]), []),
-    # (CAT(I(_class="fa fa-language"), ' ', T('Translate')), False, URL('item', 'translate', args=[item.unique_id]), []),
-    # (CAT(I(_class="fa fa-share-alt"), ' ', T('Share')), False, URL('item', 'share', args=[item.unique_id]), []),
     (CAT(I(_class="fa fa-history"), ' ', T('Changelog')), False, URL('item', 'changelog', args=[item.unique_id]), []),
   ])
   response.menu += [(T('Item'), False, "#", item_actions)]
   }}
 {{pass}}
+{{if application.isOwner(item.unique_id):}}
 {{_()}}
+{{pass}}
 
 {{response.title = "eNews - {}".format(item.headline)}}
 {{extend 'layout.html'}}
-
-{{block left_sidebar}}
-  <!-- <div class="panel panel-default">
-      <div class="list-group">
-              <a href="{{=application.getItemURL(item.unique_id)}}" class="list-group-item {{='active' if request.function in  application.getItemURL(item.unique_id) else ''}}">
-                  <i class="fa fa-newspaper-o"></i> {{=T('Content')}}
-              </a>
-              <a href="#" class="list-group-item {{='active' if request.function == 'meta' else ''}}" data-toggle="modal" data-target="#metaModal">
-                  <i class="fa fa-cog"></i> {{=T('Details')}}
-              </a>
-              <a href="{{=URL('item', 'share', args=[item.unique_id])}}" class="list-group-item {{='active' if request.function == 'share' else ''}}">
-                  <i class="fa fa-share-alt"></i> {{=T('Share')}}
-              </a>
-              <a href="{{=URL('item', 'changelog', args=[item.unique_id])}}" class="list-group-item {{='active' if request.function == 'changelog' else ''}}">
-                  <i class="fa fa-history"></i> {{=T('Changelog')}}
-              </a>
-      </div>
-  </div> -->
-
-  {{#=add_items}}
-{{end}}
 
 {{block right_sidebar}}
   {{=plugin_comment(item.unique_id)}}
@@ -52,8 +32,6 @@
     </li>
 </ol>
 
-{{include}}
-
 <!-- metaModal -->
 <div class="modal fade" id="metaModal" tabindex="-1" role="dialog" aria-labelledby="metaModalLabel">
   <div class="modal-dialog" role="document">
@@ -67,6 +45,9 @@
     </div>
   </div>
 </div>
+
+{{include}}
+
 <script>
   $('#metaModal').on('shown.bs.modal', function (e) {
     web2py_component("{{=URL('item', 'meta.load', args=[item.unique_id])}}","metaModalBody");

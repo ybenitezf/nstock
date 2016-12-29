@@ -1,30 +1,11 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">{{=item.headline}} <small>{{=T('Shares')}}</small></h3>
-  </div>
-
-
-
-<div class="panel-body">
-    <form data-w2p_target="{{=request.cid}}" class="form-inline" action="#" method="POST" enctype="multipart/form-data">
-    <div class="form-group">
-        <input class="form-control input-lg string" id="share_email" name="email" type="text" placeholder="{{=T('e-mail address')}}" autocomplete="off">
-        {{=form.custom.submit}}
-    </div>
-    {{=form.custom.end}}
+<p><strong>{{=T("Headline")}}</strong>: {{=item.headline}}</p>
+<hr />
+<form data-w2p_target="{{=request.cid}}" action="#" method="POST" enctype="multipart/form-data">
+<div class="form-group">
+    <input class="form-control string" id="share_email" name="email" type="text" placeholder="{{=T('e-mail address')}}" autocomplete="off">
+    {{if form.errors:}}
+    <p class="text-danger">{{=form.errors.email}}</p>
+    {{pass}}
 </div>
-
-
-
-<ul class="list-group">
-{{for u in rows:}}
-    <li class="list-group-item">
-        {{if auth.has_permission('owner', db.item, record_id=item.id): }}
-        {{=A('X', _href=URL('item', 'unshare', args=[item.id, auth.user_group(u.id)]), cid=request.cid, _class="badge")}}
-        {{pass}}
-        {{=u.first_name}} {{=u.last_name}}
-        | {{=u.email}}
-    </li>
-{{pass}}
-</ul>
-</div>
+{{=form.custom.submit}}
+{{=form.custom.end}}
