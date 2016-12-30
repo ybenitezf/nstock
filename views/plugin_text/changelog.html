@@ -22,4 +22,11 @@
   {{if changes.rows:}}
     {{=changes}}
   {{pass}}
+  <div class="panel-footer">
+      <a class="btn btn-default" href="{{=URL('item', 'changelog.html', args=[item.unique_id])}}">
+          <i class="fa fa-caret-left"></i>
+
+          {{=T('Metadata changes')}}
+      </a>
+  </div>
 </div>

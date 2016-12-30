@@ -385,6 +385,7 @@
 'merge': 'combinar',
 'META': 'META',
 'META changelog': 'META cambios',
+'Metadata changes': 'Cambios (Metadatos)',
 'Mode': 'Modo',
 'Models': 'Modelos',
 'models': 'modelos',

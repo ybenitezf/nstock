@@ -25,6 +25,8 @@
     {{if application.getContentChangesURL(item.unique_id):}}
         <a class="btn btn-default" href="{{=application.getContentChangesURL(item.unique_id)}}">
             {{=T('Content changes')}}
+
+            <i class="fa fa-caret-right"></i>
         </a>
     {{pass}}
   </div>

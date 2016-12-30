@@ -12,11 +12,17 @@
             <li>
                 <a href="{{=URL('default', 'index')}}">{{=T('CAST')}}</a>
             </li>
+            {{if application.isOwner(item.unique_id):}}
             <li>
                 <a href="{{=application.getItemURL(item.unique_id)}}">{{=item.slugline}}</a>
             </li>
+            {{else:}}
             <li>
-                <a href="{{=URL('item', 'changelog', args=[item.unique_id])}}">
+                {{=item.slugline}}
+            </li>
+            {{pass}}
+            <li>
+                <a href="{{=URL('changelog', args=[item.unique_id])}}">
                 {{=T('Changes')}}
                 </a>
             </li>
