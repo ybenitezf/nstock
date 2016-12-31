@@ -7,7 +7,7 @@
 
   <div class="panel-body">
     <p>
-      <img src="{{=URL('default', 'download', args=[content.thumbnail])}}" alt="" class="img-thumbnail"/>
+      <img src="{{=URL('default', 'download', args=[content.thumbnail])}}" alt="" class="img-responsive margin-auto"/>
     </p>
 
     {{=form}}
@@ -17,7 +17,7 @@
 
 <div class="btn-toolbar">
   <div class="btn-group pull-right">
-    <a class="btn btn-success" href="{{=URL('plugin_picture', 'add_rendition', args=[item.id])}}">
+    <a class="btn btn-success" href="{{=URL('plugin_picture', 'add_rendition', args=[item.unique_id])}}">
       <i class="fa fa-plus"></i> {{=T('Add rendition')}}
     </a>
   </div>
@@ -54,8 +54,7 @@
           <i class="fa fa-download"></i>
           {{=T('Download')}}
         </a>
-        {{if auth.has_permission('owner', db.item, record_id=item.id):}}
-          {{if not CT_REG.picture.is_translation(item):}}
+        {{if application.isOwner(item.unique_id):}}
             <!-- Only the owner in the original item can do this. -->
             <a id="del-red-{{=rendition.id}}" class="btn btn-danger btn-sm">
               <i class="fa fa-close"></i>
@@ -68,14 +67,13 @@
                   e.preventDefault();
                   e.stopPropagation();
                   Pace.start();
-                  web2py_component("{{=URL('plugin_picture', 'delete_rendition.load', args=[item.id, rendition.id])}}", target='hiddethis');
+                  web2py_component("{{=URL('plugin_picture', 'delete_rendition.load', args=[item.unique_id, rendition.id])}}", target='hiddethis');
                   $( "#rendition{{=rendition.id}}" ).remove();
                   Pace.stop();
                 });
 
               });
             </script>
-          {{pass}}
         {{pass}}
       </div>
     </div>

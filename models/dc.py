@@ -156,3 +156,4 @@ dashboard_sidemenu = LOAD(
 # register content type plugins
 application = Application()
 plugins.text.app = application
+plugins.picture.app = application

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from perms import isOwnerOrCollaborator, isOwner
+# from perms import isOwnerOrCollaborator, isOwner
 from PIL import Image
 from tempfile import NamedTemporaryFile
 import os
@@ -11,23 +11,23 @@ if False:
     response = current.response
     T = current.T
     from db import db, auth
-    from dc import CT_REG
+    from dc import application
     from z_whoosh import Whoosh
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def index():
     """
     Edit content
     """
-    item = db.item(request.args(0))
+    item = application.getItemByUUID(request.args(0))
 
     db.plugin_picture_info.thumbnail.readable = False
     db.plugin_picture_info.thumbnail.writable = False
     db.plugin_picture_info.renditions.readable = False
     db.plugin_picture_info.renditions.writable = False
 
-    content = db.plugin_picture_info(item_id=item.id)
+    content = db.plugin_picture_info(item_id=item.unique_id)
 
     form = SQLFORM(
         db.plugin_picture_info,
@@ -36,18 +36,18 @@ def index():
         submit_button=T('Save'))
 
     if form.process().accepted:
-        Whoosh().add_to_index(
-            item.id,
-            CT_REG.picture.get_full_text(db.item(item.id), CT_REG))
-        response.flash = T('Done')
+        # Whoosh().add_to_index(
+        #     item.id,
+        #     CT_REG.picture.get_full_text(db.item(item.id), CT_REG))
+        response.flash = None
 
     return dict(form=form, item=item, content=content)
 
 
-@auth.requires(isOwner(request.args(0)))
+@auth.requires(application.isOwner(request.args(0)))
 def delete_rendition():
-    item = db.item(request.args(0))
-    content = db.plugin_picture_info(item_id=item.id)
+    item = application.getItemByUUID(request.args(0))
+    content = db.plugin_picture_info(item_id=item.unique_id)
     rend = db.plugin_picture_rendition(request.args(1))
 
     if item and content and rend:
@@ -62,10 +62,10 @@ def delete_rendition():
     return CAT('')
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def diff():
-    item = db.item(request.args(0))
-    content = db.plugin_picture_info(item_id=item.id)
+    item = application.getItemByUUID(request.args(0))
+    content = db.plugin_picture_info(item_id=item.unique_id)
     archive = db.plugin_picture_info_archive(request.args(1))
 
     fields = []
@@ -99,10 +99,10 @@ def diff():
     return locals()
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def changelog():
-    item = db.item(request.args(0))
-    pic_info = db.plugin_picture_info(item_id=item.id)
+    item = application.getItemByUUID(request.args(0))
+    pic_info = db.plugin_picture_info(item_id=item.unique_id)
 
     query = (db.plugin_picture_info_archive.current_record == pic_info.id)
     db.plugin_picture_info_archive.modified_on.label = T('Date & Time')
@@ -119,7 +119,7 @@ def changelog():
             SPAN(_class="glyphicon glyphicon-random"),
             _href=URL(
                 'diff',
-                args=[item.id, row.id]),
+                args=[item.unique_id, row.id]),
             _class="btn btn-default",
             _title=T("Differences"),
         )
@@ -142,10 +142,10 @@ def changelog():
     return locals()
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def add_rendition():
-    item = db.item(request.args(0))
-    content = db.plugin_picture_info(item_id=item.id)
+    item = application.getItemByUUID(request.args(0))
+    content = db.plugin_picture_info(item_id=item.unique_id)
 
     form = SQLFORM(db.plugin_picture_rendition)
 
@@ -165,7 +165,7 @@ def add_rendition():
         # append this rendition to the item content
         content.renditions.append(r_id)
         content.update_record()
-        redirect(CT_REG.picture.get_item_url(item))
+        redirect(application.getItemURL(item.unique_id))
 
     return locals()
 
@@ -202,7 +202,7 @@ def create():
 
     if form.process(dbio=False).accepted:
         # create the item
-        item_id = CT_REG.picture.create_item(form.vars)
+        item_id = application.createItem('picture', form.vars)
         # first rendition
         rend_id = db.plugin_picture_rendition.insert(
             **db.plugin_picture_rendition._filter_fields(form.vars)
@@ -234,9 +234,9 @@ def create():
             **db.plugin_picture_info._filter_fields(form.vars)
         )
         # register document for search
-        Whoosh().add_to_index(
-            item_id,
-            CT_REG.picture.get_full_text(db.item(item_id), CT_REG))
+        # Whoosh().add_to_index(
+        #     item_id,
+        #     CT_REG.picture.get_full_text(db.item(item_id), CT_REG))
         # --
         # redirect to the item
         redirect(URL('default', 'index'))
