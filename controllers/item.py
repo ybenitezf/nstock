@@ -84,9 +84,6 @@ def meta():
         else:
             redirect(application.getItemURL(item.unique_id))
 
-    if request.ajax:
-        return form
-
     return locals()
 
 
@@ -146,12 +143,19 @@ def diff():
     if item is None:
         raise HTTP(404)
     item_archive = db.item_archive(request.args(1))
+    if item_archive is None:
+        raise HTTP(503)
 
     fields = []
     fields_archived = []
 
+    # allow view of administrative metadata
+    db.item.modified_by.readable = True
+    db.item.modified_on.readable = True
+    db.item_archive.modified_by.readable = True
+    db.item_archive.modified_on.readable = True
+
     for f in db.item:
-        # if values diff
         if item[f.name] != item_archive[f.name]:
             f.comment = None
             fields.append(f)
@@ -167,7 +171,7 @@ def diff():
         formstyle='divs'
         )
     form_archive = SQLFORM.factory(
-        *fields,
+        *fields_archived,
         record=item_archive,
         readonly=True,
         showid=False,
