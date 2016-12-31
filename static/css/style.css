@@ -112,3 +112,7 @@ body { padding-bottom: 70px; }
     height: 450px;
     overflow-y: auto;
 }
+
+.margin-auto {
+    margin: 0 auto;
+}
