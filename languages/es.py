@@ -237,7 +237,7 @@
 'EDIT': 'EDITAR',
 'Edit': 'Editar',
 'Edit application': 'Editar aplicación',
-'Edit content': 'Edit content',
+'Edit content': 'Editar contenido',
 'edit controller': 'editar controlador',
 'Edit current dashboard': 'Editar carpeta actual',
 'Edit current record': 'Edite el registro actual',
