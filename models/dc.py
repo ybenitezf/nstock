@@ -8,6 +8,7 @@ import uuid
 if False:
     from gluon import Field, T, IS_NOT_EMPTY, IS_IN_SET, LOAD
     from db import db, auth, mail, myconf, plugins
+    request = current.request
 
 
 # configure global context
@@ -127,12 +128,41 @@ db.item.embargoed.comment = T(
 db.item._enable_record_versioning()
 
 # translation table, indicates with item translate another
+# db.define_table(
+#     'translations',
+#     Field('item_id', 'reference item'),  # original item
+#     Field('trans_id', 'reference item'),  # tranlation
+#     Field('language_tag', 'string', length=2),  # language of the translation
+#     )
+
 db.define_table(
-    'translations',
-    Field('item_id', 'reference item'),  # original item
-    Field('trans_id', 'reference item'),  # tranlation
-    Field('language_tag', 'string', length=2),  # language of the translation
-    )
+    'languages',
+    Field('language_tag', 'string', length=10),
+    Field('english_name', 'string', length=30)
+)
+
+
+def _():
+    """
+    load language file into language table
+    """
+    import os
+    import csv
+    f_name = os.path.join(
+        request.folder,
+        os.path.join('private', 'language-codes.csv'))
+    with open(f_name) as lang_codes:
+        reader = csv.DictReader(lang_codes)
+        for row in reader:
+            db.languages.insert(
+                language_tag=row['alpha2'],
+                english_name=row['English']
+            )
+if db(db.languages.id > 0).count() == 0:
+    _()
+db.item.language_tag.represent = lambda v, r: db.languages(
+    language_tag=v
+).english_name
 
 # dashboard's
 db.define_table(

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 if False:
     from gluon import redirect, current, Field, HTTP
-    from gluon import A, CAT, SPAN, SQLFORM, URL
-    from gluon import IS_IN_SET, IS_EMAIL
+    from gluon import A, CAT, SPAN, SQLFORM, URL, IS_IN_SET
+    from gluon import IS_EMAIL
     request = current.request
     response = current.response
     session = current.session
@@ -10,7 +10,7 @@ if False:
     T = current.T
     # from db import auth, db, mail
     from db import auth, db
-    from dc import CT_REG, application
+    from dc import application
     from z_whoosh import Whoosh
     # from menu import *
 
@@ -40,7 +40,15 @@ def meta():
         raise HTTP(404)
 
     contentType = application.getContentType(item.item_type)
-    contentType.prepare_language_field()
+    l_names = [
+        (r.language_tag, r.english_name) for r in db(
+            db.languages.id > 0
+        ).select(orderby=db.languages.english_name)
+    ]
+    db.item.language_tag.requires = IS_IN_SET(
+        l_names,
+        zero=None
+    )
 
     # issue #5 hidde some fields from metadata
     db.item.provider.readable = False
@@ -196,59 +204,59 @@ def unshare():
     return CAT('')
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
-def translate():
-    item = db.item(request.args(0))
-
-    # if CT_REG[item.item_type].is_translation(item):
-    #     session.flash = T('This item is a translation of another !')
-    #     redirect(URL('index', args=[item.id]))
-
-    # 1.- need a list of all the translations that this item has
-    query = (db.translations.item_id == item.id)
-    trans = db(query).select(
-        db.translations.trans_id,
-        db.translations.language_tag
-    )
-    # 2.- a form with allows creating a new translation
-    fld_target = Field('target', 'string', length=2)
-    fld_target.label = T('Target language')
-    fld_target.comment = T('''
-        To create a new translation of the current item select the target
-        language.
-    ''')
-    import os
-    import csv
-    f_name = os.path.join(
-        request.folder,
-        os.path.join('private', 'language-codes.csv'))
-    lang_reg = dict()
-    with open(f_name) as lang_codes:
-        reader = csv.DictReader(lang_codes)
-        required_names = list()
-        for row in reader:
-            query = (db.translations.item_id == item.id)
-            query &= (db.translations.language_tag == row['alpha2'])
-            is_translated = db(query).select()
-            if item.language_tag != row['alpha2'] and not is_translated:
-                required_names.append((row['alpha2'], row['English']))
-            lang_reg[row['alpha2']] = row['English']
-        required_names.sort(cmp=lambda x, y: cmp(x[1], y[1]))
-        fld_target.requires = IS_IN_SET(required_names, zero=None)
-    form = SQLFORM.factory(
-        fld_target,
-        submit_button=T('Translate this item'))
-
-    if form.process().accepted:
-        # create a new item/content pair for the language_tag selected
-        item_id = CT_REG[item.item_type].create_translation(
-            item,
-            form.vars.target)
-        Whoosh().add_to_index(item_id, CT_REG[item.item_type].get_full_text(
-            db.item(item_id), CT_REG))
-        redirect(URL('index', args=[item_id]))
-
-    return dict(item=item, trans=trans, form=form, lang_reg=lang_reg)
+# @auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+# def translate():
+#     item = db.item(request.args(0))
+#
+#     # if CT_REG[item.item_type].is_translation(item):
+#     #     session.flash = T('This item is a translation of another !')
+#     #     redirect(URL('index', args=[item.id]))
+#
+#     # 1.- need a list of all the translations that this item has
+#     query = (db.translations.item_id == item.id)
+#     trans = db(query).select(
+#         db.translations.trans_id,
+#         db.translations.language_tag
+#     )
+#     # 2.- a form with allows creating a new translation
+#     fld_target = Field('target', 'string', length=2)
+#     fld_target.label = T('Target language')
+#     fld_target.comment = T('''
+#         To create a new translation of the current item select the target
+#         language.
+#     ''')
+#     import os
+#     import csv
+#     f_name = os.path.join(
+#         request.folder,
+#         os.path.join('private', 'language-codes.csv'))
+#     lang_reg = dict()
+#     with open(f_name) as lang_codes:
+#         reader = csv.DictReader(lang_codes)
+#         required_names = list()
+#         for row in reader:
+#             query = (db.translations.item_id == item.id)
+#             query &= (db.translations.language_tag == row['alpha2'])
+#             is_translated = db(query).select()
+#             if item.language_tag != row['alpha2'] and not is_translated:
+#                 required_names.append((row['alpha2'], row['English']))
+#             lang_reg[row['alpha2']] = row['English']
+#         required_names.sort(cmp=lambda x, y: cmp(x[1], y[1]))
+#         fld_target.requires = IS_IN_SET(required_names, zero=None)
+#     form = SQLFORM.factory(
+#         fld_target,
+#         submit_button=T('Translate this item'))
+#
+#     if form.process().accepted:
+#         # create a new item/content pair for the language_tag selected
+#         item_id = CT_REG[item.item_type].create_translation(
+#             item,
+#             form.vars.target)
+#         Whoosh().add_to_index(item_id, CT_REG[item.item_type].get_full_text(
+#             db.item(item_id), CT_REG))
+#         redirect(URL('index', args=[item_id]))
+#
+#     return dict(item=item, trans=trans, form=form, lang_reg=lang_reg)
 
 
 @auth.requires(application.isOwner(request.args(0)))

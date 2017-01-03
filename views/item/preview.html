@@ -101,7 +101,8 @@
         <p><strong>{{=T("Section")}}</strong>: {{=item.section_page}}</p>
       {{pass}}
       {{if item.language_tag:}}
-        <p><strong>{{=T("Language")}}</strong>: {{=item.language_tag}}</p>
+        <p><strong>{{=T("Language")}}</strong>:
+        {{=db.item.language_tag.represent(item.language_tag, item)}}</p>
       {{pass}}
       {{if item.embargoed:}}
         <p><strong>{{=T("Embargoed")}}</strong>: {{=item.embargoed.strftime("%Y-%m-%d %-I:%M %p")}}</p>

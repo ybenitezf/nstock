@@ -13,32 +13,6 @@ class ContentText(ContentPlugin):
     def get_item_url(self, item):
         return URL('plugin_text', 'index.html', args=[item.unique_id])
 
-    def get_item_icon(self, item):
-        return 'fa-file-text-o'
-
-    def create_content_translation(self, original_item, target_item):
-        """
-        Create a duplicate of the content for translation
-        """
-        db = self.db
-        content = db.plugin_text_text(item_id=original_item.id)
-
-        # duplicate item
-        flds = db.plugin_text_text._filter_fields(content)
-        flds['item_id'] = target_item.id
-        # remove administrative metadata
-        hidde = [
-            'created_by', 'created_on', 'modified_on', 'modified_by',
-            'is_active']
-        for name in hidde:
-            del flds[name]
-
-        content_id = db.plugin_text_text.insert(
-            **db.plugin_text_text._filter_fields(flds)
-        )
-
-        return content_id
-
     def get_changelog_url(self, item):
         return URL('plugin_text', 'changelog', args=[item.id])
 
