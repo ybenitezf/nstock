@@ -600,7 +600,7 @@
 'Toggle Fullscreen': 'Alternar pantalla completa',
 'too short': 'demasiado corto',
 'Too short': 'Muy corto',
-'Toogle pin to dashboard': 'Encagar/Soltar del tablero',
+'Toogle pin to dashboard': 'Encajar/Soltar del tablero',
 'Tools': 'Herramientas',
 'Traceback': 'Traceback',
 'Translate': 'Traducir',

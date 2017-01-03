@@ -138,14 +138,14 @@ db.define_table(
 db.define_table(
     'dashboard',
     Field('name', 'string', length=20, label=T('Dashboard name')),
-    Field('item_list', 'list:reference item'),
+    Field('item_list', 'list:string'),
     auth.signature,
 )
 db.dashboard.name.requires = IS_NOT_EMPTY()
 
 
 def is_in_board(item, board):
-    return item.id in board.item_list
+    return item.unique_id in board.item_list
 
 # side links for items
 add_items = LOAD('item', 'add_items.load', ajax=True)

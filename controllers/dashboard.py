@@ -4,6 +4,7 @@ if False:
     from gluon import SQLFORM, URL, CAT, IS_NOT_EMPTY
     from gluon import current, redirect, Field
     from db import db, auth
+    from dc import application
     from z_whoosh import Whoosh
     request = current.request
     response = current.response
@@ -44,7 +45,7 @@ def index():
     query &= (
         auth.accessible_query('collaborator', db.item) |
         auth.accessible_query('owner', db.item))
-    query &= db.dashboard.item_list.contains(db.item.id)
+    query &= db.dashboard.item_list.contains(db.item.unique_id)
     query &= (db.dashboard.id == dash.id)
 
     grid = SQLFORM.grid(
@@ -76,7 +77,7 @@ def load_items():
     query &= (
         auth.accessible_query('collaborator', db.item) |
         auth.accessible_query('owner', db.item))
-    query &= db.dashboard.item_list.contains(db.item.id)
+    query &= db.dashboard.item_list.contains(db.item.unique_id)
     query &= (db.dashboard.id == dash.id)
 
     grid = SQLFORM.grid(
@@ -145,19 +146,19 @@ def edit():
 @auth.requires(isOwner())
 def toogle_pin():
     dash = db.dashboard(request.args(0))
-    item = db.item(request.args(1))
+    item = application.getItemByUUID(request.args(1))
 
     response.js = ""
 
-    if item.id in dash.item_list:
+    if item.unique_id in dash.item_list:
         new_list = dash.item_list
-        new_list.remove(item.id)
+        new_list.remove(item.unique_id)
         if request.vars.remove_item == "True":
             response.js += "$('#item-{}').hide();".format(item.id)
 
     else:
         new_list = dash.item_list
-        new_list.append(item.id)
+        new_list.append(item.unique_id)
     dash.update_record(item_list=new_list)
 
     response.js += "jQuery('#dashboard_cmp').get(0).reload();"
@@ -170,23 +171,6 @@ def side_menu():
     query = (db.dashboard.id > 0)
     query &= (db.dashboard.created_by == auth.user.id)
     dash_list = db(query).select(db.dashboard.ALL)
-
-    # if not dash_list:
-    #     # make a new dashboard: as this is LOADED we need to force the
-    #     # language
-    #     # to the one being used by the user.
-    #     T.force(request.cookies['language'].value)
-    #     name = T('My Dashboard', lazy=False)
-    #     d_id = db.dashboard.insert(
-    #         name=name, item_list=[])
-    #     query = (db.dashboard.id > 0)
-    #     query &= (db.dashboard.created_by == auth.user.id)
-    #     dash_list = db(query).select(db.dashboard.ALL)
-    #     auth.add_permission(0, 'owner', db.dashboard, d_id)
-
-    # if not session.dashboard:
-    #     dash = db(db.dashboard.created_by == auth.user.id).select().first()
-    #     activeDashboard(dash.id)
 
     alinks = request.vars.alinks
     return dict(dash_list=dash_list, alinks=alinks)

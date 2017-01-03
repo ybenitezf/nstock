@@ -22,7 +22,7 @@
               $('#toggle{{=item.id}}').click(function(e) {
                 e.stopPropagation();
                 Pace.start();
-                web2py_component("{{=URL('dashboard', 'toogle_pin.load', vars=dict(remove_item=remove_item), args=[dash.id, item.id])}}", target='hiddethis');
+                web2py_component("{{=URL('dashboard', 'toogle_pin.load', vars=dict(remove_item=remove_item), args=[dash.id, item.unique_id])}}", target='hiddethis');
                 $( this ).toggleClass( 'active' );
                 Pace.stop();
               });
