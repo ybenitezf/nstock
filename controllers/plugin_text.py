@@ -8,7 +8,6 @@ if False:
     from db import db, auth
     # from dc import CT_REG
     from dc import application
-    from z_whoosh import Whoosh
 
 
 @auth.requires(application.isOwner(request.args(0)))
@@ -29,9 +28,7 @@ def index():
         submit_button=T('Save'))
 
     if form.process().accepted:
-        # Whoosh().add_to_index(
-        #     item.id,
-        #     CT_REG.text.get_full_text(db.item(item.id), CT_REG))
+        application.indexItem(item.unique_id)
         redirect(application.getItemURL(item.unique_id))
         response.flash = T('Done')
 
@@ -151,12 +148,7 @@ def create():
         form.vars.item_id = item_id
         db.plugin_text_text.insert(
             **db.plugin_text_text._filter_fields(form.vars))
-        # register document for search
-        # Whoosh().add_to_index(
-        #     item_id,
-        #     CT_REG.text.get_full_text(db.item(item_id), CT_REG))
-        # --
-        # redirect(URL('index', args=[item_id]))
+        application.indexItem(item_id)
         redirect(URL('default', 'index.html'))
 
     return locals()

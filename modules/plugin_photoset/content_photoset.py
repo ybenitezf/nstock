@@ -15,20 +15,22 @@ class ContentPhotoset(ContentPlugin):
         )
 
     def get_item_url(self, item):
-        return URL('plugin_photoset', 'index.html', args=[item.id])
+        return URL('plugin_photoset', 'index.html', args=[item.unique_id])
 
     def get_changelog_url(self, item):
-        return URL('plugin_photoset', 'changelog', args=[item.id])
+        return URL('plugin_photoset', 'changelog', args=[item.unique_id])
 
-    def get_full_text(self, item, CT_REG):
+    def get_full_text(self, item):
         """Return full text document, mean for plugins"""
-        photoset_content = self.db.plugin_photoset_content(item_id=item.id)
+        photoset_content = self.db.plugin_photoset_content(
+            item_id=item.unique_id)
         output = self.response.render(
             'plugin_photoset/full_text.txt',
-            dict(photoset_content=photoset_content, item=item, CT_REG=CT_REG))
+            dict(photoset_content=photoset_content, item=item))
         return unicode(output.decode('utf-8'))
 
     def preview(self, item):
+        super(ContentPhotoset, self).preview(item)
         photoset_content = self.db.plugin_photoset_content(
             item_id=item.unique_id
         )

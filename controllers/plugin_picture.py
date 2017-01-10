@@ -12,7 +12,6 @@ if False:
     T = current.T
     from db import db, auth
     from dc import application
-    from z_whoosh import Whoosh
 
 
 @auth.requires(application.isOwnerOrCollaborator(request.args(0)))
@@ -36,9 +35,7 @@ def index():
         submit_button=T('Save'))
 
     if form.process().accepted:
-        # Whoosh().add_to_index(
-        #     item.id,
-        #     CT_REG.picture.get_full_text(db.item(item.id), CT_REG))
+        application.indexItem(item.unique_id)
         response.flash = None
 
     return dict(form=form, item=item, content=content)
@@ -234,9 +231,7 @@ def create():
             **db.plugin_picture_info._filter_fields(form.vars)
         )
         # register document for search
-        # Whoosh().add_to_index(
-        #     item_id,
-        #     CT_REG.picture.get_full_text(db.item(item_id), CT_REG))
+        application.indexItem(item_id)
         # --
         # redirect to the item
         redirect(URL('default', 'index'))

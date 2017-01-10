@@ -43,12 +43,12 @@
     </div>
     {{pass}}
     <div class="row item-rows">
+      {{if rows is not None:}}
         {{for r in rows:}}
         {{item = r.item}}
-        <!-- <div class="col-xs-12 col-sm-12 col-md-6"> -->
           {{include 'item/preview.html'}}
-        <!-- </div> -->
         {{pass}}
+      {{pass}}
     </div>
     {{ if len(grid.components) == 3: }}
     <div class="row">

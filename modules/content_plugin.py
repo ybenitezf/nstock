@@ -24,7 +24,7 @@ class ContentPlugin(object):
         """
         Show the item preview on list's or in packages.
         """
-        raise NotImplementedError
+        return ''
 
     def create_item_url(self):
         """
@@ -46,7 +46,7 @@ class ContentPlugin(object):
         )
         return unicode(output.decode('utf-8'))
 
-    def get_full_text(self, item, CT_REG):
+    def get_full_text(self, item):
         """Return full text document, mean for plugins"""
         raise NotImplementedError
 

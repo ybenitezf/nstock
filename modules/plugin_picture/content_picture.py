@@ -12,20 +12,21 @@ class ContentPicture(ContentPlugin):
         )
 
     def get_item_url(self, item):
-        return URL('plugin_picture', 'index.html', args=[item.id])
+        return URL('plugin_picture', 'index.html', args=[item.unique_id])
 
-    def get_full_text(self, item, CT_REG):
+    def get_full_text(self, item):
         """Return full text document, mean for plugins"""
-        pic_info = self.db.plugin_picture_info(item_id=item.id)
+        pic_info = self.db.plugin_picture_info(item_id=item.unique_id)
         output = self.response.render(
             'plugin_picture/full_text.txt',
-            dict(pic_info=pic_info, item=item, CT_REG=CT_REG))
+            dict(pic_info=pic_info, item=item))
         return unicode(output.decode('utf-8'))
 
     def get_changelog_url(self, item):
-        return URL('plugin_picture', 'changelog', args=[item.id])
+        return URL('plugin_picture', 'changelog', args=[item.unique_id])
 
     def preview(self, item):
+        super(ContentPicture, self).preview(item)
         info = self.db.plugin_picture_info(item_id=item.unique_id)
         return XML(
             self.response.render(

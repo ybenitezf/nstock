@@ -1,5 +1,6 @@
 # coding: utf-8
 from content_plugin import ContentPlugin
+from z_whoosh import Whoosh
 from gluon import current, URL
 from gluon.storage import Storage
 import perms
@@ -76,6 +77,18 @@ class Application(object):
             self.isOwner(unique_id, user=user) or
             self.isCollaborator(unique_id, user=user))
 
+    def indexItem(self, item_id, user=None):
+        """
+        Add/update item to the user search index
+        """
+        if user is None:
+            user = self.auth.user
+        item = self.getItemByUUID(item_id)
+        ct = self.getContentType(item.item_type)
+        text = ct.get_full_text(item)
+        w = Whoosh(str(user.id))
+        w.add_to_index(unicode(item_id), text)
+
     def createItem(self, content_type, values):
         db = self.db
         auth = self.auth
@@ -105,7 +118,6 @@ class Application(object):
         """
         Share item_id with user
         """
-        # 4. - update the item to the Woosh of the user (TODO)
         item = self.getItemByUUID(item_id)
         target_id = self.db.item.insert(**self.db.item._filter_fields(item))
         # give owner to the target user
@@ -122,5 +134,7 @@ class Application(object):
         self.db(self.db.item_archive.current_record == item.id).update(
             current_record=target_id
         )
+        # add to the index of the user
+        self.indexItem(item.unique_id, user)
 
         return

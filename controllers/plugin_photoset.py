@@ -2,7 +2,6 @@
 from gluon.storage import Storage
 from PIL import Image
 from tempfile import NamedTemporaryFile
-# from perms import isOwnerOrCollaborator, isOwner
 import os
 
 if False:
@@ -14,7 +13,6 @@ if False:
     session = current.session
     from db import db, auth
     from dc import application
-    # from z_whoosh import Whoosh
 
 
 @auth.requires(application.isOwner(request.args(0)))
@@ -77,8 +75,7 @@ def edit_form():
     )
 
     if form.process().accepted:
-        # Whoosh().add_to_index(
-        #     item.id, CT_REG.photoset.get_full_text(item, CT_REG))
+        application.indexItem(item.unique_id)
         response.flash = T('Saved')
 
     return form
@@ -196,8 +193,7 @@ def create():
                 form.vars
             )
         )
-        # Whoosh().add_to_index(
-        #     item_id, CT_REG.photoset.get_full_text(db.item(item_id), CT_REG))
+        application.indexItem(item_id)
         session.plugin_photoset = None
         redirect(URL('default', 'index.html'))
 
