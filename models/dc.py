@@ -58,8 +58,11 @@ db.define_table(
     Field('genre', 'string', length=100, default=''),
     Field('section_page', 'string', length=100, default=''),
     # language of the item it self not the lenguage of the content
-    Field('language_tag', 'string', default=T.accepted_language, length=2),
-
+    Field(
+        'language_tag',
+        'string',
+        default=T.accepted_language.split('-')[0],
+        length=2),
     # item metadata
     Field('provider', 'string', length=100, default=''),
     Field('provider_service', 'string', default=''),
@@ -160,9 +163,15 @@ def _():
             )
 if db(db.languages.id > 0).count() == 0:
     _()
-db.item.language_tag.represent = lambda v, r: db.languages(
-    language_tag=v
-).english_name
+
+
+def _ltag_represent(v, r):
+    value = db.languages(language_tag=v)
+    if value is not None:
+        return value.english_name
+
+    return v
+db.item.language_tag.represent = _ltag_represent
 
 # dashboard's
 db.define_table(
@@ -187,3 +196,4 @@ dashboard_sidemenu = LOAD(
 application = Application()
 plugins.text.app = application
 plugins.picture.app = application
+plugins.photoset.app = application

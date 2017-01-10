@@ -2,7 +2,7 @@
 from gluon.storage import Storage
 from PIL import Image
 from tempfile import NamedTemporaryFile
-from perms import isOwnerOrCollaborator, isOwner
+# from perms import isOwnerOrCollaborator, isOwner
 import os
 
 if False:
@@ -13,31 +13,31 @@ if False:
     response = current.response
     session = current.session
     from db import db, auth
-    from dc import CT_REG
-    from z_whoosh import Whoosh
+    from dc import application
+    # from z_whoosh import Whoosh
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwner(request.args(0)))
 def index():
-    item = db.item(request.args(0))
+    item = application.getItemByUUID(request.args(0))
     content = db.plugin_photoset_content(item_id=item.id)
 
     return locals()
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def view_photoset():
-    item = db.item(request.args(0))
-    content = db.plugin_photoset_content(item_id=item.id)
+    item = application.getItemByUUID(request.args(0))
+    content = db.plugin_photoset_content(item_id=item.unique_id)
     photos = content.photoset
     if not photos:
         photos = []
     return locals()
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def preview_photo():
-    item = db.item(request.args(0))
+    item = application.getItemByUUID(request.args(0))
     photo = db.plugin_photoset_photo(request.args(1))
     return IMG(
         _src=URL('default', 'download', args=[photo.picture]),
@@ -46,9 +46,9 @@ def preview_photo():
     )
 
 
-@auth.requires(isOwner(request.args(0)))
+@auth.requires(application.isOwner(request.args(0)))
 def delete_photo():
-    item = db.item(request.args(0))
+    item = application.getItemByUUID(request.args(0))
     content = db.plugin_photoset_content(item_id=item.id)
     photo = db.plugin_photoset_photo(request.args(1))
 
@@ -59,10 +59,10 @@ def delete_photo():
     return CAT('')
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwner(request.args(0)))
 def edit_form():
-    item = db.item(request.args(0))
-    content = db.plugin_photoset_content(item_id=item.id)
+    item = application.getItemByUUID(request.args(0))
+    content = db.plugin_photoset_content(item_id=item.unique_id)
 
     db.plugin_photoset_content.photoset.readable = False
     db.plugin_photoset_content.photoset.writable = False
@@ -77,20 +77,20 @@ def edit_form():
     )
 
     if form.process().accepted:
-        Whoosh().add_to_index(
-            item.id, CT_REG.photoset.get_full_text(item, CT_REG))
+        # Whoosh().add_to_index(
+        #     item.id, CT_REG.photoset.get_full_text(item, CT_REG))
         response.flash = T('Saved')
 
     return form
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def changelog():
     """
     Show item change log over the time
     """
-    item = db.item(request.args(0))
-    content = db.plugin_photoset_content(item_id=item.id)
+    item = application.getItemByUUID(request.args(0))
+    content = db.plugin_photoset_content(item_id=item.unique_id)
 
     query = (db.plugin_photoset_content_archive.current_record == content.id)
     db.plugin_photoset_content_archive.modified_on.label = T('Date & Time')
@@ -107,7 +107,7 @@ def changelog():
             SPAN(_class="glyphicon glyphicon-random"),
             _href=URL(
                 'diff',
-                args=[item.id, row.id]),
+                args=[item.unique_id, row.id]),
             _class="btn btn-default",
             _title=T("Differences"),
         )
@@ -130,10 +130,10 @@ def changelog():
     return locals()
 
 
-@auth.requires(isOwnerOrCollaborator())
+@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def diff():
-    item = db.item(request.args(0))
-    content = db.plugin_photoset_content(item_id=item.id)
+    item = application.getItemByUUID(request.args(0))
+    content = db.plugin_photoset_content(item_id=item.unique_id)
     archive = db.plugin_photoset_content_archive(request.args(1))
 
     fields = []
@@ -158,7 +158,7 @@ def diff():
         formstyle='divs'
         )
     form_archive = SQLFORM.factory(
-        *fields,
+        *fields_archived,
         record=archive,
         readonly=True,
         showid=False,
@@ -172,11 +172,7 @@ def create():
     fields = []
 
     fld_headline = db.item.headline
-    # fld_keywords = db.item.keywords
-    # fields.extend([fld_headline, fld_keywords])
     fields.extend([fld_headline, db.item.keywords, db.item.genre])
-    # fields.append(db.item.located)
-    # fields.append(db.plugin_photoset_content.description)
     fdl_item_type = db.item.item_type
     fdl_item_type.writable = False
     fdl_item_type.readable = False
@@ -188,7 +184,8 @@ def create():
     )
 
     if form.process(dbio=False).accepted:
-        item_id = CT_REG.photoset.create_item(form.vars)
+        # item_id = CT_REG.photoset.create_item(form.vars)
+        item_id = application.createItem('photoset', form.vars)
         form.vars.item_id = item_id
         if session.plugin_photoset:
             form.vars.photoset = session.plugin_photoset.photos
@@ -199,10 +196,10 @@ def create():
                 form.vars
             )
         )
-        Whoosh().add_to_index(
-            item_id, CT_REG.photoset.get_full_text(db.item(item_id), CT_REG))
+        # Whoosh().add_to_index(
+        #     item_id, CT_REG.photoset.get_full_text(db.item(item_id), CT_REG))
         session.plugin_photoset = None
-        redirect(URL('index', args=[item_id]))
+        redirect(URL('default', 'index.html'))
 
     return locals()
 

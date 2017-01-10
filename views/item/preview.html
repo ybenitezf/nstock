@@ -37,6 +37,7 @@
           </button>
           <script type="text/javascript">
             $('#itemSend{{=item.id}}').click(function (e) {
+              e.stopPropagation();
               $('#metaModalLabel').html('{{=T("Send")}} / {{=T("Share")}}');
               $('#metaModal').modal('show');
               web2py_component("{{=URL('item','share.load', args=[item.unique_id])}}","metaModalBody");
@@ -63,9 +64,11 @@
                   </a>
                   <script type="text/javascript">
                     $('#itemDetails{{=item.id}}').click(function (e) {
+                      e.stopPropagation();
                       $('#metaModalLabel').html('{{=T("Details")}}');
                       $('#metaModal').modal('show');
                       web2py_component("{{=URL('item', 'meta.load', args=[item.unique_id])}}","metaModalBody");
+                      return false;
                     });
                   </script>
                 </li>

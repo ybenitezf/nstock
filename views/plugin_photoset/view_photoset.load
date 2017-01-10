@@ -44,16 +44,15 @@
                 $('#photo-preview-{{=_photo.id}}').click(function(e) {
                   e.preventDefault();
                   Pace.start();
-                  web2py_component("{{=URL('plugin_photoset', 'preview_photo.load', args=[item.id, _photo.id])}}", target='photoset-preview-cmp');
+                  web2py_component("{{=URL('plugin_photoset', 'preview_photo.load', args=[item.unique_id, _photo.id])}}", target='photoset-preview-cmp');
                   $( '#modal-preview' ).modal('show');
                   Pace.stop();
                 });
               </script>
             </div>
 
-            {{if not CT_REG.photoset.is_translation(item):}}
             <div class="btn-group btn-group-xs pull-right">
-              {{if auth.has_permission('owner', db.item, record_id=item.id):}}
+              {{if application.isOwner(item.unique_id):}}
               <a id="photoset_action_delete_{{=_photo.id}}" class="btn btn-danger btn-xs">
                 <i class="fa fa-close"></i>
               </a>
@@ -61,7 +60,7 @@
                 $('#photoset_action_delete_{{=_photo.id}}').click(function(e) {
                   e.preventDefault();
                   Pace.start();
-                  web2py_component("{{=URL('plugin_photoset', 'delete_photo.load', args=[item.id, _photo.id])}}", target='hiddethis');
+                  web2py_component("{{=URL('plugin_photoset', 'delete_photo.load', args=[item.unique_id, _photo.id])}}", target='hiddethis');
                   $('#view_photoset').get(0).reload();
                   Pace.stop();
                 });
@@ -72,7 +71,6 @@
               </a>
               {{pass}}
             </div>
-            {{pass}}
           </div>
         </div>
       </div>
@@ -83,14 +81,14 @@
 </div>
 
 
-{{if not CT_REG.photoset.is_translation(item) and auth.has_permission('owner', db.item, record_id=item.id):}}
+{{if application.isOwner(item.unique_id):}}
 <script>
 $(document).ready(function() {
   var uploader = new qq.FileUploader({
         // pass the dom node (ex. $(selector)[0] for jQuery users)
         element: document.getElementById('file-uploader'),
         // path to server-side upload script
-        action: '{{=URL("upload_photo", args=[item.id])}}',
+        action: '{{=URL("upload_photo", args=[item.unique_id])}}',
         sizeLimit: 0,
         minSizeLimit: 0,
         allowedExtensions: ['jpg', 'jpeg', 'png'],

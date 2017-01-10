@@ -116,3 +116,19 @@ body { padding-bottom: 70px; }
 .margin-auto {
     margin: 0 auto;
 }
+
+.panel-mb-5 {
+  margin-bottom: 5px;
+}
+
+.panel-preview-mini-toolbar {
+  padding-top: 5px;padding-bottom: 0px;padding-left: 0px;padding-right: 0px;border-top-width: 0px;
+}
+
+.hand-pointer {
+  cursor: pointer; cursor: hand;
+}
+
+.preview-img-hover:hover {
+  filter: brightness(50%);
+}
