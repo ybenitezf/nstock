@@ -47,7 +47,7 @@ def preview_photo():
 @auth.requires(application.isOwner(request.args(0)))
 def delete_photo():
     item = application.getItemByUUID(request.args(0))
-    content = db.plugin_photoset_content(item_id=item.id)
+    content = db.plugin_photoset_content(item_id=item.unique_id)
     photo = db.plugin_photoset_photo(request.args(1))
 
     content.photoset.remove(photo.id)

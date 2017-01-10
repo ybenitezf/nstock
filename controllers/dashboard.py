@@ -104,9 +104,8 @@ def create():
             item_list=[]
         )
         auth.add_permission(0, 'owner', db.dashboard, d_id)
-        if form.vars.activate:
-            redirect(URL('index', args=[d_id]))
-        redirect(URL('index', args=[session.dashboard]))
+        session.dashboard = d_id
+        redirect(URL('default', 'index'))
     return dict(form=form)
 
 
