@@ -4,8 +4,8 @@
 
 {{=T('You can see the changes on')}}:
 
-{{=URL('item', 'changelog', args=[item.id], scheme=True, host=True)}}
+{{=URL('item', 'changelog.html', args=[item.unique_id], scheme=True, host=True)}}
 
 --
-{{=T('See you on eNews')}}.
-{{=URL('default', 'index', scheme=True, host=True)}}
+{{=T('See you on nStock')}}.
+{{=URL('default', 'index.html', scheme=True, host=True)}}

@@ -112,7 +112,26 @@ class Application(object):
         return URL(c=c, f=f, args=[item.unique_id])
 
     def notifyCollaborators(self, item_id, subject, message):
-        pass
+        db = self.db
+        auth = self.auth
+        item = self.getItemByUUID(item_id)
+
+        # i need all user who have some permission over current item
+        # with are not the current user
+        query = (db.auth_permission.record_id == item.id)
+        query &= (db.auth_permission.table_name == db.item)
+        query &= (db.auth_permission.group_id == db.auth_membership.group_id)
+        query &= (db.auth_user.id == db.auth_membership.user_id)
+        query &= (db.auth_user.id != auth.user.id)
+
+        myusers = db(query).select(db.auth_user.ALL, distinct=True)
+        for u in myusers:
+            db.notification.insert(
+                subject=subject,
+                message_content=message,
+                from_user=auth.user.id,
+                to_user=u.id
+            )
 
     def shareItem(self, item_id, user):
         """

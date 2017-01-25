@@ -38,8 +38,27 @@ def toogle_on():
 @auth.requires(isOwner())
 def index():
     """Show the item list of this dashboard"""
+    dash = db.dashboard(request.args(0))
+    activeDashboard(request.args(0))
 
-    return ''
+    query = (db.item.id > 0)
+    query &= (
+        auth.accessible_query('collaborator', db.item) |
+        auth.accessible_query('owner', db.item))
+    query &= db.dashboard.item_list.contains(db.item.unique_id)
+    query &= (db.dashboard.id == dash.id)
+
+    grid = SQLFORM.grid(
+        query, args=request.args[:1],
+        orderby=[~db.item.created_on],
+        create=False,
+        csv=False,
+        paginate=6,
+    )
+
+    response.title = dash.name
+
+    return dict(grid=grid, current_dash=dash)
 
 
 @auth.requires(isOwner())

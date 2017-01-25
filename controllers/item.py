@@ -250,6 +250,10 @@ def all_items():
     """
     Show user items list
     """
+    if type(request.vars.q) is list:
+        # in the case of being loaded from a query string
+        # use only the last valor from q
+        request.vars.q = request.vars.q[-1]
     request.vars.q = None if request.vars.q == '' else request.vars.q
     if request.vars.q is not None:
         ids = Whoosh().search(request.vars.q)

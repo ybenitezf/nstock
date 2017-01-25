@@ -130,14 +130,6 @@ db.item.embargoed.comment = T(
 
 db.item._enable_record_versioning()
 
-# translation table, indicates with item translate another
-# db.define_table(
-#     'translations',
-#     Field('item_id', 'reference item'),  # original item
-#     Field('trans_id', 'reference item'),  # tranlation
-#     Field('language_tag', 'string', length=2),  # language of the translation
-#     )
-
 db.define_table(
     'languages',
     Field('language_tag', 'string', length=10),
@@ -191,6 +183,16 @@ add_items = LOAD('item', 'add_items.load', ajax=True)
 
 dashboard_sidemenu = LOAD(
     'dashboard', 'side_menu.load', ajax=True, target='dashboard_cmp')
+
+# notification center
+db.define_table(
+    'notification',
+    Field('subject', 'string', length=500),
+    Field('message_content', 'text'),
+    Field('from_user', 'reference auth_user'),
+    Field('to_user', 'reference auth_user'),
+    Field('seen', 'boolean', default=False),
+)
 
 # register content type plugins
 application = Application()

@@ -7,4 +7,4 @@
   {{=dashboard_sidemenu}}
 {{end}}
 
-{{=LOAD('item', 'all_items.load', ajax=True, user_signature=True,target='main')}}
+{{=LOAD('item', 'all_items.load', vars=request.vars, ajax=True, user_signature=True,target='main')}}
