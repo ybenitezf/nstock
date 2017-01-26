@@ -184,15 +184,26 @@ add_items = LOAD('item', 'add_items.load', ajax=True)
 dashboard_sidemenu = LOAD(
     'dashboard', 'side_menu.load', ajax=True, target='dashboard_cmp')
 
+
 # notification center
-db.define_table(
-    'notification',
-    Field('subject', 'string', length=500),
-    Field('message_content', 'text'),
-    Field('from_user', 'reference auth_user'),
-    Field('to_user', 'reference auth_user'),
-    Field('seen', 'boolean', default=False),
-)
+def _():
+    tbl = db.define_table(
+        'notification',
+        Field('subject', 'string', length=500),
+        Field('message_content', 'text'),
+        Field('from_user', 'reference auth_user'),
+        Field('to_user', 'reference auth_user'),
+        Field('seen', 'boolean', default=False),
+        Field('msg_date', 'datetime', default=request.now)
+    )
+    tbl.subject.label = T('Subject')
+    tbl.message_content.label = T('Message')
+    tbl.from_user.label = T('From')
+    tbl.msg_date.label = T('Date and Time')
+    tbl.seen.label = T('Seen')
+    tbl.to_user.readable = False
+    tbl.id.readable = False
+_()
 
 # register content type plugins
 application = Application()

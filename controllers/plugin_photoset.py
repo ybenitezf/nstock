@@ -53,6 +53,7 @@ def delete_photo():
     content.photoset.remove(photo.id)
     del db.plugin_photoset_photo[photo.id]
     content.update_record()
+    application.notifyChanges(item.unique_id)
 
     return CAT('')
 
@@ -75,6 +76,7 @@ def edit_form():
     )
 
     if form.process().accepted:
+        application.notifyChanges(item.unique_id)
         application.indexItem(item.unique_id)
         response.flash = T('Saved')
 

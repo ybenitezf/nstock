@@ -1,11 +1,23 @@
-{{=user.first_name}} {{=user.last_name}}, {{=T('has made changes to the meta-data of the item')}}:
+<p>
+{{=user.first_name}} {{=user.last_name}}, {{=T('has made changes to the item')}}:
+</p>
 
-{{=item.headline}}
+<p>
+  <a href="{{=URL('default', 'index.html', vars=dict(q=item.slugline), scheme=True, host=True)}}">
+    <strong>{{=item.headline}}</strong>
+  </a>
+</p>
 
-{{=T('You can see the changes on')}}:
+<p>{{=T('You can see the changes on')}}:</p>
 
+<a href="{{=URL('item', 'changelog.html', args=[item.unique_id], scheme=True, host=True)}}">
 {{=URL('item', 'changelog.html', args=[item.unique_id], scheme=True, host=True)}}
+</a>
 
---
-{{=T('See you on nStock')}}.
-{{=URL('default', 'index.html', scheme=True, host=True)}}
+<p>
+--<br />
+{{=T('See you on nStock')}}.<br />
+<a href="{{=URL('default', 'index.html', scheme=True, host=True)}}">
+  {{=URL('default', 'index.html', scheme=True, host=True)}}
+</a><br />
+</p>

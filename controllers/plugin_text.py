@@ -28,6 +28,7 @@ def index():
         submit_button=T('Save'))
 
     if form.process().accepted:
+        application.notifyChanges(item.unique_id)
         application.indexItem(item.unique_id)
         redirect(application.getItemURL(item.unique_id))
         response.flash = T('Done')

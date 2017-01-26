@@ -1,18 +1,21 @@
-{{=user.first_name}} {{=user.last_name}}, {{=T('has post the comment')}}:
+<p>{{=user.first_name}} {{=user.last_name}}, {{=T('has post the comment')}}:</p>
 
-"{{=comment.body}}"
+<blockquote cite="{{=URL('default', 'index.html', vars=dict(q=item.slugline), scheme=True, host=True)}}">
+  {{=MARKMIN(comment.body)}}
+</blockquote>
 
-{{=T('On the item:')}}
+<p>{{=T('On the item:')}}</p>
 
-{{=item.headline}} [1]
+<p>
+  <a href="{{=URL('default', 'index.html', vars=dict(q=item.slugline), scheme=True, host=True)}}">
+    <strong>{{=item.headline}}</strong>
+  </a>
+</p>
 
-{{=T("You can view this or others comments to this item on")}}:
-
-{{=URL('item', 'index.html', args=[item.id], scheme=True, host=True)}}
-
---
-{{=T('See you on eNews')}}.
-{{=URL('default', 'index.html', scheme=True, host=True)}}
-
-
-[1] {{=URL('item', 'index.html', args=[item.id], scheme=True, host=True)}}
+<p>
+--<br />
+{{=T('See you on nStock')}}.<br />
+<a href="{{=URL('default', 'index.html', scheme=True, host=True)}}">
+  {{=URL('default', 'index.html', scheme=True, host=True)}}
+</a><br />
+</p>

@@ -1,10 +1,17 @@
-{{=user.first_name}} {{=user.last_name}}, {{=T('has share the item')}}:
+<p>{{=user.first_name}} {{=user.last_name}}, {{=T('has share the item')}}:</p>
 
-{{=item.headline}}
-[{{=URL('default', 'index.html', vars=dict(q=item.slugline), scheme=True, host=True)}}]
+<p>
+  <a href="{{=URL('default', 'index.html', vars=dict(q=item.slugline), scheme=True, host=True)}}">
+    <strong>{{=item.headline}}</strong>
+  </a>
+</p>
 
-{{=T('With')}} {{=t_user.first_name}} {{=t_user.last_name}}.
+<p>{{=T('With')}} {{=t_user.first_name}} {{=t_user.last_name}} [{{=t_user.email}}].</p>
 
---
-{{=T('See you on nStock')}}.
-{{=URL('default', 'index.html', scheme=True, host=True)}}
+<p>
+--<br />
+{{=T('See you on nStock')}}.<br />
+<a href="{{=URL('default', 'index.html', scheme=True, host=True)}}">
+  {{=URL('default', 'index.html', scheme=True, host=True)}}
+</a><br />
+</p>

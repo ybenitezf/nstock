@@ -111,6 +111,24 @@ class Application(object):
         f = "changelog.html"
         return URL(c=c, f=f, args=[item.unique_id])
 
+    def notifyChanges(self, item_id):
+        response = self.response
+        auth = self.auth
+        T = self.T
+        item = self.getItemByUUID(item_id)
+
+        message = response.render(
+            'changes_email.txt',
+            dict(item=item, user=auth.user)
+        )
+        subject = T("Changes on %s") % (item.headline,)
+
+        self.notifyCollaborators(
+            item.unique_id,
+            subject,
+            message
+        )
+
     def notifyCollaborators(self, item_id, subject, message):
         db = self.db
         auth = self.auth

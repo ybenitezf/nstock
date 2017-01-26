@@ -69,17 +69,7 @@ def meta():
     if form.process().accepted:
         # session.flash = "Done !"
         # send an email to all the users who has access to this item
-        message = response.render(
-            'changes_email.txt',
-            dict(item=item, user=auth.user)
-        )
-        subject = T("Changes on %s") % (item.headline,)
-        # item_notify_users(item.id, subject=subject, message=message)
-        application.notifyCollaborators(
-            item.unique_id,
-            subject,
-            message
-        )
+        application.notifyChanges(item.unique_id)
         application.indexItem(item.unique_id)
         if request.ajax:
             response.js = "$('#metaModal').modal('hide');"
