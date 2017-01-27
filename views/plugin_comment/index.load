@@ -21,7 +21,7 @@
 
     <script type="text/javascript">
       $('#cmtModal{{=item.id}}').on('shown.bs.modal', function (e) {
-        web2py_component("{{=URL('plugin_comment', 'index.load', args=[item.unique_id])}}","cmtModalBody{{=item.id}}");
+        web2py_component("{{=URL('plugin_comment', 'index.load', args=[item.unique_id, 'panelless'])}}","cmtModalBody{{=item.id}}");
       });
       $('#cmtModal{{=item.id}}').on('hidden.bs.modal', function (e) {
         $('#cmtModalBody{{=item.id}}').html("");
@@ -29,6 +29,46 @@
       });
     </script>
 {{else:}}
+  {{if 'panelless' in request.args:}}
+  <ul class="media-list">
+    <li class="media">
+      <div class="media-body">
+        {{=form.custom.begin}}
+        <div class="form-group" id="plugin_comment_comment_body__row">
+          <textarea class="text form-control" id="plugin_comment_comment_body" name="body"></textarea>
+          <span class="help-block"></span>
+        </div>
+
+        <div class="form-group" id="submit_record__row">
+          <input class="btn btn-primary" value="{{=T('Post')}}" type="submit"><span class="help-block"></span>
+        </div>
+
+        {{=form.custom.end}}
+      </div>
+    </li>
+  {{for comment in comments:}}
+    <li class="media">
+      <div class="media-body">
+        <h6 class="media-heading">{{=comment.created_by.first_name}} {{=comment.created_by.last_name}} <small>{{=T("says")}}</small></h6>
+        {{=MARKMIN(comment.body)}}
+        <p class="small text-muted">
+          {{from gluon.tools import prettydate}}
+          {{=prettydate(comment.modified_on, T)}}
+        </p>
+      </div>
+    </li>
+  {{pass}}
+  {{if not comments:}}
+    <li class="media">
+      <div class="media-body">
+        <p class="text-center">
+          {{=T("No one has commented yet")}}
+        </p>
+      </div>
+    </li>
+  {{pass}}
+  </ul>
+  {{else:}}
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">{{=T('Comments')}}</h3>
@@ -73,19 +113,6 @@
       {{pass}}
       </ul>
     </div>
-
-    <!-- <div class="panel-footer">
-      {{=form.custom.begin}}
-      <div class="form-group" id="plugin_comment_comment_body__row">
-        <textarea class="text form-control" id="plugin_comment_comment_body" name="body"></textarea>
-        <span class="help-block"></span>
-      </div>
-
-      <div class="form-group" id="submit_record__row">
-        <input class="btn btn-primary" value="{{=T('Post')}}" type="submit"><span class="help-block"></span>
-      </div>
-
-      {{=form.custom.end}}
-    </div> -->
   </div>
+  {{pass}}
 {{pass}}
