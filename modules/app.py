@@ -151,27 +151,34 @@ class Application(object):
                 to_user=u.id
             )
 
-    def shareItem(self, item_id, user):
+    def shareItem(self, item_id, user, perms='collaborator'):
         """
         Share item_id with user
         """
         item = self.getItemByUUID(item_id)
-        target_id = self.db.item.insert(**self.db.item._filter_fields(item))
-        # give owner to the target user
-        g_id = self.auth.user_group(user.id)
-        self.auth.add_permission(g_id, 'owner', self.db.item, target_id)
-        # give collaborator perms to the current user
-        g_id = self.auth.user_group(self.auth.user.id)
-        self.auth.add_permission(
-            g_id, 'collaborator', self.db.item, target_id
-        )
-        # disable the old item
-        item.update_record(is_active=False)
-        # update the archive tables
-        self.db(self.db.item_archive.current_record == item.id).update(
-            current_record=target_id
-        )
-        # add to the index of the user
-        self.indexItem(item.unique_id, user)
+        if perms == 'collaborator':
+            g_id = self.auth.user_group(user.id)
+            self.auth.add_permission(
+                g_id, 'collaborator', self.db.item, item.id)
+            self.indexItem(item.unique_id, user)
+        else:
+            target_id = self.db.item.insert(
+                **self.db.item._filter_fields(item))
+            # give owner to the target user
+            g_id = self.auth.user_group(user.id)
+            self.auth.add_permission(g_id, 'owner', self.db.item, target_id)
+            # give collaborator perms to the current user
+            g_id = self.auth.user_group(self.auth.user.id)
+            self.auth.add_permission(
+                g_id, 'collaborator', self.db.item, target_id
+            )
+            # disable the old item
+            item.update_record(is_active=False)
+            # update the archive tables
+            self.db(self.db.item_archive.current_record == item.id).update(
+                current_record=target_id
+            )
+            # add to the index of the user
+            self.indexItem(item.unique_id, user)
 
         return

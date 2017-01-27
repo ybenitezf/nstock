@@ -198,9 +198,11 @@ def share():
         raise HTTP(404)
 
     fld_email = Field('email', 'string', default='')
+    fld_perms = Field('perms', 'string', default='collaborator')
     fld_email.requires = IS_EMAIL()
     form = SQLFORM.factory(
         fld_email,
+        fld_perms,
         formstyle='bootstrap3_inline',
         submit_button=T("Share this item"),
         table_name='share')
@@ -209,6 +211,8 @@ def share():
         u = db.auth_user(email=form.vars.email)
         if u is not None:
             # create new share
+            application.shareItem(item.unique_id, u, perms=form.vars.perms)
+            # notify users
             subject = T("Share of %s", (item.headline,))
             message = response.render(
                 'share_email.txt',
@@ -223,7 +227,6 @@ def share():
                 subject,
                 message
             )
-            application.shareItem(item.unique_id, u)
             # --
             # close the dialog
             response.js = "$('#metaModal').modal('hide');"
