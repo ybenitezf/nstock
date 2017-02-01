@@ -3,6 +3,7 @@ from content_plugin import ContentPlugin
 from z_whoosh import Whoosh
 from gluon import current, URL
 from gluon.storage import Storage
+from gluon.cache import Cache
 import perms
 
 
@@ -20,6 +21,7 @@ class Application(object):
         self.mail = current.mail
         self.conf = current.conf
         self.registry = Storage()
+        self.cache = Cache(self.request)
 
     def registerContentType(self, item_type, plug):
         """
@@ -129,20 +131,32 @@ class Application(object):
             message
         )
 
+    def getCollaborators(self, item_id, exclude_current=True):
+        """
+        Given a item returns the list of user who have access to item.
+        """
+        db = self.db
+        auth = self.auth
+        item = self.getItemByUUID(item_id)
+
+        query = (db.auth_permission.record_id == item.id)
+        query &= (db.auth_permission.table_name == db.item)
+        query &= (db.auth_permission.group_id == db.auth_membership.group_id)
+        query &= (db.auth_user.id == db.auth_membership.user_id)
+        if exclude_current:
+            query &= (db.auth_user.id != auth.user.id)
+        return db(query).select(
+            db.auth_user.ALL,
+            distinct=True,
+            cache=(self.cache.ram, 30),
+            cacheable=True)
+
     def notifyCollaborators(self, item_id, subject, message):
         db = self.db
         auth = self.auth
         item = self.getItemByUUID(item_id)
 
-        # i need all user who have some permission over current item
-        # with are not the current user
-        query = (db.auth_permission.record_id == item.id)
-        query &= (db.auth_permission.table_name == db.item)
-        query &= (db.auth_permission.group_id == db.auth_membership.group_id)
-        query &= (db.auth_user.id == db.auth_membership.user_id)
-        query &= (db.auth_user.id != auth.user.id)
-
-        myusers = db(query).select(db.auth_user.ALL, distinct=True)
+        myusers = self.getCollaborators(item.unique_id)
         for u in myusers:
             db.notification.insert(
                 subject=subject,

@@ -10,16 +10,34 @@
 <div class="form-group">
   <div class="radio">
     <label>
-      <input type="radio" name="perms" id="optionsPerms1" value="owner">
+      <input type="radio" name="perms" id="optionsPerms1" value="owner" checked>
       {{=T("Owner - Give all permissions to the user")}}.
     </label>
   </div>
   <div class="radio">
     <label>
-      <input type="radio" name="perms" id="optionsPerms1" value="collaborator" checked>
+      <input type="radio" name="perms" id="optionsPerms1" value="collaborator">
       {{=T("Collaborator - Give read only permissions.")}}
     </label>
   </div>
 </div>
 {{=form.custom.submit}}
 {{=form.custom.end}}
+
+{{ u_list = application.getCollaborators(item.unique_id, exclude_current=False) }}
+{{if u_list:}}
+<hr />
+<p><strong>{{=T('Contributors')}}</strong></p>
+<ul class="list-group">
+  {{for u_person in u_list:}}
+  <li class="list-group-item">
+    {{=u_person.email}} |
+    {{if application.isCollaborator(item.unique_id, user=u_person):}}
+      {{=T('collaborator')}}
+    {{else:}}
+      {{=T('owner')}}
+    {{pass}}
+  </li>
+  {{pass}}
+</ul>
+{{pass}}

@@ -198,7 +198,7 @@ def share():
         raise HTTP(404)
 
     fld_email = Field('email', 'string', default='')
-    fld_perms = Field('perms', 'string', default='collaborator')
+    fld_perms = Field('perms', 'string', default='owner')
     fld_email.requires = IS_EMAIL()
     form = SQLFORM.factory(
         fld_email,
