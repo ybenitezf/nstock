@@ -36,6 +36,7 @@ def index():
         showbuttontext=False,
         editable=False,
         csv=False,
+        maxtextlengths={'notification.subject': 100},
         create=False,
         searchable=False,
         orderby=[~tbl.msg_date],

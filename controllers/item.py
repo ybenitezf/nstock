@@ -18,15 +18,15 @@ if False:
 @auth.requires(application.isOwnerOrCollaborator(request.args(0)))
 def index():
     """
-    Default view for all items, the item/index view requires a var
-    named item, all content types templates must exteds the layout of this view
+    Make it the same as all_items or search views but showing only one item.
     """
 
     # We never will have a pure item, so we redirect to the apropiate C/T
     # plugin
-    redirect(application.getItemURL(request.args(0)))
+    # redirect(application.getItemURL(request.args(0)))
+    item = application.getItemByUUID(request.args(0))
 
-    return None
+    return locals()
 
 
 @auth.requires(application.isOwner(request.args(0)))

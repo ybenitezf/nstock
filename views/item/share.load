@@ -7,7 +7,7 @@
     <p class="text-danger">{{=form.errors.email}}</p>
     {{pass}}
 </div>
-<div class="form-group">
+<!-- <div class="form-group">
   <div class="radio">
     <label>
       <input type="radio" name="perms" id="optionsPerms1" value="owner" checked>
@@ -20,11 +20,11 @@
       {{=T("Collaborator - Give read only permissions.")}}
     </label>
   </div>
-</div>
+</div> -->
 {{=form.custom.submit}}
 {{=form.custom.end}}
 
-{{ u_list = application.getCollaborators(item.unique_id, exclude_current=False) }}
+<!-- {{ u_list = application.getCollaborators(item.unique_id, exclude_current=False) }}
 {{if u_list:}}
 <hr />
 <p><strong>{{=T('Contributors')}}</strong></p>
@@ -40,4 +40,4 @@
   </li>
   {{pass}}
 </ul>
-{{pass}}
+{{pass}} -->

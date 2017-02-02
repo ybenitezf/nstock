@@ -1,13 +1,13 @@
 <p>{{=user.first_name}} {{=user.last_name}}, {{=T('has post the comment')}}:</p>
 
-<blockquote cite="{{=URL('default', 'index.html', vars=dict(q=item.slugline), scheme=True, host=True)}}">
+<blockquote cite="{{=URL('item', 'index.html', args=[item.unique_id], scheme=True, host=True)}}">
   {{=MARKMIN(comment.body)}}
 </blockquote>
 
 <p>{{=T('On the item:')}}</p>
 
 <p>
-  <a href="{{=URL('default', 'index.html', vars=dict(q=item.slugline), scheme=True, host=True)}}">
+  <a href="{{=URL('item', 'index.html', args=[item.unique_id], scheme=True, host=True)}}">
     <strong>{{=item.headline}}</strong>
   </a>
 </p>

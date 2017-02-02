@@ -3,7 +3,7 @@
 </p>
 
 <p>
-  <a href="{{=URL('default', 'index.html', vars=dict(q=item.slugline), scheme=True, host=True)}}">
+  <a href="{{=URL('item', 'index.html', args=[item.unique_id], scheme=True, host=True)}}">
     <strong>{{=item.headline}}</strong>
   </a>
 </p>

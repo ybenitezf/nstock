@@ -40,6 +40,7 @@
 '1 hour ago': 'hace 1 hora',
 '1 minute ago': 'hace 1 minuto',
 '1 second ago': 'hace 1 segundo',
+'1 week ago': '1 week ago',
 '<': '<',
 '<=': '<=',
 '=': '=',
