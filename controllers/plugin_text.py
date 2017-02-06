@@ -143,8 +143,6 @@ def create():
     form = SQLFORM.factory(*fields)
 
     if form.process().accepted:
-        # ct = application.getContentType('text')
-        # item_id = ct.create_item(form.vars)
         item_id = application.createItem('text', form.vars)
         form.vars.item_id = item_id
         db.plugin_text_text.insert(

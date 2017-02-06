@@ -1,1 +1,2 @@
 {{extend 'item/full_text.txt'}}
+{{=content.description}}

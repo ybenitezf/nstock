@@ -211,7 +211,8 @@ def share():
         u = db.auth_user(email=form.vars.email)
         if u is not None:
             # create new share
-            application.shareItem(item.unique_id, u, perms=form.vars.perms)
+            ct = application.getContentType(item.item_type)
+            ct.shareItem(item.unique_id, u, perms=form.vars.perms)
             # notify users
             subject = T("Share of %s", (item.headline,))
             message = response.render(

@@ -236,16 +236,13 @@ def upload_photo():
             os.unlink(fl.name)  # cleanup
             # if a photoset is given add this photo to the set
             if request.args(0):
-                item = db.item(request.args(0))
-                photoset = db.plugin_photoset_content(item_id=item.id)
-                photoset.photoset.append(photo_id)
+                item = application.getItemByUUID(request.args(0))
+                photoset = db.plugin_photoset_content(item_id=item.unique_id)
+                if photoset.photoset is None:
+                    photoset.photoset = [photo_id]
+                else:
+                    photoset.photoset.append(photo_id)
                 photoset.update_record()
-                # update translations set
-                for row in db(db.translations.item_id == item.id).select():
-                    t_item = db.item(row.trans_id)
-                    t_photoset = db.plugin_photoset_content(item_id=t_item.id)
-                    t_photoset.photoset.append(photo_id)
-                    t_photoset.update_record()
             else:
                 # in the create stage, i guess
                 session.plugin_photoset.photos.append(photo_id)

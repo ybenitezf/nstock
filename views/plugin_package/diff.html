@@ -1,111 +1,82 @@
 {{left_sidebar_enabled=False}}
 {{right_sidebar_enabled=False}}
+{{response.files.append(URL('static','css/diffview.css'))}}
+{{response.files.append(URL('static','js/diffview.js'))}}
+{{response.files.append(URL('static','js/difflib.js'))}}
 
 {{extend 'layout.html'}}
 
 <div class="row">
     <div class="col-md-12">
-        <ol class="breadcrumb">
-            <li>
-                <a href="{{=URL('default', 'index')}}">{{=T('CAST')}}</a>
-            </li>
-            <li>
-                <a href="{{=CT_REG[item.item_type].get_item_url(item)}}">{{=item.slugline}}</a>
-            </li>
-            <li>
-                <a href="{{=URL('item', 'changelog', args=[item.id])}}">
-                {{=T('Changes')}}
-                </a>
-            </li>
-            <li class="active">
-                {{=T("Content differences")}}
-            </li>
-        </ol>
+      <ol class="breadcrumb">
+          <li>
+              <a href="{{=URL('default', 'index')}}">{{=T('CAST')}}</a>
+          </li>
+          {{if application.isOwner(item.unique_id):}}
+          <li>
+              <a href="{{=application.getItemURL(item.unique_id)}}">{{=item.slugline}}</a>
+          </li>
+          {{else:}}
+          <li>
+              {{=item.slugline}}
+          </li>
+          {{pass}}
+          <li>
+              <a href="{{=URL('changelog', args=[item.unique_id])}}">
+              {{=T('Changes')}}
+              </a>
+          </li>
+          <li class="active">
+              {{=T("Content differences")}}
+          </li>
+      </ol>
     </div>
 
-  <!-- Diff in groups -->
-  <div class="col-md-6">
-    <!-- Before -->
+  <!-- Diff in description -->
+  <div class="col-md-12">
+    <!-- text content diff using jsdifflib -->
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title">{{=T('Before')}}</h3>
+        <h3 class="panel-title">{{=T("Description")}}</h3>
       </div>
-      <div class="panel-body">
-        {{for grp in archive.groups:}}
-        {{group = db.plugin_package_groups(grp)}}
-          {{if group:}}
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h3 class="panel-title">{{=group.group_role}}</h3>
-              </div>
+      <!-- the actual content in to separate and hidden text areas -->
+      <textarea id="current" rows="8" cols="40" style="display: None;">{{=content.description}}</textarea>
+      <textarea id="before" rows="8" cols="40" style="display: None;">{{=archive.description}}</textarea>
+      <input style="display: None;" type="text" name="contextSize" id="contextSize" value="">
+      <!-- the diff table output to full panel width -->
+      <div id="diffoutput"></div>
 
-              {{if group.group_items:}}
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>{{=T('Type')}}</th> <th>{{=T('Headline')}}</th> <th>{{=T('Language')}}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {{for g_item_id in group.group_items:}}
-                  {{g_item = db.item(g_item_id)}}
-                  <tr>
-                    <th scope="row"> <i class="fa {{=CT_REG[g_item.item_type].get_item_icon(g_item)}}"></i> </th>
-                    <td>{{=g_item.headline}}</td>
-                    <td>{{=g_item.language_tag}}</td>
-                  </tr>
-                  {{pass}}
-                </tbody>
-              </table>
-              {{pass}}
-            </div>
-          {{pass}}
-        {{pass}}
-      </div>
+      <script type="text/javascript">
+
+      function diffUsingJS(viewType) {
+        "use strict";
+        var byId = function (id) { return document.getElementById(id); },
+          base = difflib.stringAsLines(byId("before").value),
+          newtxt = difflib.stringAsLines(byId("current").value),
+          sm = new difflib.SequenceMatcher(base, newtxt),
+          opcodes = sm.get_opcodes(),
+          diffoutputdiv = byId("diffoutput"),
+          contextSize = byId("contextSize").value;
+
+        diffoutputdiv.innerHTML = "";
+        contextSize = contextSize || null;
+
+        diffoutputdiv.appendChild(diffview.buildView({
+          baseTextLines: base,
+          newTextLines: newtxt,
+          opcodes: opcodes,
+          baseTextName: "{{=T('Before')}}",
+          newTextName: "{{=T('Current')}}",
+          contextSize: contextSize,
+          viewType: viewType
+        }));
+      }
+
+      $( document ).ready(function() {
+          diffUsingJS(0);
+      });
+      </script>
     </div>
-    <!-- Before -->
-  </div>
-
-  <div class="col-md-6">
-    <!-- Current -->
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">{{=T('Current')}}</h3>
-      </div>
-      <div class="panel-body">
-        {{for grp in content.groups:}}
-        {{group = db.plugin_package_groups(grp)}}
-          {{if group:}}
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h3 class="panel-title">{{=group.group_role}}</h3>
-              </div>
-
-              {{if group.group_items:}}
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>{{=T('Type')}}</th> <th>{{=T('Headline')}}</th> <th>{{=T('Language')}}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {{for g_item_id in group.group_items:}}
-                  {{g_item = db.item(g_item_id)}}
-                  <tr>
-                    <th scope="row"> <i class="fa {{=CT_REG[g_item.item_type].get_item_icon(g_item)}}"></i> </th>
-                    <td>{{=g_item.headline}}</td>
-                    <td>{{=g_item.language_tag}}</td>
-                  </tr>
-                  {{pass}}
-                </tbody>
-              </table>
-              {{pass}}
-            </div>
-          {{pass}}
-        {{pass}}
-      </div>
-    </div>
-    <!-- Current -->
   </div>
 
 </div>

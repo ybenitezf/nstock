@@ -98,6 +98,7 @@ db.item.headline.requires = IS_NOT_EMPTY()
 db.item.language_tag.label = T('Language')
 db.item.keywords.label = T("Keywords")
 db.item.keywords.requires = IS_NOT_EMPTY()
+db.item.keywords.comment = T("One keyword per line")
 db.item.section_page.label = T("Section")
 db.item.section_page.comment = T(
     "Section or page in with this item is intended to be used")
@@ -210,3 +211,4 @@ application = Application()
 plugins.text.app = application
 plugins.picture.app = application
 plugins.photoset.app = application
+plugins.package.app = application
