@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from z_whoosh import Whoosh
+# from z_whoosh import Whoosh
 if False:
     from gluon import redirect, current, Field, HTTP
     from gluon import A, CAT, SPAN, SQLFORM, URL, IS_IN_SET
@@ -15,7 +15,7 @@ if False:
     # from menu import *
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.isOwnerOrCollaborator(request.args(0)))
 def index():
     """
     Make it the same as all_items or search views but showing only one item.
@@ -29,7 +29,7 @@ def index():
     return locals()
 
 
-@auth.requires(application.isOwner(request.args(0)))
+@auth.requires(lambda: application.isOwner(request.args(0)))
 def meta():
     """
     Edit/Show item metadata info
@@ -79,7 +79,7 @@ def meta():
     return locals()
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.isOwnerOrCollaborator(request.args(0)))
 def changelog():
     """
     Show item change log over the time
@@ -126,7 +126,7 @@ def changelog():
     return dict(item=item, changes=changes)
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.isOwnerOrCollaborator(request.args(0)))
 def diff():
     """
     Show the diff betwen the actual item and the archive one
@@ -172,99 +172,79 @@ def diff():
     return dict(item=item, form_actual=form_actual, form_archive=form_archive)
 
 
-@auth.requires_login()
-def add_items():
-    return dict()
+# @auth.requires_login()
+# def add_items():
+#     return dict()
 
 
-@auth.requires_permission('owner', db.item, record_id=request.args(0))
-def unshare():
-    item = db.item(request.args(0))
-    gid = int(request.args(1))
+# @auth.requires_permission('owner', db.item, record_id=request.args(0))
+# def unshare():
+#     item = db.item(request.args(0))
+#     gid = int(request.args(1))
+#
+#     auth.del_permission(gid, 'collaborator', db.item, item.id)
+#
+#     response.js = '$( "#{}" ).get(0).reload();'.format(request.cid)
+#     return CAT('')
 
-    auth.del_permission(gid, 'collaborator', db.item, item.id)
 
-    response.js = '$( "#{}" ).get(0).reload();'.format(request.cid)
-    return CAT('')
-
-
-@auth.requires(application.isOwner(request.args(0)))
+@auth.requires(lambda: application.isOwner(request.args(0)))
 def share():
     """
-    Show the user's who has access to this item
+    Show the list of desk to with the item can be push
     """
     item = application.getItemByUUID(request.args(0))
     if item is None:
         raise HTTP(404)
 
-    fld_email = Field('email', 'string', default='')
-    fld_perms = Field('perms', 'string', default='owner')
-    fld_email.requires = IS_EMAIL()
+    query = (db.desk.id > 0)
+    query &= auth.accessible_query('push_items', db.desk)
+
+    posible_desk = db(query).select()
+
+    fld_to_desk = Field('to_desk', 'integer')
+    fld_to_desk.label = T("Push to")
+    fld_to_desk.comment = T("Select where to push the item")
+    fld_to_desk.requires = IS_IN_SET(
+        [(desk.id, desk.name) for desk in posible_desk]
+    )
     form = SQLFORM.factory(
-        fld_email,
-        fld_perms,
-        formstyle='bootstrap3_inline',
-        submit_button=T("Share this item"),
+        fld_to_desk,
+        submit_button=T("Send"),
         table_name='share')
     if form.process().accepted:
         # search a user by his email addr
-        u = db.auth_user(email=form.vars.email)
-        if u is not None:
-            # create new share
-            ct = application.getContentType(item.item_type)
-            ct.shareItem(item.unique_id, u, perms=form.vars.perms)
-            # notify users
-            subject = T("Share of %s", (item.headline,))
-            message = response.render(
-                'share_email.txt',
-                dict(
-                    item=item,
-                    user=auth.user,
-                    t_user=db.auth_user(email=form.vars.email)
-                )
-            )
-            application.notifyCollaborators(
-                item.unique_id,
-                subject,
-                message
-            )
-            # --
-            # close the dialog
-            response.js = "$('#metaModal').modal('hide');"
-        else:
-            # no user with that email
-            response.flash = T("The user don't exists on this system")
-            form.errors.email = T("The user don't exists on this system")
+        pass
 
     return locals()
 
 
-@auth.requires_login()
-def all_items():
-    """
-    Show user items list
-    """
-    if type(request.vars.q) is list:
-        # in the case of being loaded from a query string
-        # use only the last valor from q
-        request.vars.q = request.vars.q[-1]
-    request.vars.q = None if request.vars.q == '' else request.vars.q
-    if request.vars.q is not None:
-        ids = Whoosh().search(request.vars.q)
-        query = db.item.unique_id.belongs(ids)
-    else:
-        query = (db.item.id > 0)
-
-    query &= (
-        auth.accessible_query('collaborator', db.item) |
-        auth.accessible_query('owner', db.item))
-
-    grid = SQLFORM.grid(
-        query,
-        orderby=[~db.item.created_on],
-        create=False,
-        csv=False,
-        paginate=6,
-    )
-
-    return dict(grid=grid)
+# @auth.requires_login()
+# def all_items():
+#     """
+#     Show user items list
+#     """
+#     if type(request.vars.q) is list:
+#         # in the case of being loaded from a query string
+#         # use only the last valor from q
+#         request.vars.q = request.vars.q[-1]
+#     request.vars.q = None if request.vars.q == '' else request.vars.q
+#     if request.vars.q is not None:
+#         ids = Whoosh().search(request.vars.q)
+#         query = db.item.unique_id.belongs(ids)
+#     else:
+#         query = (db.item.id > 0)
+#
+#     query &= (
+#         auth.accessible_query('collaborator', db.item) |
+#         auth.accessible_query('owner', db.item))
+#
+#     grid = SQLFORM.grid(
+#         query,
+#         orderby=[~db.item.created_on],
+#         create=False,
+#         csv=False,
+#         paginate=6,
+#     )
+#
+#     return dict(grid=grid)

@@ -18,6 +18,7 @@ class Application(object):
         self.auth = current.auth
         self.request = current.request
         self.response = current.response
+        self.session = current.session
         self.mail = current.mail
         self.conf = current.conf
         self.registry = Storage()
@@ -41,6 +42,23 @@ class Application(object):
         item = db(query).select().first()
         return item
 
+    def canUpdateItem(self, unique_id, user=None):
+        item = self.getItemByUUID(unique_id)
+        isOwner = self.isOwner(unique_id, user=user)
+        desk = self.db.desk(self.session.desk_id)
+        can_update_desk = self.auth.has_permission(
+            'update_items', self.db.desk, desk.id)
+
+        return (isOwner or can_update_desk) and (item.id in desk.item_list)
+
+    def canReadItem(self, unique_id, user=None):
+        item = self.getItemByUUID(unique_id)
+        desk = self.db.desk(self.session.desk_id)
+        can_read_desk = self.auth.has_permission(
+            'read', self.db.desk, desk.id)
+
+        return can_read_desk and (item.id in desk.item_list)
+
     def isOwner(self, unique_id, user=None):
         """
         Returns True if user is the owner of the item
@@ -55,6 +73,26 @@ class Application(object):
 
         return self.auth.has_permission(
             'owner', self.db.item, record_id=item.id, user_id=user.id)
+
+    def getUserDesk(self, user=None):
+        db = self.db
+        auth = self.auth
+        if user is None:
+            user = auth.user
+
+        # setup user desk if necessary.
+        user_desk = db(
+            auth.accessible_query('owner', db.desk)).select().first()
+        if user_desk is None:
+            name = "{} {}".format(
+                auth.user.first_name,
+                self.T("desk"))
+            desk_id = db.desk.insert(name=name)
+            g_id = auth.user_group(auth.user.id)
+            auth.add_permission(g_id, 'owner', db.desk, desk_id)
+            user_desk = db.desk(desk_id)
+
+        return user_desk
 
     def isCollaborator(self, unique_id, user=None):
         """
@@ -99,6 +137,12 @@ class Application(object):
         item_id = db.item.insert(**db.item._filter_fields(values))
         # give owner perm to the item
         auth.add_permission(0, 'owner', db.item, item_id)
+        # add the item to the user desk
+        user_desk = self.getUserDesk()
+        item_list = user_desk.item_list
+        item_list.insert(0, item_id)
+        user_desk.update_record(item_list=item_list)
+        # --
         return db.item(item_id).unique_id
 
     def getItemURL(self, unique_id):

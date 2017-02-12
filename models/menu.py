@@ -56,7 +56,8 @@ def _():
         (T("Dashboard's"), False, URL('default', 'index'), submenu)
     ]
 if auth.user:
-    _()
+    #_()
+    pass
 
 DEVELOPMENT_MENU = False
 

@@ -10,7 +10,7 @@ if False:
     from dc import application
 
 
-@auth.requires(application.isOwner(request.args(0)))
+@auth.requires(lambda: application.isOwner(request.args(0)))
 def index():
     """
     Edit/Show package content
@@ -30,7 +30,7 @@ def index():
     return locals()
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.isOwnerOrCollaborator(request.args(0)))
 def diff():
     item = application.getItemByUUID(request.args(0))
     content = db.plugin_package_content(item_id=item.unique_id)
@@ -38,7 +38,7 @@ def diff():
     return locals()
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.isOwnerOrCollaborator(request.args(0)))
 def changelog():
     item = application.getItemByUUID(request.args(0))
     pkg_content = db.plugin_package_content(item_id=item.unique_id)
@@ -83,13 +83,8 @@ def changelog():
 
 @auth.requires_login()
 def create():
-    if session.dashboard is None:
-        session.flash = T('You must activate some dashboard first')
-        redirect(URL('default', 'index'))
-
-    dash = db.dashboard(session.dashboard)
-    if not dash.item_list:
-        session.flash = T('The current dashboard is empty')
+    if not session.marked_items:
+        session.flash = T('You must mark some items first')
         redirect(URL('default', 'index'))
 
     # get the headline form the first item in the list
@@ -101,7 +96,7 @@ def create():
     fields.append(fdl_headline)
     fdl_keywords = db.item.keywords
     keywords_list = []
-    for item_id in dash.item_list:
+    for item_id in session.marked_items:
         _item = application.getItemByUUID(item_id)
         keywords_list.extend(_item.keywords)
     keywords_list = list(set(keywords_list))  # remove any dup
@@ -121,11 +116,12 @@ def create():
 
     if form.process(dbio=False).accepted:
         form.vars.item_id = application.createItem('package', form.vars)
-        form.vars.item_list = dash.item_list
+        form.vars.item_list = session.marked_items
         db.plugin_package_content.insert(
             **db.plugin_package_content._filter_fields(form.vars)
         )
         application.indexItem(form.vars.item_id)
+        session.marked_items = []
         redirect(URL('default', 'index'))
 
     return locals()

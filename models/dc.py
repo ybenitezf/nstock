@@ -206,6 +206,30 @@ def _():
     tbl.id.readable = False
 _()
 
+
+# orgs are going here
+def _():
+    # don't polute globals()
+    tbl = db.define_table(
+        'desk',
+        Field('name', 'string', length=100),
+        Field('item_list', 'list:reference item', default=[])
+    )
+    tbl.name.label = T('Name')
+    tbl.item_list.readable = False
+
+    tbl = db.define_table(
+        'organization',
+        Field('name', 'string', length=100),
+        Field('description', 'text'),
+        Field('users', 'list:reference auth_user', default=[]),
+        Field('desks', 'list:reference desk', default=[])
+    )
+    tbl.name.label = T('Name')
+    tbl.description.label = T('Description')
+    tbl.users.label = T('Users')
+_()
+
 # register content type plugins
 application = Application()
 plugins.text.app = application

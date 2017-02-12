@@ -57,7 +57,7 @@
     <!--[if lt IE 8]><p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p><![endif]-->
     <div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>
     <!-- Navbar ======================================= -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -69,6 +69,21 @@
           {{=response.logo or ''}}
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
+          {{if auth.user:}}
+          <ul class="nav navbar-nav">
+            {{ user_desk = application.getUserDesk() }}
+            <li class="{{='active' if request.controller == 'desk' and request.function == 'index' and request.args(0) == str(user_desk.id) else ''}}">
+              <a href="{{=URL('default', 'index')}}">
+                {{=T("Home")}}
+              </a>
+            </li>
+            <li class="{{='active' if request.controller == 'org' else ''}}">
+              <a href="{{=URL('org', 'index')}}">
+                {{=T("Organizations")}}
+              </a>
+            </li>
+          </ul>
+          {{pass}}
           <ul class="nav navbar-nav navbar-right">
             {{='auth' in globals() and auth.navbar('Welcome',mode='dropdown') or ''}}
           </ul>
@@ -82,18 +97,22 @@
       </div>
     </nav>
     <!-- Masthead ===================================== -->
-    {{block header}}
-    {{end}}
+    <div class="container-fluid hidden-xs hidden-sm">
+      <div class="col-md-12">
+        {{block header}}
+        {{end}}
+      </div>
+    </div>
     <!-- Main ========================================= -->
     <!-- Begin page content -->
     <div class="container-fluid main-container">
       {{if left_sidebar_enabled:}}
           <div class="col-md-3 left-sidebar hidden-xs hidden-sm">
-            <div data-spy="affix" data-offset-top="60">
+            <!-- <div data-spy="affix" data-offset-top="10"> -->
               {{block left_sidebar}}
               <p></p>
               {{end}}
-            </div>
+            <!-- </div> -->
           </div>
       {{pass}}
 

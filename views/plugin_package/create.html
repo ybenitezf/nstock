@@ -34,7 +34,7 @@
       </tr>
     </thead>
     <tbody>
-      {{for item_id in dash.item_list:}}
+      {{for item_id in session.marked_items:}}
       {{item = application.getItemByUUID(item_id)}}
       <tr>
         <th scope="row"> {{=T(item.item_type)}} </th>

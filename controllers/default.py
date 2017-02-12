@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 if False:
-    from gluon import current
+    from gluon import current, redirect, URL
     request = current.request
     response = current.response
     session = current.session
     cache = current.cache
     T = current.T
     from db import db, auth, service
+    from dc import application
 
 
 @auth.requires_login()
@@ -14,6 +15,8 @@ def index():
     """
     LOAD all components with ajax
     """
+    user_desk = application.getUserDesk()
+    redirect(URL('desk', 'index', args=[user_desk.id]))
     return locals()
 
 

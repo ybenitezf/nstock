@@ -23,14 +23,29 @@
   {{=plugin_comment(item.unique_id)}}
 {{end}}
 
+{{block header}}
 <ol class="breadcrumb">
-    <li>
-        <a href="{{=URL('default', 'index.html')}}">{{=T('CAST')}}</a>
-    </li>
-    <li class="active">
-        {{=item.slugline}}
-    </li>
+  <li>
+    <a href="{{=URL('default', 'index')}}">{{=T('Home')}}</a>
+  </li>
+  {{if session.org_id:}}
+  <li>
+    <a href="{{=URL('org', 'view', args=[session.org_id])}}">
+      {{=db.organization(session.org_id).name}}
+    </a>
+  </li>
+  {{pass}}
+
+  {{if session.desk_id:}}
+  <li>
+    <a href="{{=URL('desk', 'index', args=[session.desk_id])}}">
+      {{=db.desk(session.desk_id).name}}
+    </a>
+  </li>
+  {{pass}}
+  <li class="active">{{=item.slugline}}</li>
 </ol>
+{{end}}
 
 <!-- metaModal -->
 <div class="modal fade" id="metaModal" tabindex="-1" role="dialog" aria-labelledby="metaModalLabel">

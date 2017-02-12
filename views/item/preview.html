@@ -10,9 +10,8 @@
   <div id="item-{{=item.id}}" class="media item-preview">
     <div class="media-body text-preview">
         <div class="pull-right">
-          {{if session.dashboard:}}
-            {{dash = db.dashboard(session.dashboard)}}
-            <button id="toggle{{=item.id}}" class="btn btn-default {{='active' if is_in_board(item, dash) else ''}}" title="{{=T('Toogle pin to dashboard')}}">
+            {{marked = session.marked_items}}
+            <button id="toggle{{=item.id}}" class="btn btn-default {{='active' if item.unique_id in marked else ''}}" title="{{=T('Mark / unmark')}}">
               <i class="fa fa-map-pin"></i>
             </button>
 
@@ -22,7 +21,7 @@
               $('#toggle{{=item.id}}').click(function(e) {
                 e.stopPropagation();
                 Pace.start();
-                web2py_component("{{=URL('dashboard', 'toogle_pin.load', vars=dict(remove_item=remove_item), args=[dash.id, item.unique_id])}}", target='hiddethis');
+                web2py_component("{{=URL('desk', 'toogle_mark.load', args=[item.unique_id])}}", target='hiddethis');
                 $( this ).toggleClass( 'active' );
                 Pace.stop();
               });
@@ -30,7 +29,6 @@
             });
             </script>
 
-          {{pass}}
           {{if application.isOwner(item.unique_id):}}
           <button id="itemSend{{=item.id}}" class="btn btn-default" title="{{=T('Send')}}">
             <i class="fa fa-send"></i>
