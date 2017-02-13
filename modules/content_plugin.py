@@ -50,14 +50,9 @@ class ContentPlugin(object):
         """Return full text document, mean for plugins"""
         raise NotImplementedError
 
-    def shareItem(self, item_id, user, perms='ownner'):
+    def shareItem(self, item_id, src_desk, dst_desk):
         """Share item with user, given the perms"""
-        self.app.shareItem(item_id, user, perms=perms)
-        self.on_share(self.app.getItemByUUID(item_id), user)
+        self.app.shareItem(item_id, src_desk, dst_desk)
         # some content plugins may whant to do some stuff before or after
         # sharing an item. For example package-type items. Remember call
         # super.
-
-    def on_share(self, item, user):
-        """do something when conent is shared with user"""
-        pass

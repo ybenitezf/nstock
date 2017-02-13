@@ -4,79 +4,56 @@
 {{response.files.append(URL('static','js/diffview.js'))}}
 {{response.files.append(URL('static','js/difflib.js'))}}
 
-{{extend 'layout.html'}}
+{{extend 'item/item_layout.html'}}
 
-<div class="row">
+<div class="container-fluid">
+  <div class="row">
+    <!-- Diff in description -->
     <div class="col-md-12">
-      <ol class="breadcrumb">
-          <li>
-              <a href="{{=URL('default', 'index')}}">{{=T('CAST')}}</a>
-          </li>
-          {{if application.isOwner(item.unique_id):}}
-          <li>
-              <a href="{{=application.getItemURL(item.unique_id)}}">{{=item.slugline}}</a>
-          </li>
-          {{else:}}
-          <li>
-              {{=item.slugline}}
-          </li>
-          {{pass}}
-          <li>
-              <a href="{{=URL('changelog', args=[item.unique_id])}}">
-              {{=T('Changes')}}
-              </a>
-          </li>
-          <li class="active">
-              {{=T("Content differences")}}
-          </li>
-      </ol>
-    </div>
+      <!-- text content diff using jsdifflib -->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{=T("Description")}}</h3>
+        </div>
+        <!-- the actual content in to separate and hidden text areas -->
+        <textarea id="current" rows="8" cols="40" style="display: None;">{{=content.description}}</textarea>
+        <textarea id="before" rows="8" cols="40" style="display: None;">{{=archive.description}}</textarea>
+        <input style="display: None;" type="text" name="contextSize" id="contextSize" value="">
+        <!-- the diff table output to full panel width -->
+        <div id="diffoutput"></div>
 
-  <!-- Diff in description -->
-  <div class="col-md-12">
-    <!-- text content diff using jsdifflib -->
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">{{=T("Description")}}</h3>
+        <script type="text/javascript">
+
+        function diffUsingJS(viewType) {
+          "use strict";
+          var byId = function (id) { return document.getElementById(id); },
+            base = difflib.stringAsLines(byId("before").value),
+            newtxt = difflib.stringAsLines(byId("current").value),
+            sm = new difflib.SequenceMatcher(base, newtxt),
+            opcodes = sm.get_opcodes(),
+            diffoutputdiv = byId("diffoutput"),
+            contextSize = byId("contextSize").value;
+
+          diffoutputdiv.innerHTML = "";
+          contextSize = contextSize || null;
+
+          diffoutputdiv.appendChild(diffview.buildView({
+            baseTextLines: base,
+            newTextLines: newtxt,
+            opcodes: opcodes,
+            baseTextName: "{{=T('Before')}}",
+            newTextName: "{{=T('Current')}}",
+            contextSize: contextSize,
+            viewType: viewType
+          }));
+        }
+
+        $( document ).ready(function() {
+            diffUsingJS(0);
+        });
+        </script>
       </div>
-      <!-- the actual content in to separate and hidden text areas -->
-      <textarea id="current" rows="8" cols="40" style="display: None;">{{=content.description}}</textarea>
-      <textarea id="before" rows="8" cols="40" style="display: None;">{{=archive.description}}</textarea>
-      <input style="display: None;" type="text" name="contextSize" id="contextSize" value="">
-      <!-- the diff table output to full panel width -->
-      <div id="diffoutput"></div>
-
-      <script type="text/javascript">
-
-      function diffUsingJS(viewType) {
-        "use strict";
-        var byId = function (id) { return document.getElementById(id); },
-          base = difflib.stringAsLines(byId("before").value),
-          newtxt = difflib.stringAsLines(byId("current").value),
-          sm = new difflib.SequenceMatcher(base, newtxt),
-          opcodes = sm.get_opcodes(),
-          diffoutputdiv = byId("diffoutput"),
-          contextSize = byId("contextSize").value;
-
-        diffoutputdiv.innerHTML = "";
-        contextSize = contextSize || null;
-
-        diffoutputdiv.appendChild(diffview.buildView({
-          baseTextLines: base,
-          newTextLines: newtxt,
-          opcodes: opcodes,
-          baseTextName: "{{=T('Before')}}",
-          newTextName: "{{=T('Current')}}",
-          contextSize: contextSize,
-          viewType: viewType
-        }));
-      }
-
-      $( document ).ready(function() {
-          diffUsingJS(0);
-      });
-      </script>
     </div>
-  </div>
 
+  </div>
 </div>

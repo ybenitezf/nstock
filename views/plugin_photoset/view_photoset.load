@@ -52,7 +52,7 @@
             </div>
 
             <div class="btn-group btn-group-xs pull-right">
-              {{if application.isOwner(item.unique_id):}}
+              {{if application.canUpdateItem(item.unique_id):}}
               <a id="photoset_action_delete_{{=_photo.id}}" class="btn btn-danger btn-xs">
                 <i class="fa fa-close"></i>
               </a>
@@ -81,7 +81,7 @@
 </div>
 
 
-{{if application.isOwner(item.unique_id):}}
+{{if application.canUpdateItem(item.unique_id):}}
 <script>
 $(document).ready(function() {
   var uploader = new qq.FileUploader({

@@ -44,18 +44,25 @@ class Application(object):
 
     def canUpdateItem(self, unique_id, user=None):
         item = self.getItemByUUID(unique_id)
-        isOwner = self.isOwner(unique_id, user=user)
-        desk = self.db.desk(self.session.desk_id)
+        desk = self.db(
+            self.db.desk.item_list.contains(item.id)).select().first()
+        is_owner = self.isOwner(unique_id, user=user) and (
+            desk.id == self.getUserDesk().id)
         can_update_desk = self.auth.has_permission(
-            'update_items', self.db.desk, desk.id)
+            'update_items', self.db.desk, desk.id) or self.auth.has_permission(
+            'owner', self.db.desk, desk.id) or self.auth.has_permission(
+            'update', self.db.desk, desk.id)
 
-        return (isOwner or can_update_desk) and (item.id in desk.item_list)
+        return (is_owner or can_update_desk) and (item.id in desk.item_list)
 
     def canReadItem(self, unique_id, user=None):
         item = self.getItemByUUID(unique_id)
-        desk = self.db.desk(self.session.desk_id)
+        desk = self.db(
+            self.db.desk.item_list.contains(item.id)).select().first()
         can_read_desk = self.auth.has_permission(
-            'read', self.db.desk, desk.id)
+            'read', self.db.desk, desk.id) or self.auth.has_permission(
+            'owner', self.db.desk, desk.id) or self.auth.has_permission(
+            'update', self.db.desk, desk.id)
 
         return can_read_desk and (item.id in desk.item_list)
 
@@ -84,9 +91,7 @@ class Application(object):
         user_desk = db(
             auth.accessible_query('owner', db.desk)).select().first()
         if user_desk is None:
-            name = "{} {}".format(
-                auth.user.first_name,
-                self.T("desk"))
+            name = self.T("%s desk", (auth.user.first_name,))
             desk_id = db.desk.insert(name=name)
             g_id = auth.user_group(auth.user.id)
             auth.add_permission(g_id, 'owner', db.desk, desk_id)
@@ -182,9 +187,12 @@ class Application(object):
         db = self.db
         auth = self.auth
         item = self.getItemByUUID(item_id)
+        desk = self.db(
+            self.db.desk.item_list.contains(item.id)).select().first()
 
-        query = (db.auth_permission.record_id == item.id)
-        query &= (db.auth_permission.table_name == db.item)
+        query = (db.auth_permission.record_id == desk.id)
+        query &= (db.auth_permission.name != 'push_items')
+        query &= (db.auth_permission.table_name == db.desk)
         query &= (db.auth_permission.group_id == db.auth_membership.group_id)
         query &= (db.auth_user.id == db.auth_membership.user_id)
         if exclude_current:
@@ -209,29 +217,19 @@ class Application(object):
                 to_user=u.id
             )
 
-    def shareItem(self, item_id, user, perms='collaborator'):
+    def shareItem(self, item_id, src_desk, dst_desk):
         """
-        Share item_id with user
+        Move item_id from src_desk to dst_desk
         """
-        if user.id != self.auth.user.id:
-            item = self.getItemByUUID(item_id)
-            if perms == 'collaborator':
-                g_id = self.auth.user_group(user.id)
-                self.auth.add_permission(
-                    g_id, 'collaborator', self.db.item, item.id)
-                self.indexItem(item.unique_id, user)
-            else:
-                # give owner to the target user
-                g_id = self.auth.user_group(user.id)
-                self.auth.add_permission(g_id, 'owner', self.db.item, item.id)
-                # give collaborator perms to the current user
-                g_id = self.auth.user_group(self.auth.user.id)
-                self.auth.add_permission(
-                    g_id, 'collaborator', self.db.item, item.id)
-                # remove the owner perm from original user.
-                self.auth.del_permission(
-                    g_id, 'owner', self.db.item, item.id)
-                # add to the index of the user
-                self.indexItem(item.unique_id, user)
+        item = self.getItemByUUID(item_id)
+        src = self.db.desk(src_desk)
+        dst = self.db.desk(dst_desk)
+        src_list = src.item_list
+        src_list.remove(item.id)
+        src.update_record(item_list=src_list)
+        dst_list = dst.item_list
+        dst_list.insert(0, item.id)
+        dst.update_record(item_list=dst_list)
+        self.notifyChanges(item_id)
 
         return

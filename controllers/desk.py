@@ -177,6 +177,7 @@ def create():
     tbl.name.requires = IS_NOT_EMPTY()
 
     form = SQLFORM(db.desk)
+    form.add_button(T('Cancel'), URL('org', 'view', args=[org.id]))
 
     if form.process().accepted:
         # add the new desk to the org list

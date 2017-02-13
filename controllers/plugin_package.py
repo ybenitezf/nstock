@@ -10,7 +10,7 @@ if False:
     from dc import application
 
 
-@auth.requires(lambda: application.isOwner(request.args(0)))
+@auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def index():
     """
     Edit/Show package content
@@ -30,7 +30,7 @@ def index():
     return locals()
 
 
-@auth.requires(lambda: application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def diff():
     item = application.getItemByUUID(request.args(0))
     content = db.plugin_package_content(item_id=item.unique_id)
@@ -38,7 +38,7 @@ def diff():
     return locals()
 
 
-@auth.requires(lambda: application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def changelog():
     item = application.getItemByUUID(request.args(0))
     pkg_content = db.plugin_package_content(item_id=item.unique_id)

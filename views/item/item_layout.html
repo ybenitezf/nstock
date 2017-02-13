@@ -12,7 +12,7 @@
   response.menu += [(T('Item'), False, "#", item_actions)]
   }}
 {{pass}}
-{{if application.isOwner(item.unique_id):}}
+{{if application.canUpdateItem(item.unique_id):}}
 {{_()}}
 {{pass}}
 
@@ -36,13 +36,12 @@
   </li>
   {{pass}}
 
-  {{if session.desk_id:}}
+  {{desk = db(db.desk.item_list.contains(item.id)).select().first()}}
   <li>
-    <a href="{{=URL('desk', 'index', args=[session.desk_id])}}">
-      {{=db.desk(session.desk_id).name}}
+    <a href="{{=URL('desk', 'index', args=[desk.id])}}">
+      {{=desk.name}}
     </a>
   </li>
-  {{pass}}
   <li class="active">{{=item.slugline}}</li>
 </ol>
 {{end}}

@@ -15,7 +15,7 @@ if False:
     from dc import application
 
 
-@auth.requires(application.isOwner(request.args(0)))
+@auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def index():
     item = application.getItemByUUID(request.args(0))
     content = db.plugin_photoset_content(item_id=item.id)
@@ -23,7 +23,7 @@ def index():
     return locals()
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def view_photoset():
     item = application.getItemByUUID(request.args(0))
     content = db.plugin_photoset_content(item_id=item.unique_id)
@@ -33,7 +33,7 @@ def view_photoset():
     return locals()
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def preview_photo():
     item = application.getItemByUUID(request.args(0))
     photo = db.plugin_photoset_photo(request.args(1))
@@ -44,7 +44,7 @@ def preview_photo():
     )
 
 
-@auth.requires(application.isOwner(request.args(0)))
+@auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def delete_photo():
     item = application.getItemByUUID(request.args(0))
     content = db.plugin_photoset_content(item_id=item.unique_id)
@@ -58,7 +58,7 @@ def delete_photo():
     return CAT('')
 
 
-@auth.requires(application.isOwner(request.args(0)))
+@auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def edit_form():
     item = application.getItemByUUID(request.args(0))
     content = db.plugin_photoset_content(item_id=item.unique_id)
@@ -83,7 +83,7 @@ def edit_form():
     return form
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def changelog():
     """
     Show item change log over the time
@@ -129,7 +129,7 @@ def changelog():
     return locals()
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def diff():
     item = application.getItemByUUID(request.args(0))
     content = db.plugin_photoset_content(item_id=item.unique_id)

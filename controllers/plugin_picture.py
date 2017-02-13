@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# from perms import isOwnerOrCollaborator, isOwner
 from PIL import Image
 from tempfile import NamedTemporaryFile
 import os
@@ -14,7 +13,7 @@ if False:
     from dc import application
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def index():
     """
     Edit content
@@ -42,7 +41,7 @@ def index():
     return dict(form=form, item=item, content=content)
 
 
-@auth.requires(application.isOwner(request.args(0)))
+@auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def delete_rendition():
     item = application.getItemByUUID(request.args(0))
     content = db.plugin_picture_info(item_id=item.unique_id)
@@ -60,7 +59,7 @@ def delete_rendition():
     return CAT('')
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def diff():
     item = application.getItemByUUID(request.args(0))
     content = db.plugin_picture_info(item_id=item.unique_id)
@@ -97,7 +96,7 @@ def diff():
     return locals()
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def changelog():
     item = application.getItemByUUID(request.args(0))
     pic_info = db.plugin_picture_info(item_id=item.unique_id)
@@ -140,7 +139,7 @@ def changelog():
     return locals()
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def add_rendition():
     item = application.getItemByUUID(request.args(0))
     content = db.plugin_picture_info(item_id=item.unique_id)

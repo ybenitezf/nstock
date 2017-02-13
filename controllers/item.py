@@ -3,7 +3,7 @@
 if False:
     from gluon import redirect, current, Field, HTTP
     from gluon import A, CAT, SPAN, SQLFORM, URL, IS_IN_SET
-    from gluon import IS_EMAIL
+    # from gluon import IS_EMAIL
     request = current.request
     response = current.response
     session = current.session
@@ -15,7 +15,7 @@ if False:
     # from menu import *
 
 
-@auth.requires(lambda: application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def index():
     """
     Make it the same as all_items or search views but showing only one item.
@@ -29,7 +29,7 @@ def index():
     return locals()
 
 
-@auth.requires(lambda: application.isOwner(request.args(0)))
+@auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def meta():
     """
     Edit/Show item metadata info
@@ -79,7 +79,7 @@ def meta():
     return locals()
 
 
-@auth.requires(lambda: application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def changelog():
     """
     Show item change log over the time
@@ -126,7 +126,7 @@ def changelog():
     return dict(item=item, changes=changes)
 
 
-@auth.requires(lambda: application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def diff():
     """
     Show the diff betwen the actual item and the archive one
@@ -188,7 +188,7 @@ def diff():
 #     return CAT('')
 
 
-@auth.requires(lambda: application.isOwner(request.args(0)))
+@auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def share():
     """
     Show the list of desk to with the item can be push
@@ -197,7 +197,7 @@ def share():
     if item is None:
         raise HTTP(404)
 
-    query = (db.desk.id > 0)
+    query = (db.desk.id != session.desk_id)
     query &= auth.accessible_query('push_items', db.desk)
 
     posible_desk = db(query).select()
@@ -213,8 +213,10 @@ def share():
         submit_button=T("Send"),
         table_name='share')
     if form.process().accepted:
-        # search a user by his email addr
-        pass
+        # send the item to the selected desk
+        ct = application.getContentType(item.item_type)
+        ct.shareItem(item.unique_id, session.desk_id, form.vars.to_desk)
+        response.js = "$('#metaModal').modal('hide');"
 
     return locals()
 

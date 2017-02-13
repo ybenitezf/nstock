@@ -10,7 +10,7 @@ if False:
     from dc import application
 
 
-@auth.requires(application.isOwner(request.args(0)))
+@auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def index():
     """
     Edit content
@@ -36,7 +36,7 @@ def index():
     return dict(form=form, item=item, content=content)
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def diff():
     item = application.getItemByUUID(request.args(0))
     if item is None:
@@ -75,7 +75,7 @@ def diff():
     return locals()
 
 
-@auth.requires(application.isOwnerOrCollaborator(request.args(0)))
+@auth.requires(lambda: application.canReadItem(request.args(0)))
 def changelog():
     """
     Show item change log over the time

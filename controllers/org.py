@@ -114,6 +114,7 @@ def create():
     tbl.name.requires = [IS_NOT_EMPTY()]
 
     form = SQLFORM(tbl)
+    form.add_button(T('Cancel'), URL('index'))
     if form.process().accepted:
         # add the new organization
         g_id = auth.user_group(auth.user.id)

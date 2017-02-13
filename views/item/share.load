@@ -2,12 +2,6 @@
   <p><strong>{{=T("Headline")}}</strong>: {{=item.headline}}</p>
   <hr />
   <form data-w2p_target="{{=request.cid}}" action="#" method="POST" enctype="multipart/form-data">
-  <!-- <div class="form-group">
-      <input class="form-control string" id="share_email" name="email" type="text" placeholder="{{=T('e-mail address')}}" autocomplete="off">
-      {{if form.errors:}}
-      <p class="text-danger">{{=form.errors.email}}</p>
-      {{pass}}
-  </div> -->
 
   <div class="form-group">
     <label for="share_to_desk">{{=form.custom.label.to_desk}}</label>
@@ -19,6 +13,6 @@
   {{=form.custom.end}}
 {{else:}}
 <div class="alert alert-warning">
-  {{=T("Warning !")}} {{=T("You don't have access to any desk yet.")}}
+  {{=T("Warning !")}} {{=T("You can't push this item to any other Desk")}}
 </div>
 {{pass}}

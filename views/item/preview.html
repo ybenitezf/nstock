@@ -29,14 +29,14 @@
             });
             </script>
 
-          {{if application.isOwner(item.unique_id):}}
+          {{if application.canUpdateItem(item.unique_id):}}
           <button id="itemSend{{=item.id}}" class="btn btn-default" title="{{=T('Send')}}">
             <i class="fa fa-send"></i>
           </button>
           <script type="text/javascript">
             $('#itemSend{{=item.id}}').click(function (e) {
               e.stopPropagation();
-              $('#metaModalLabel').html('{{=T("Send")}} / {{=T("Share")}}');
+              $('#metaModalLabel').html('{{=T("Send")}}');
               $('#metaModal').modal('show');
               web2py_component("{{=URL('item','share.load', args=[item.unique_id])}}","metaModalBody");
             });
@@ -49,7 +49,7 @@
               <li class="fa fa-bars"></li>
             </button>
             <ul class="dropdown-menu pull-right">
-              {{if application.isOwner(item.unique_id):}}
+              {{if application.canUpdateItem(item.unique_id):}}
                 <li>
                   <a href="{{=application.getItemURL(item.unique_id)}}">
                     <i class="fa fa-edit"></i>

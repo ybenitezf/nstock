@@ -34,19 +34,17 @@ class ContentPackage(ContentPlugin):
     def get_changelog_url(self, item):
         return URL('plugin_package', 'changelog', args=[item.unique_id])
 
-    def shareItem(self, item_id, user, perms='ownner'):
+    def shareItem(self, item_id, src_desk, dst_desk):
         """Share package to user"""
-        super(ContentPackage, self).shareItem(item_id, user, perms=perms)
+        super(ContentPackage, self).shareItem(item_id, src_desk, dst_desk)
         # on packages, we share each item on the package, and then
         # the package it self
         pkg_item = self.app.getItemByUUID(item_id)
         pkg_content = self.db.plugin_package_content(
             item_id=pkg_item.unique_id)
         for c_item in pkg_content.item_list:
-            ct = self.app.getContentType(
-                self.app.getItemByUUID(c_item).item_type)
-            # test if the package owner is also the container item owner
-            if self.app.isOwner(c_item):
-                ct.shareItem(c_item, user, perms='owner')
-            else:
-                ct.shareItem(c_item, user, perms='collaborator')
+            p_c_item = self.app.getItemByUUID(c_item)
+            src = self.db.desk(src_desk)
+            if p_c_item.id in src.item_list:
+                ct = self.app.getContentType(p_c_item.item_type)
+                ct.shareItem(c_item, src_desk, dst_desk)
