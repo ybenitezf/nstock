@@ -87,9 +87,6 @@ def create():
         session.flash = T('You must mark some items first')
         redirect(URL('default', 'index'))
 
-    # get the headline form the first item in the list
-    # first_item = application.getItemByUUID(dash.item_list[0])
-
     fields = []
     # i need the input of the based item fields
     fdl_headline = db.item.headline

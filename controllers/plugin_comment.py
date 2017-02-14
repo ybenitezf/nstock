@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# from mail import item_notify_users
 
 if False:
     from gluon import T, SQLFORM, HTTP

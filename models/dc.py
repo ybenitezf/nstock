@@ -166,25 +166,6 @@ def _ltag_represent(v, r):
     return v
 db.item.language_tag.represent = _ltag_represent
 
-# dashboard's
-db.define_table(
-    'dashboard',
-    Field('name', 'string', length=20, label=T('Dashboard name')),
-    Field('item_list', 'list:string'),
-    auth.signature,
-)
-db.dashboard.name.requires = IS_NOT_EMPTY()
-
-
-def is_in_board(item, board):
-    return item.unique_id in board.item_list
-
-# side links for items
-add_items = LOAD('item', 'add_items.load', ajax=True)
-
-dashboard_sidemenu = LOAD(
-    'dashboard', 'side_menu.load', ajax=True, target='dashboard_cmp')
-
 
 # notification center
 def _():

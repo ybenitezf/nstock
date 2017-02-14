@@ -1,4 +1,4 @@
-{{left_sidebar_enabled=False}}
+{{left_sidebar_enabled=True}}
 {{right_sidebar_enabled=True}}
 {{def _():}}
   {{
@@ -21,6 +21,10 @@
 
 {{block right_sidebar}}
   {{=plugin_comment(item.unique_id)}}
+{{end}}
+
+{{block left_sidebar}}
+  {{include 'item/add_items.html'}}
 {{end}}
 
 {{block header}}

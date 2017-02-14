@@ -54,7 +54,7 @@
           <i class="fa fa-download"></i>
           {{=T('Download')}}
         </a>
-        {{if application.isOwner(item.unique_id):}}
+        {{if application.canUpdateItem(item.unique_id):}}
             <!-- Only the owner in the original item can do this. -->
             <a id="del-red-{{=rendition.id}}" class="btn btn-danger btn-sm">
               <i class="fa fa-close"></i>

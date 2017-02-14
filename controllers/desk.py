@@ -20,7 +20,7 @@ if False:
 def index():
     """Show the list of items in this desk"""
     desk = db.desk(request.args(0))
-    # fix: if is a user_desk don't pass the org
+
     if desk.id == application.getUserDesk().id:
         session.org_id = None
     session.desk_id = desk.id
@@ -39,7 +39,7 @@ def index():
 def item_list():
     """Show the list of items in this desk"""
     desk = db.desk(request.args(0))
-    # fix: if is a user_desk don't pass the org
+
     if desk.id == application.getUserDesk().id:
         session.org_id = None
     session.desk_id = desk.id
@@ -152,6 +152,16 @@ def users():
             else:
                 auth.del_permission(
                     auth.user_group(my_user.id), 'push_items', db.desk,
+                    desk.id)
+
+            if form.vars.update_desk:
+                # give perm
+                auth.add_permission(
+                    auth.user_group(my_user.id), 'update_desk', db.desk,
+                    desk.id)
+            else:
+                auth.del_permission(
+                    auth.user_group(my_user.id), 'update_desk', db.desk,
                     desk.id)
 
             redirect(URL('desk', 'users', args=[desk.id]))

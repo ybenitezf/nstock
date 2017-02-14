@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
-# from z_whoosh import Whoosh
 if False:
     from gluon import redirect, current, Field, HTTP
     from gluon import A, CAT, SPAN, SQLFORM, URL, IS_IN_SET
-    # from gluon import IS_EMAIL
     request = current.request
     response = current.response
     session = current.session
     cache = current.cache
     T = current.T
-    # from db import auth, db, mail
     from db import auth, db
     from dc import application
-    # from menu import *
 
 
 @auth.requires(lambda: application.canReadItem(request.args(0)))
@@ -20,10 +16,6 @@ def index():
     """
     Make it the same as all_items or search views but showing only one item.
     """
-
-    # We never will have a pure item, so we redirect to the apropiate C/T
-    # plugin
-    # redirect(application.getItemURL(request.args(0)))
     item = application.getItemByUUID(request.args(0))
 
     return locals()
@@ -172,22 +164,6 @@ def diff():
     return dict(item=item, form_actual=form_actual, form_archive=form_archive)
 
 
-# @auth.requires_login()
-# def add_items():
-#     return dict()
-
-
-# @auth.requires_permission('owner', db.item, record_id=request.args(0))
-# def unshare():
-#     item = db.item(request.args(0))
-#     gid = int(request.args(1))
-#
-#     auth.del_permission(gid, 'collaborator', db.item, item.id)
-#
-#     response.js = '$( "#{}" ).get(0).reload();'.format(request.cid)
-#     return CAT('')
-
-
 @auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def share():
     """
@@ -219,34 +195,3 @@ def share():
         response.js = "$('#metaModal').modal('hide');"
 
     return locals()
-
-
-# @auth.requires_login()
-# def all_items():
-#     """
-#     Show user items list
-#     """
-#     if type(request.vars.q) is list:
-#         # in the case of being loaded from a query string
-#         # use only the last valor from q
-#         request.vars.q = request.vars.q[-1]
-#     request.vars.q = None if request.vars.q == '' else request.vars.q
-#     if request.vars.q is not None:
-#         ids = Whoosh().search(request.vars.q)
-#         query = db.item.unique_id.belongs(ids)
-#     else:
-#         query = (db.item.id > 0)
-#
-#     query &= (
-#         auth.accessible_query('collaborator', db.item) |
-#         auth.accessible_query('owner', db.item))
-#
-#     grid = SQLFORM.grid(
-#         query,
-#         orderby=[~db.item.created_on],
-#         create=False,
-#         csv=False,
-#         paginate=6,
-#     )
-#
-#     return dict(grid=grid)

@@ -99,29 +99,6 @@ class Application(object):
 
         return user_desk
 
-    def isCollaborator(self, unique_id, user=None):
-        """
-        Returns True if user is a collaborator of the item
-        """
-        item = self.getItemByUUID(unique_id)
-
-        if item is None:
-            return False
-
-        if user is None:
-            return perms.isCollaborator(item.id)
-
-        return self.auth.has_permission(
-            'collaborator', self.db.item, record_id=item.id, user_id=user.id)
-
-    def isOwnerOrCollaborator(self, unique_id, user=None):
-        if unique_id is None:
-            return False
-
-        return (
-            self.isOwner(unique_id, user=user) or
-            self.isCollaborator(unique_id, user=user))
-
     def indexItem(self, item_id, user=None):
         """
         Add/update item to the user search index

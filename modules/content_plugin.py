@@ -36,16 +36,6 @@ class ContentPlugin(object):
     def get_changelog_url(self, item):
         return None
 
-    def prepare_item_for_search(self, item, CT_REG):
-        """
-        Prepare a text document so the item can be indexed with Woosh
-        """
-        output = self.response.render(
-            "item/full_text.txt",
-            dict(item=item, CT_REG=CT_REG)
-        )
-        return unicode(output.decode('utf-8'))
-
     def get_full_text(self, item):
         """Return full text document, mean for plugins"""
         raise NotImplementedError
