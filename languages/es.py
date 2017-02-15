@@ -267,7 +267,7 @@
 'email': 'email',
 'Email': 'Correo electrónico',
 'Email and SMS': 'Correo electrónico y SMS',
-'Email sent': 'Correo electrónico enviado',
+'Email sent': 'Se ha enviado un correo a su dirección, por favor reviselo.',
 'Email verification': 'Verificación del correo electrónico',
 'Email verified': 'Correo vereficado',
 'Embargoed': 'Embargado',
