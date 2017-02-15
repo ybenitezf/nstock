@@ -1,17 +1,17 @@
 div.w2p_flash {
     background-image: none;
-    border-radius: 4px;
-    -o-border-radius: 4px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    color: #333;
-    font-weight: 400;
+    /*border-radius: 4px;*/
+    /*-o-border-radius: 4px;*/
+    /*-moz-border-radius: 4px;*/
+    /*-webkit-border-radius: 4px;*/
+    /*color: #333;*/
+    /*font-weight: 400;*/
     min-width: 28px;
     max-width: 300px;
     opacity: 1;
     vertical-align: baseline;
     right: auto;
-    border-width: 1px;
+    /*border-width: 1px;*/
     margin: 0 0 20px;
     padding: 15px 35px 15px 15px;
 }
@@ -44,8 +44,8 @@ div.w2p_flash.alert {
     right: 75px;
     cursor: pointer;
     z-index: 1000;
-    background-color: #f9edbe;
-    border-color: #f0c36d;
+    /*background-color: #f9edbe;
+    border-color: #f0c36d;*/
 }
 .w2p-toolbar-hidden {
     margin: 10px;
