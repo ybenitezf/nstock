@@ -2,6 +2,7 @@
 if False:
     from gluon import current, URL, SQLFORM, redirect
     from gluon import IS_NOT_EMPTY, Field, IS_EMAIL
+    from gluon import IS_NOT_IN_DB
     request = current.request
     response = current.response
     session = current.session
@@ -111,10 +112,19 @@ def create():
     tbl.users.writable = False
     tbl.desks.readable = False
     tbl.desks.writable = False
-    tbl.name.requires = [IS_NOT_EMPTY()]
+    tbl.name.requires = [
+        IS_NOT_EMPTY(
+            error_message=T("Cannot be empty")
+        ),
+        IS_NOT_IN_DB(
+            db,
+            'organization.name',
+            error_message=T(
+                "An Organization witch that name is allready in nStock"))]
 
     form = SQLFORM(tbl)
     form.add_button(T('Cancel'), URL('index'))
+
     if form.process().accepted:
         # add the new organization
         g_id = auth.user_group(auth.user.id)
