@@ -28,10 +28,10 @@
   {{include 'desk/desk_menu.html'}}
 {{end}}
 
+{{if my_users:}}
 <h4>
   {{=T("Organization users")}}
 </h4>
-
 <div class="table-responsive">
 <table class="table table-striped">
   <thead>
@@ -66,3 +66,8 @@
   </tbody>
 </table>
 </div>
+{{else:}}
+<div class="alert alert-warning">
+  {{=T("Warning!")}} {{=T("The organization don't have any user.")}}
+</div>
+{{pass}}

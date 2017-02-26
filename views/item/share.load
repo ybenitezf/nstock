@@ -13,6 +13,7 @@
   {{=form.custom.end}}
 {{else:}}
 <div class="alert alert-warning">
+  {{print "paso por aqui"}}
   {{=T("Warning !")}} {{=T("You can't push this item to any other Desk")}}
 </div>
 {{pass}}
