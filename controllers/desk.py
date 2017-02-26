@@ -76,6 +76,45 @@ def edit():
 
 @auth.requires(
     lambda: auth.has_permission('update', db.desk, request.args(0)))
+def delete():
+    desk = db.desk(request.args(0))
+    session.desk_id = desk.id
+
+    db.desk.item_list.readable = False
+    db.desk.item_list.writable = False
+    form = SQLFORM.confirm(
+        T("Are you sure?"),
+        {T('Cancel'): URL('index', args=[desk.id])})
+
+    if form.accepted:
+        # empty move all the items in the desk to the owners desk
+        for item_id in desk.item_list:
+            item = db.item(item_id)
+            owner = db.auth_user(item.created_by)
+            owner_desk = application.getUserDesk(user=owner)
+            owner_desk_items = owner_desk.item_list
+            owner_desk_items.append(item_id)
+            owner_desk.update_record(item_list=owner_desk_items)
+
+        # remove desk from org
+        org = db(
+            db.organization.desks.contains(desk.id)
+        ).select().first()
+        desk_list = org.desks
+        desk_list.remove(desk.id)
+        org.update_record(desks=desk_list)
+        # delete the desk from db.
+        del db.desk[desk.id]
+        # cleanup context
+        session.desk_id = None
+        # go to org view
+        redirect(URL('org','view', args=[org.id]))
+
+    return locals()
+
+
+@auth.requires(
+    lambda: auth.has_permission('update', db.desk, request.args(0)))
 def users():
     desk = db.desk(request.args(0))
     session.desk_id = desk.id

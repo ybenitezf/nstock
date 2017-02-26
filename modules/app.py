@@ -89,7 +89,7 @@ class Application(object):
 
         # setup user desk if necessary.
         user_desk = db(
-            auth.accessible_query('owner', db.desk)).select().first()
+            auth.accessible_query('owner', db.desk, user.id)).select().first()
         if user_desk is None:
             name = self.T("%s desk", (auth.user.first_name,))
             desk_id = db.desk.insert(name=name)
