@@ -98,7 +98,21 @@ def members():
             org.update_record(users=user_list)
             # remove perms over the org
             auth.del_permission(
-                auth.user_group(user_to_remove.id), 'read', 'object', org.id)
+                auth.user_group(user_to_remove.id),
+                'read',
+                db.organization,
+                org.id)
+            # remove, also, all rights over the desks in the org.
+            desk_perms = [
+                'read_desk', 'update_items', 'push_items', 'update_desk']
+            for desk_id in org.desks:
+                for perm in desk_perms:
+                    auth.del_permission(
+                        auth.user_group(user_to_remove.id),
+                        perm,
+                        db.desk,
+                        desk_id
+                    )
         redirect(URL('org', 'members', args=[org.id]))
 
     return locals()
