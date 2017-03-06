@@ -141,6 +141,8 @@ def changelog():
 def add_rendition():
     item = application.getItemByUUID(request.args(0))
     content = db.plugin_picture_info(item_id=item.unique_id)
+    db.plugin_picture_rendition.thumbnail.writable = False
+    db.plugin_picture_rendition.thumbnail.readable = False
 
     form = SQLFORM(db.plugin_picture_rendition)
 
@@ -152,8 +154,7 @@ def add_rendition():
         filename = stream.name
         im = Image.open(filename)
         # update rendition with image info
-        rend.height = im.height
-        rend.width = im.width
+        rend.width, rend.height = im.size
         rend.format = im.format
         rend.color = im.mode
         rend.update_record()
