@@ -10,6 +10,21 @@ class ContentText(ContentPlugin):
             URL('plugin_text', 'create.html'),
             CAT(I(_class="fa fa-file-text-o"), ' ', self.T('Text')))
 
+
+    def get_icon(self):
+        return I(_class="fa fa-file-text-o")
+
+
+    def get_name(self):
+        return self.T('Text')
+
+
+    def create_content(self, item):
+        self.db.plugin_text_text.insert(
+            item_id=item.unique_id
+        )
+
+
     def get_item_url(self, item):
         return URL('plugin_text', 'index.html', args=[item.unique_id])
 

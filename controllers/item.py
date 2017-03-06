@@ -21,6 +21,36 @@ def index():
     return locals()
 
 
+@auth.requires_login()
+def create():
+    """
+    Create a Item.
+    """
+    item_type = request.args(0)
+    ct = application.getContentType(item_type)
+    if ct is None:
+        raise HTTP(404)
+
+    fields = [
+        db.item.headline,
+        db.item.keywords,
+        db.item.genre,
+        db.item.item_type,
+    ]
+    db.item.item_type.default = item_type
+    db.item.item_type.writable = False
+    db.item.item_type.readable = False
+
+    form = SQLFORM.factory(*fields, submit_button=T("Continue"))
+
+    if form.process().accepted:
+        item_id = application.createItem(item_type, form.vars)
+        application.indexItem(item_id)
+        redirect(application.getItemURL(item_id))
+
+    return locals()
+
+
 @auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def meta():
     """

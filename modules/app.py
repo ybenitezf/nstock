@@ -125,6 +125,11 @@ class Application(object):
         item_list.insert(0, item_id)
         user_desk.update_record(item_list=item_list)
         # --
+
+        # create te content instance
+        ct = self.getContentType(content_type)
+        ct.create_content(db.item(item_id))
+        # --
         return db.item(item_id).unique_id
 
     def getItemURL(self, unique_id):

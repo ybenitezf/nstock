@@ -1,5 +1,14 @@
-{{left_sidebar_enabled=True}}
-{{right_sidebar_enabled=True}}
+{{
+  if not 'left_sidebar_enabled' in locals():
+      left_sidebar_enabled=True
+      pass
+
+  if not 'right_sidebar_enabled' in locals():
+      right_sidebar_enabled=True
+      pass
+}}
+{{#left_sidebar_enabled=True}}
+{{#right_sidebar_enabled=True}}
 {{def _():}}
   {{
   item_actions = []

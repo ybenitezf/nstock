@@ -25,7 +25,7 @@ def _():
             tbl = db.define_table(
                 'plugin_text_text',
                 Field('byline', 'string', length=250, default=''),
-                Field('body', 'text', label=T('Content')),
+                Field('body', 'text', label=T('Content'), default=''),
                 Field('item_id', 'string', length=64),
                 auth.signature,
             )

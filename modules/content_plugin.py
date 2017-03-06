@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from gluon import I
 
 class ContentPlugin(object):
 
@@ -17,8 +17,21 @@ class ContentPlugin(object):
         self.mail = app.mail
         self.configured = True
 
+
     def get_item_url(self, item):
         raise NotImplementedError
+
+
+    def create_content(self, item):
+        raise NotImplementedError
+
+
+    def get_icon(self):
+        return I(_class="fa fa-file")
+
+    def get_name(self):
+        return self.T("Some Content-Type")
+
 
     def preview(self, item):
         """

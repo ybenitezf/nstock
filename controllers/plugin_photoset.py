@@ -67,6 +67,7 @@ def edit_form():
     db.plugin_photoset_content.photoset.writable = False
     db.plugin_photoset_content.item_id.readable = False
     db.plugin_photoset_content.item_id.writable = False
+    db.plugin_photoset_content.credit_line.requires = IS_NOT_EMPTY()
 
     form = SQLFORM(
         db.plugin_photoset_content,

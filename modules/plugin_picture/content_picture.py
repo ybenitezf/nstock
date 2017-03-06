@@ -11,6 +11,22 @@ class ContentPicture(ContentPlugin):
             CAT(I(_class='fa fa-picture-o'), ' ', self.T('Picture'))
         )
 
+
+    def get_icon(self):
+        return I(_class='fa fa-picture-o')
+
+
+    def get_name(self):
+        return self.T('Picture')
+
+
+    def create_content(self, item):
+        self.db.plugin_picture_info.insert(
+            item_id=item.unique_id,
+            renditions=[]
+        )
+
+
     def get_item_url(self, item):
         return URL('plugin_picture', 'index.html', args=[item.unique_id])
 

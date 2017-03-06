@@ -20,8 +20,6 @@ def index():
     """
     item = application.getItemByUUID(request.args(0))
 
-    db.plugin_picture_info.thumbnail.readable = False
-    db.plugin_picture_info.thumbnail.writable = False
     db.plugin_picture_info.renditions.readable = False
     db.plugin_picture_info.renditions.writable = False
 
@@ -159,6 +157,18 @@ def add_rendition():
         rend.format = im.format
         rend.color = im.mode
         rend.update_record()
+        # --------------------------------
+        size = (500, 500)
+        im.thumbnail(size)
+        fl = NamedTemporaryFile(suffix=".jpg", delete=True)
+        fl.close()
+        im.save(fl.name, "JPEG")
+        store_tumb = db.plugin_picture_rendition.thumbnail.store(
+            open(fl.name, 'rb'), fl.name)
+        os.unlink(fl.name)  # cleanup
+        rend.update_record(
+            thumbnail=store_tumb
+        )
         # append this rendition to the item content
         content.renditions.append(r_id)
         content.update_record()

@@ -23,6 +23,22 @@ class ContentPackage(ContentPlugin):
             URL('plugin_package', 'create.html'),
             CAT(I(_class='fa fa-file-archive-o'), ' ', self.T('Package')))
 
+
+    def get_icon(self):
+        return I(_class='fa fa-file-archive-o')
+
+
+    def get_name(self):
+        return self.T('Package')
+
+
+    def create_content(self, item):
+        self.db.plugin_package_content.insert(
+            item_list=self.app.session.marked_items,
+            item_id=item.unique_id
+        )
+        self.app.session.marked_items = []
+
     def get_full_text(self, item):
         """Return full text document, mean for plugins"""
         content = self.db.plugin_package_content(item_id=item.unique_id)

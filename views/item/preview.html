@@ -109,14 +109,6 @@
         <p><strong>{{=T("Embargoed")}}</strong>: {{=item.embargoed.strftime("%Y-%m-%d %-I:%M %p")}}</p>
       {{pass}}
       {{=contentType.preview(item)}}
-      {{author = db.auth_user(item.created_by)}}
-      <p>
-        <strong class="small text-muted">{{=author.first_name}} {{=author.last_name}}</strong>
-        <span class="small text-muted">
-          --
-          {{=item.created_on}}
-        </span>
-      </p>
 
       <div class="pull-right">
         {{=plugin_comment_short(item.unique_id)}}

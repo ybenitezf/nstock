@@ -1,0 +1,20 @@
+{{left_sidebar_enabled=True}}
+{{right_sidebar_enabled=True}}
+{{extend 'layout.html'}}
+
+{{block header}}
+<ol class="breadcrumb">
+  <li>
+    <a href="{{=URL('default', 'index')}}">{{=T('Home')}}</a>
+  </li>
+  <li>
+    {{desk = application.getUserDesk()}}
+    <a href="{{=URL('desk', 'index', args=[desk.id])}}">{{=desk.name}}</a>
+  </li>
+  <li class="active">
+    {{=T('Add')}} {{=ct.get_name()}}
+  </li>
+</ol>
+{{end}}
+
+{{=form}}

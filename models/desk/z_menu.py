@@ -13,9 +13,11 @@ def _():
     create_items = []
     registry = application.registry
     for content_type in registry:
-        url, title = registry[content_type].create_item_url()
+        icon = registry[content_type].get_icon()
+        name = registry[content_type].get_name()
+        url = URL('item', 'create.html', args=[content_type])
         create_items.append(
-            (title, False, url, [])
+            (CAT(icon, ' ', name), False, url, [])
         )
     response.menu += [(T('Add Items'), False, "#", create_items)]
 

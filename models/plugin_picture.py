@@ -25,7 +25,7 @@ def _():
                 Field(
                     'picture', 'upload', uploadseparate=True, autodelete=True
                 ),
-                Field('purpose', 'string', length=50, default='raw'),
+                Field('purpose', 'string', length=50, default='web'),
                 Field(
                     'height', 'integer', default=0, readable=False,
                     writable=False
@@ -41,7 +41,13 @@ def _():
                 Field(
                     'format', 'string', length=10, readable=False,
                     writable=False
-                )
+                ),
+                Field(
+                    'thumbnail', 'upload',
+                    uploadseparate=True,
+                    autodelete=True,
+                    default=None
+                ),
             )
             tbl.purpose.comment = T('''
             It may contain any value but it is recommended to use one of the
@@ -70,12 +76,6 @@ def _():
                     'caption', 'string',
                     length=250,
                     default=''
-                ),
-                Field(
-                    'thumbnail', 'upload',
-                    uploadseparate=True,
-                    autodelete=True,
-                    default=None
                 ),
                 Field('renditions', 'list:reference plugin_picture_rendition'),
                 Field('item_id', 'string', length=64),

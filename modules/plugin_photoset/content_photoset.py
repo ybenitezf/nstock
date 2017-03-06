@@ -14,6 +14,20 @@ class ContentPhotoset(ContentPlugin):
             CAT(I(_class="fa fa-object-group"), ' ', self.T('Photo Set'))
         )
 
+    def get_icon(self):
+        return I(_class="fa fa-object-group")
+
+    def get_name(self):
+        return self.T('Photo Set')
+
+
+    def create_content(self, item):
+        self.db.plugin_photoset_content.insert(
+            item_id=item.unique_id,
+            photoset=[]
+        )
+
+
     def get_item_url(self, item):
         return URL('plugin_photoset', 'index.html', args=[item.unique_id])
 

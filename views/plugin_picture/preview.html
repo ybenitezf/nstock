@@ -1,11 +1,9 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-    {{=T("Picture")}}
+    {{=T('Picture')}}
   </div>
   <div class="panel-body">
-    <p>
-      <img class="img-responsive margin-auto" src="{{=URL('default', 'download', args=[info.thumbnail])}}" alt="...">
-    </p>
+
     {{if info.caption:}}
     <p><strong>{{=T("Caption")}}</strong>: {{=info.caption}}</p>
     {{pass}}
@@ -23,6 +21,9 @@
       <li class="list-group-item"><strong>{{=T('Renditions')}}</strong>:</li>
     {{for red in info.renditions:}}
     {{rendition = db.plugin_picture_rendition(red)}}
+      <li class="list-group-item clearfix">
+        <img class="img-responsive margin-auto" src="{{=URL('default', 'download', args=[rendition.thumbnail])}}" alt="...">
+      </li>
       <li class="list-group-item clearfix">
         <strong>{{=rendition.purpose}}</strong> |
         {{=rendition.width}} x {{=rendition.height}} |

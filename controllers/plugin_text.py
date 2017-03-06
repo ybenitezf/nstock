@@ -134,13 +134,13 @@ def create():
         db.item.keywords,
         db.item.genre,
         db.item.item_type,
-        db.plugin_text_text.body
+        # db.plugin_text_text.body
     ]
     db.item.item_type.default = 'text'
     db.item.item_type.writable = False
     db.item.item_type.readable = False
 
-    form = SQLFORM.factory(*fields)
+    form = SQLFORM.factory(*fields, submit_button=T("Next"))
 
     if form.process().accepted:
         item_id = application.createItem('text', form.vars)
@@ -148,6 +148,6 @@ def create():
         db.plugin_text_text.insert(
             **db.plugin_text_text._filter_fields(form.vars))
         application.indexItem(item_id)
-        redirect(URL('default', 'index.html'))
+        redirect(URL('index.html', args=[item_id]))
 
     return locals()
