@@ -24,7 +24,7 @@ def index():
 @auth.requires_login()
 def create():
     """
-    Create a Item.
+    Create a Item of a given content type
     """
     item_type = request.args(0)
     ct = application.getContentType(item_type)
@@ -41,9 +41,30 @@ def create():
     db.item.item_type.writable = False
     db.item.item_type.readable = False
 
+    # aks for preconditions:
+    cond, values = ct.check_create_conditions()
+
+    if cond is False:
+        user_desk = application.getUserDesk()
+        if 'message' in values.keys():
+            message = values['message']
+        else:
+            message = T('Some conditions for the item creation are not met.')
+        session.flash = message
+        redirect(URL('desk', 'index.html', args=[user_desk.id]))
+
+    else:
+        # get the proposed values and initialize the form
+        if 'headline' in values.keys():
+            db.item.headline.default = values['headline']
+        if 'keywords' in values.keys():
+            db.item.keywords.default = values['keywords']
+        if 'genre' in values.keys():
+            db.item.genre.default = values['genre']
+
     form = SQLFORM.factory(*fields, submit_button=T("Continue"))
 
-    if form.process().accepted:
+    if form.process(dbio=False).accepted:
         item_id = application.createItem(item_type, form.vars)
         application.indexItem(item_id)
         redirect(application.getItemURL(item_id))

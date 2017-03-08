@@ -26,6 +26,31 @@ class ContentPlugin(object):
         raise NotImplementedError
 
 
+    def check_create_conditions(self):
+        """
+        For plugin developers, here you can very that some conditions are
+        fulfilled before creating am item of this type.
+
+        For example a packegae may need a list of items for being created.
+
+        The return value must be a tuple of the form:
+
+        (boolean, dict)
+
+        The first value tell's nstock that the conditions are met.
+
+        The sencond value is a dict of advise values for the item metadata,
+        the following are the recognizable keys:
+            headline: string
+            keywords: list of strings
+            genre: string
+
+        If the conditions are not met, the return distionary may have a
+        message for the user under the key 'message'
+        """
+        return (True, dict())
+
+
     def get_icon(self):
         return I(_class="fa fa-file")
 
