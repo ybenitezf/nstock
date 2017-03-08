@@ -26,7 +26,7 @@
     {{for _pid in photos:}}
     {{_photo = db.plugin_photoset_photo(_pid)}}
     {{if _photo:}}
-    <div class="col-md-6">
+    <div class="col-md-4">
       <div class="panel panel-default">
         <div class="panel-body">
           <img src="{{=URL('default', 'download', args=[_photo.thumbnail])}}" alt="" class="img-responsive text-center">
@@ -113,7 +113,7 @@ $(document).ready(function() {
             onLeave: "{{=T('The files are being uploaded, if you leave now the upload will be cancelled.')}}"
         },
         showMessage: function(message){ alert(message); },
-        uploadButtonText: '{{=T("Select and upload more photos")}}',
+        uploadButtonText: '{{=T("Select and upload photos")}}',
         template: '<div class="qq-uploader">' +
           '<div class="qq-upload-drop-area"><span>{dragText}</span></div>' +
           '<div class="qq-upload-button">{uploadButtonText}</div>' +

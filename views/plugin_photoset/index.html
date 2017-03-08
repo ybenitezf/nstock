@@ -1,3 +1,4 @@
+{{left_sidebar_enabled=False}}
 {{response.files.append(URL('static','plugin_photoset/css/fileuploader.css'))}}
 {{response.files.append(URL('static','plugin_photoset/css/style.css'))}}
 {{response.files.append(URL('static','plugin_photoset/js/fileuploader.js'))}}
@@ -8,19 +9,32 @@
 
 </div>
 
+
 <div class="container-fluid">
 
   <div class="row">
     <div class="col-md-12">
-      <!-- here goes the basic form -->
-      {{=LOAD(c='plugin_photoset', f='edit_form.load', ajax=True, args=[item.unique_id], target='edit_form')}}
-    </div>
-  </div>
 
-  <div class="row">
-    <div class="col-md-12">
-      <!-- here put the JS uploader -->
-      {{=LOAD(c='plugin_photoset', f='view_photoset.load', ajax=True, args=[item.unique_id], target='view_photoset')}}
+      <div>
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#content" aria-controls="content" role="tab" data-toggle="tab">{{=T('Content')}}</a></li>
+          <li role="presentation"><a href="#pictures" aria-controls="pictures" role="tab" data-toggle="tab">{{=T('Pictures')}}</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="content">
+            {{=LOAD(c='plugin_photoset', f='edit_form.load', ajax=True, args=[item.unique_id], target='edit_form')}}
+          </div>
+          <div role="tabpanel" class="tab-pane" id="pictures">
+            {{=LOAD(c='plugin_photoset', f='view_photoset.load', ajax=True, args=[item.unique_id], target='view_photoset')}}
+          </div>
+        </div>
+
+      </div>
+
     </div>
   </div>
 
