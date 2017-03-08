@@ -211,6 +211,7 @@
 'customize me!': '¡Adáptame!',
 'Dashboard name': 'Nombre de carpeta',
 "Dashboard's": 'Carpetas',
+'Data': 'Datos',
 'data uploaded': 'datos subidos',
 'Database': 'Base de datos',
 'Database %s select': 'selección en base de datos %s',

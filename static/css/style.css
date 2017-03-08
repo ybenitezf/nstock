@@ -145,3 +145,7 @@ body { padding-bottom: 70px; }
 .preview-img-hover:hover {
   filter: brightness(50%);
 }
+
+.tab-content {
+	margin-top: 10px;
+}
