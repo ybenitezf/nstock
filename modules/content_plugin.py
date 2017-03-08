@@ -39,12 +39,6 @@ class ContentPlugin(object):
         """
         return ''
 
-    def create_item_url(self):
-        """
-        Return a tuple in with the first element is the link to create a new
-        item of this Content-Type and the second is the text to use as title.
-        """
-        raise NotImplementedError
 
     def get_changelog_url(self, item):
         return None

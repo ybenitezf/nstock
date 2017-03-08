@@ -8,12 +8,6 @@ class ContentPhotoset(ContentPlugin):
     Photo set item
     """
 
-    def create_item_url(self):
-        return (
-            URL('plugin_photoset', 'create.html'),
-            CAT(I(_class="fa fa-object-group"), ' ', self.T('Photo Set'))
-        )
-
     def get_icon(self):
         return I(_class="fa fa-object-group")
 

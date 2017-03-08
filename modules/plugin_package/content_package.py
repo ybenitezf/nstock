@@ -18,11 +18,6 @@ class ContentPackage(ContentPlugin):
                 dict(item=item, p_content=content))
         )
 
-    def create_item_url(self):
-        return (
-            URL('plugin_package', 'create.html'),
-            CAT(I(_class='fa fa-file-archive-o'), ' ', self.T('Package')))
-
 
     def get_icon(self):
         return I(_class='fa fa-file-archive-o')

@@ -5,12 +5,6 @@ from gluon import URL, XML, CAT, I
 
 class ContentText(ContentPlugin):
 
-    def create_item_url(self):
-        return (
-            URL('plugin_text', 'create.html'),
-            CAT(I(_class="fa fa-file-text-o"), ' ', self.T('Text')))
-
-
     def get_icon(self):
         return I(_class="fa fa-file-text-o")
 
