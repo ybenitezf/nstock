@@ -27,6 +27,31 @@ class ContentPackage(ContentPlugin):
         return self.T('Package')
 
 
+    def check_create_conditions(self):
+        if ((not self.app.session.marked_items) or
+            (len(self.app.session.marked_items) == 0)):
+            # the are not items marked for package creation
+            return (False, dict(
+                message=self.T("You need to mark some items first")))
+
+        # build up the suggested values
+        keywords = []
+        headline = ''
+        for item_id in self.app.session.marked_items:
+            _item = self.app.getItemByUUID(item_id)
+            keywords.extend(_item.keywords)
+            if _item.item_type == 'text':
+                headline = _item.headline
+        keywords = list(set(keywords))  # remove dups
+        if headline == '':
+            # if there is not a text item in the list, take the headline
+            # from the first item
+            _item = self.app.getItemByUUID(self.app.session.marked_items[0])
+            headline = _item.headline
+
+        return (True, dict(headline=headline, keywords=keywords))
+
+
     def create_content(self, item):
         self.db.plugin_package_content.insert(
             item_list=self.app.session.marked_items,

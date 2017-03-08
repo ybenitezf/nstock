@@ -24,8 +24,6 @@ def index():
     if desk.id == application.getUserDesk().id:
         session.org_id = None
     session.desk_id = desk.id
-    # used to mark items for package creation
-    session.marked_items = []
 
     return locals()
 
@@ -53,7 +51,10 @@ def toogle_mark():
         session.marked_items = []
 
     item = application.getItemByUUID(request.args(0))
-    session.marked_items.append(item.unique_id)
+    if item.unique_id in session.marked_items:
+        session.marked_items.remove(item.unique_id)
+    else:
+        session.marked_items.append(item.unique_id)
 
     return ''
 
