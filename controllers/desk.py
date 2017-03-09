@@ -24,6 +24,8 @@ def index():
     if desk.id == application.getUserDesk().id:
         session.org_id = None
     session.desk_id = desk.id
+    if session.marked_items is None:
+        session.marked_items = []
 
     return locals()
 
