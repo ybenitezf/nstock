@@ -65,6 +65,10 @@ class ContentPlugin(object):
         return ''
 
 
+    def export(self, item, export_dir):
+        pass
+
+
     def get_changelog_url(self, item):
         return None
 

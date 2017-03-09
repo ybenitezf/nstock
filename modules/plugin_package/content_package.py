@@ -2,6 +2,8 @@
 from content_plugin import ContentPlugin
 from gluon import URL, CAT, I, XML
 
+import os
+
 
 class ContentPackage(ContentPlugin):
     """docstring for ContentPackage."""
@@ -25,6 +27,23 @@ class ContentPackage(ContentPlugin):
 
     def get_name(self):
         return self.T('Package')
+
+
+    def export(self, item, export_dir):
+        """
+        Export the package and all of his items.
+        """
+        content = self.db.plugin_package_content(item_id=item.unique_id)
+        with open(os.path.join(export_dir, 'package.json'), 'w') as f:
+            f.write(content.as_json())
+
+        for item_id in content.item_list:
+            item_dir = os.path.join(export_dir, item_id)
+            os.mkdir(item_dir)
+            self.app.exportItem(item_id, item_dir)
+
+        # done
+        return
 
 
     def check_create_conditions(self):

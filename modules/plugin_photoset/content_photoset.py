@@ -2,6 +2,8 @@
 from content_plugin import ContentPlugin
 from gluon import URL, XML, CAT, I
 
+import os
+import shutil
 
 class ContentPhotoset(ContentPlugin):
     """
@@ -20,6 +22,29 @@ class ContentPhotoset(ContentPlugin):
             item_id=item.unique_id,
             photoset=[]
         )
+
+    def export(self, item, export_dir):
+        db = self.db
+        ct_table = db.plugin_photoset_content
+        ct_photo = db.plugin_photoset_photo
+        content = ct_table(item_id=item.unique_id)
+        with open(os.path.join(export_dir, 'photoset.json'), 'w') as f:
+            f.write(content.as_json())
+
+        for p_id in content.photoset:
+            pic = ct_photo(p_id)
+            pic_dir = os.path.join(export_dir, str(p_id))
+            os.mkdir(pic_dir)
+            (filename, stream) = ct_photo.picture.retrieve(
+                pic.picture)
+            # normalize filename
+            filename = filename.lower()
+            shutil.copyfileobj(
+                stream,
+                open(os.path.join(pic_dir, filename), 'wb')
+            )
+
+        return
 
 
     def get_item_url(self, item):

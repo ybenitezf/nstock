@@ -42,6 +42,23 @@ class Application(object):
         item = db(query).select().first()
         return item
 
+
+    def exportItem(self, item_id, export_dir):
+        """
+        Put on export_dir all the item memta-data and content
+        """
+        import os.path
+        import os
+
+        item = self.getItemByUUID(item_id)
+        meta_file = os.path.join(export_dir, "meta.json")
+        with open(meta_file, 'w') as f:
+            f.write(item.as_json())
+        ct = self.getContentType(item.item_type)
+        os.mkdir(os.path.join(export_dir, "content"))
+        ct.export(item, os.path.join(export_dir, "content"))
+
+
     def canUpdateItem(self, unique_id, user=None):
         item = self.getItemByUUID(unique_id)
         desk = self.db(

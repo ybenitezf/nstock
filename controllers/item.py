@@ -10,6 +10,9 @@ if False:
     from db import auth, db
     from dc import application
 
+import shutil
+import os
+import tempfile
 
 @auth.requires(lambda: application.canReadItem(request.args(0)))
 def index():
@@ -19,6 +22,37 @@ def index():
     item = application.getItemByUUID(request.args(0))
 
     return locals()
+
+
+@auth.requires(lambda: application.canReadItem(request.args(0)))
+def export():
+    """
+    Create a zip file from the item content
+    """
+    item = application.getItemByUUID(request.args(0))
+
+    export_dir = tempfile.mkdtemp()
+    application.exportItem(item.unique_id, export_dir)
+
+    tmpdir = tempfile.mkdtemp()
+    try:
+        tmparchive = os.path.join(tmpdir, item.slugline)
+        archive = shutil.make_archive(tmparchive, 'zip', export_dir)
+
+        response.stream(
+            archive,
+            chunk_size=4096,
+            request=request,
+            attachment=True,
+            filename="{}.zip".format(item.slugline)
+        )
+
+    finally:
+        shutil.rmtree(tmpdir)
+        shutil.rmtree(export_dir)
+
+
+    return ''
 
 
 @auth.requires_login()

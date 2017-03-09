@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from content_plugin import ContentPlugin
 from gluon import URL, XML, CAT, I
-
+import os.path
 
 class ContentText(ContentPlugin):
 
@@ -17,6 +17,13 @@ class ContentText(ContentPlugin):
         self.db.plugin_text_text.insert(
             item_id=item.unique_id
         )
+
+    def export(self, item, export_dir):
+        content = self.db.plugin_text_text(item_id=item.unique_id)
+        with open(os.path.join(export_dir, 'text.json'), 'w') as f:
+            f.write(content.as_json())
+
+        return
 
 
     def get_item_url(self, item):
