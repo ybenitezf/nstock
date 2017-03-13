@@ -1,0 +1,38 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    {{=T('Video')}}
+  </div>
+  <div class="panel-body">
+
+    {{if info.credit_line:}}
+    <p><strong>{{=T("Credit line")}}</strong>: {{=info.credit_line}}</p>
+    {{pass}}
+    {{if info.description:}}
+    <p><strong>{{=T("Description")}}</strong>:</p>
+    {{=XML(info.description)}}
+    {{pass}}
+  </div>
+
+  {{if info.renditions:}}
+    <ul class="list-group">
+      <li class="list-group-item"><strong>{{=T('Renditions')}}</strong>:</li>
+      {{for r_id in info.renditions:}}
+      {{rend = db.plugin_video_rendition(r_id)}}
+        <li class="list-group-item clearfix">
+          <div class="embed-responsive embed-responsive-16by9">
+            <video controls class="embed-responsive-item">
+             <source src="{{=URL('default', 'download', args=[rend.video])}}">
+             Your browser does not support the video tag.
+           </video>
+          </div>
+        </li>
+        <li class="list-group-item clearfix">
+          <strong>{{=T('Purpose')}}</strong>: {{=rend.purpose}}
+          <a href="{{=URL('default', 'download', args=[rend.video])}}" class="btn btn-default btn-xs pull-right" title="{{=T('Download')}}">
+            <i class="fa fa-download"></i>
+          </a>
+        </li>
+      {{pass}}
+    </ul>
+  {{pass}}
+</div>

@@ -1,0 +1,44 @@
+<a class="btn btn-success" href="{{=URL('plugin_video', 'add_rendition.html', args=[item.unique_id])}}">
+  <i class="fa fa-plus"></i> {{=T('Add rendition')}}
+</a>
+
+<hr />
+
+<ul class="list-group">
+{{for r_id in content.renditions:}}
+{{rend = db.plugin_video_rendition(r_id)}}
+  <li class="list-group-item clearfix">
+    <div class="embed-responsive embed-responsive-16by9">
+      <video controls class="embed-responsive-item">
+       <source src="{{=URL('default', 'download', args=[rend.video])}}">
+       Your browser does not support the video tag.
+     </video>
+    </div>
+  </li>
+  <li class="list-group-item clearfix">
+    <strong>{{=T('Purpose')}}</strong>: {{=rend.purpose}}
+    <a href="{{=URL('default', 'download', args=[rend.video])}}" class="btn btn-default btn-xs pull-right" title="{{=T('Download')}}">
+      <i class="fa fa-download"></i> {{=T('Download')}}
+    </a>
+
+    {{if application.canUpdateItem(item.unique_id):}}
+    <a id="video_action_delete{{=r_id}}" class="btn btn-danger btn-xs pull-right margin-right-5px" title="{{=T('Delete')}}">
+      <i class="fa fa-close"></i> {{=T('Delete')}}
+    </a>
+    <script type="text/javascript">
+      $('#video_action_delete{{=r_id}}').click(function(e) {
+        e.preventDefault();
+        Pace.start();
+        web2py_component("{{=URL('plugin_video', 'del_redition', args=[item.unique_id, r_id])}}", target='hiddethis');
+        $('#video_renditions').get(0).reload();
+        Pace.stop();
+      });
+    </script>
+    {{else:}}
+    <a class="btn btn-danger btn-xs pull-right margin-right-5px" title="{{=T('Delete')}}" disabled="disabled">
+      <i class="fa fa-close"></i> {{=T('Delete')}}
+    </a>
+    {{pass}}
+  </li>
+{{pass}}
+</ul>

@@ -86,6 +86,7 @@
             </ul>
           </div>
         </div>
+      <p>{{=contentType.get_icon()}} <strong>{{=contentType.get_name()}}</strong></p>
       <p><strong>{{=T("Headline")}}</strong>: {{=item.headline}}</p>
       <p><strong>{{=T("Slugline")}}</strong>: {{=item.slugline}}</p>
       <p>
@@ -117,7 +118,7 @@
       {{ if application.canReadItem(item.unique_id): }}
       <div class="pull-right clearfix">
         <a href="{{=URL('item','export', args=[item.unique_id])}}" class="btn btn-default margin-right-5px">
-          Export <i class="fa fa-archive"></i>
+          Export <i class="fa fa-archive-o"></i>
         </a>
       </div>
       {{ pass }}

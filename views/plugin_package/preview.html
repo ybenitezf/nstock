@@ -8,6 +8,7 @@
   {{if p_content.item_list:}}
   <div class="table-responsive">
   <table class="table table-striped">
+    <caption>{{=T("Content")}}</caption>
     <thead>
       <tr>
         <th>{{=T('Type')}}</th> <th>{{=T('Headline')}}</th>
@@ -16,8 +17,12 @@
     <tbody>
       {{for g_item_id in p_content.item_list:}}
       {{g_item = application.getItemByUUID(g_item_id)}}
+      {{ct = application.getContentType(g_item.item_type)}}
       <tr>
-        <th scope="row"> {{=T(g_item.item_type)}} </th>
+        <td scope="row">
+          {{=ct.get_icon()}}
+          {{=ct.get_name()}}
+        </td>
         <td>
           <a href="{{=URL('item', 'index.html', args=[g_item.unique_id])}}">
             {{=g_item.headline}}
