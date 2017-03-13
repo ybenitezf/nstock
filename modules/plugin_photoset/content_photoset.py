@@ -3,7 +3,7 @@ from content_plugin import ContentPlugin
 from gluon import URL, XML, CAT, I
 
 import os
-import shutil
+import json
 
 class ContentPhotoset(ContentPlugin):
     """
@@ -35,14 +35,13 @@ class ContentPhotoset(ContentPlugin):
             pic = ct_photo(p_id)
             pic_dir = os.path.join(export_dir, str(p_id))
             os.mkdir(pic_dir)
-            (filename, stream) = ct_photo.picture.retrieve(
-                pic.picture)
-            # normalize filename
-            filename = filename.lower()
-            shutil.copyfileobj(
-                stream,
-                open(os.path.join(pic_dir, filename), 'wb')
-            )
+            with open(os.path.join(pic_dir, 'photo.json'), 'w') as f:
+                f.write(json.dumps({
+                    'id': pic.id,
+                    'picture': URL(
+                        'default','download', args=[pic.picture],
+                        scheme=True, host=True)
+                }))
 
         return
 
