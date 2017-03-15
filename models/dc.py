@@ -217,4 +217,5 @@ plugins.text.app = application
 plugins.picture.app = application
 plugins.photoset.app = application
 plugins.video.app = application
+plugins.audio.app = application
 plugins.package.app = application

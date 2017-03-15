@@ -29,6 +29,7 @@
 'Ajax Recipes': 'Ajax Recipes',
 'are allowed.': 'are allowed.',
 'Are you sure you want to delete this object?': 'Are you sure you want to delete this object?',
+'Audio': 'Audio',
 'Before': 'Before',
 'Buy this book': 'Buy this book',
 'By line': 'By line',

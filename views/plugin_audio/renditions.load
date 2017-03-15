@@ -1,0 +1,54 @@
+{{ if application.canUpdateItem(item.unique_id): }}
+<a class="btn btn-success" href="{{=URL('plugin_audio', 'add_rendition.html', args=[item.unique_id])}}">
+  <i class="fa fa-plus"></i> {{=T('Add rendition')}}
+</a>
+{{pass}}
+
+<hr />
+
+{{if content.renditions:}}
+  <ul class="list-group">
+  {{for r_id in content.renditions:}}
+    {{rend = db.plugin_audio_rendition(r_id)}}
+    <li class="list-group-item">
+       <audio controls>
+         <source src="{{=URL('default', 'download', args=[rend.audio])}}">
+         Your browser does not support the audio tag.
+       </audio>
+    </li>
+    <li class="list-group-item">
+      <strong>{{=T('Purpose')}}</strong>: {{=rend.purpose}}
+      <a href="{{=URL('default', 'download', args=[rend.audio])}}" class="btn btn-default btn-xs pull-right" title="{{=T('Download')}}">
+        <i class="fa fa-download"></i> {{=T('Download')}}
+      </a>
+
+      {{if application.canUpdateItem(item.unique_id):}}
+      <a id="audio_action_delete{{=r_id}}" class="btn btn-danger btn-xs pull-right margin-right-5px" title="{{=T('Delete')}}">
+        <i class="fa fa-close"></i> {{=T('Delete')}}
+      </a>
+      <script type="text/javascript">
+        $('#audio_action_delete{{=r_id}}').click(function(e) {
+          e.preventDefault();
+          Pace.start();
+          web2py_component("{{=URL('plugin_audio', 'del_rendition', args=[item.unique_id, r_id])}}", target='hiddethis');
+          $('#audio_renditions').get(0).reload();
+          Pace.stop();
+        });
+      </script>
+      {{else:}}
+      <a class="btn btn-danger btn-xs pull-right margin-right-5px" title="{{=T('Delete')}}" disabled="disabled">
+        <i class="fa fa-close"></i> {{=T('Delete')}}
+      </a>
+      {{pass}}
+    </li>
+  {{pass}}
+  </ul>
+{{else:}}
+   <div class="alert alert-info">
+     {{=T('There is no renditions')}}
+     {{ if application.canUpdateItem(item.unique_id): }}
+     , <a href="{{=URL('plugin_audio', 'add_rendition.html', args=[item.unique_id])}}">{{=T('add one')}}</a>.
+     {{pass}}
+   </div>
+
+{{pass}}

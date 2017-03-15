@@ -1,0 +1,35 @@
+{{left_sidebar_enabled=False}}
+{{response.files.append(URL('static','plugin_video/css/fileuploader.css'))}}
+{{response.files.append(URL('static','plugin_video/css/style.css'))}}
+{{response.files.append(URL('static','plugin_video/js/fileuploader.js'))}}
+{{extend 'item/item_layout.html'}}
+
+
+<div id="hiddethis" class="hidden">
+
+</div>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    {{=T("Content")}}
+  </div>
+  <div class="panel-body">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active"><a href="#content" aria-controls="content" role="tab" data-toggle="tab">{{=T('Content')}}</a></li>
+      <li role="presentation"><a href="#renditions" aria-controls="pictures" role="tab" data-toggle="tab">{{=T('Renditions')}}</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="content">
+        {{=LOAD(c='plugin_audio', f='edit_content.load', ajax=True, args=[item.unique_id], target='edit_content')}}
+      </div>
+      <div role="tabpanel" class="tab-pane" id="renditions">
+        {{=LOAD(c='plugin_audio', f='renditions.load', ajax=True, args=[item.unique_id], target='audio_renditions')}}
+      </div>
+    </div>
+  </div>
+
+</div>
