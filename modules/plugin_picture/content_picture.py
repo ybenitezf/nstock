@@ -18,6 +18,10 @@ class ContentPicture(ContentPlugin):
 
     def create_content(self, item):
         self.db.plugin_picture_info.insert(
+            credit_line="{} {}".format(
+                self.auth.user.first_name,
+                self.auth.user.last_name
+            ),
             item_id=item.unique_id,
             renditions=[]
         )

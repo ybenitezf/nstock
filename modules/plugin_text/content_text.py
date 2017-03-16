@@ -15,6 +15,10 @@ class ContentText(ContentPlugin):
 
     def create_content(self, item):
         self.db.plugin_text_text.insert(
+            byline="{} {}".format(
+                self.auth.user.first_name,
+                self.auth.user.last_name
+            ),
             item_id=item.unique_id
         )
 
