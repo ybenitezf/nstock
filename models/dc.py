@@ -198,6 +198,15 @@ def _():
     )
     tbl.name.label = T('Name')
     tbl.item_list.readable = False
+    # add a callback to remove items on delete
+    def __desk_callback_item(s):
+        item = s.select().first()
+        desks_with_item = db(db.desk.item_list.contains(item.id)).select()
+        for d in desks_with_item:
+            d.item_list.remove(item.id)
+            d.update_record()
+        return False
+    db.item._before_delete.insert(0, __desk_callback_item)
 
     tbl = db.define_table(
         'organization',

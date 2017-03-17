@@ -36,4 +36,21 @@ def _():
             tbl.description.widget = editor.widget
             tbl._enable_record_versioning()
 
+            # add a callback to the item table for updating the item list of
+            # the package on item deletion.
+            def plugin_package_callback(s):
+                item = s.select().first()
+                # this are the packages with contains the item to delete
+                pkgs = db(
+                    db.plugin_package_content.item_list.contains(
+                        item.unique_id)
+                ).select()
+                for pkg in pkgs:
+                    # remove the item from the package
+                    pkg.item_list.remove(item.unique_id)
+                    pkg.update_record()
+
+                return False
+            db.item._before_delete.insert(0, plugin_package_callback)
+
 _()

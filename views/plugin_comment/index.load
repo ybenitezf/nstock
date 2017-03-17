@@ -1,6 +1,6 @@
 {{if short:}}
     <a href="#" class="btn btn-info" title="{{=len(comments)}} {{=T('Comments')}}" data-toggle="modal" data-target="#cmtModal{{=item.id}}">
-      {{=len(comments)}} <i class="fa fa-comments"></i>
+      <i class="fa fa-comments"></i> {{=len(comments)}}
     </a>
 
     <div class="modal fade" id="cmtModal{{=item.id}}" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">

@@ -92,5 +92,21 @@ def _():
             # enable record  versioning
             tbl._enable_record_versioning()
 
+            # add callback for item cleanup on delete.
+            def __plugin_picture_item_on_delete(s):
+                item = s.select().first()
+                if item.item_type == 'picture':
+                    # cleanup here
+                    cnt = db.plugin_picture_info(item_id=item.unique_id)
+                    db(
+                        db.plugin_picture_rendition.id.belongs(
+                            cnt.renditions)).delete()
+                    db(
+                        db.plugin_picture_info.item_id == item.unique_id
+                    ).delete()
+
+                return False  # remember to procced
+            db.item._before_delete.insert(0, __plugin_picture_item_on_delete)
+
     return
 _()

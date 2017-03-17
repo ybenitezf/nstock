@@ -6,14 +6,14 @@
 <div class="container-fluid">
 
     <div class="row item-rows">
+        {{in_all_items = True}}
         {{for m_id in desk.item_list:}}
-        <!-- <div class="col-xs-12 col-sm-12 col-md-6"> -->
           {{ item = db.item(m_id) }}
-          {{in_all_items = True}}
-          {{ if application.canReadItem(item.unique_id) or application.canUpdateItem(item.unique_id): }}
-          {{include 'item/preview.html'}}
+          {{ if item: }}
+            {{ if application.canReadItem(item.unique_id) or application.canUpdateItem(item.unique_id): }}
+            {{ include 'item/preview.html' }}
+            {{ pass }}
           {{ pass }}
-        <!-- </div> -->
         {{pass}}
     </div>
 

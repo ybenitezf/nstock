@@ -17,18 +17,20 @@
     <tbody>
       {{for g_item_id in p_content.item_list:}}
       {{g_item = application.getItemByUUID(g_item_id)}}
-      {{ct = application.getContentType(g_item.item_type)}}
-      <tr>
-        <td scope="row">
-          {{=ct.get_icon()}}
-          {{=ct.get_name()}}
-        </td>
-        <td>
-          <a href="{{=URL('item', 'index.html', args=[g_item.unique_id])}}">
-            {{=g_item.headline}}
-          </a>
-        </td>
-      </tr>
+        {{if g_item:}}
+          {{ct = application.getContentType(g_item.item_type)}}
+          <tr>
+            <td scope="row">
+              {{=ct.get_icon()}}
+              {{=ct.get_name()}}
+            </td>
+            <td>
+              <a href="{{=URL('item', 'index.html', args=[g_item.unique_id])}}">
+                {{=g_item.headline}}
+              </a>
+            </td>
+          </tr>
+        {{pass}}
       {{pass}}
     </tbody>
   </table>

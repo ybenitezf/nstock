@@ -118,16 +118,46 @@
       {{ if application.canReadItem(item.unique_id): }}
       <div class="pull-right clearfix">
         <a href="{{=URL('item','export', args=[item.unique_id])}}" class="btn btn-default margin-right-5px">
-          Export <i class="fa fa-archive-o"></i>
+          <i class="fa fa-download"></i> Export
         </a>
       </div>
       {{ pass }}
 
       {{ if application.canUpdateItem(item.unique_id): }}
       <div class="pull-right clearfix">
-        <a href="{{=URL('item','delete', args=[item.unique_id])}}" class="btn btn-danger margin-right-5px">
-          {{=T('Delete')}} <i class="fa fa-close"></i>
+        <a id="itemDelete{{=item.id}}" class="btn btn-default margin-right-5px">
+          <i class="fa fa-close"></i> {{=T('Delete')}}
         </a>
+        <script type="text/javascript">
+          $('#itemDelete{{=item.id}}').click(function (e) {
+            e.stopPropagation();
+            $.confirm({
+                title: '{{=T("Are you sure?")}}',
+                content: '{{=T("This will delete the item and all of his content.")}}',
+                buttons: {
+                    confirm: {
+                      text: '{{=T("Delete")}}',
+                      btnClass: 'btn-danger',
+                      action: function () {
+                        // Delete the item
+                        web2py_component("{{=URL('item', 'delete.load', args=[item.unique_id])}}","hiddethis");
+                        // remove item root. be optimistic
+                        $( '#item-{{=item.id}}' ).remove();
+                        $( '#main' ).get(0).reload(); // reload main content
+                      }
+                    },
+                    cancel: {
+                        text: '{{=T('Cancel')}}',
+                        btnClass: 'btn-success',
+                        action: function(){
+                            this.close();
+                        }
+                    }
+                }
+            });
+            return false;
+          });
+        </script>
       </div>
       {{ pass }}
 
