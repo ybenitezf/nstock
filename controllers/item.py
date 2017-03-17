@@ -250,6 +250,34 @@ def diff():
 
 
 @auth.requires(lambda: application.canUpdateItem(request.args(0)))
+def delete():
+    """
+    Delete an Item. If the item is in the owner desk then remove completely
+    from the database and uploads.
+    """
+    item = application.getItemByUUID(request.args(0))
+    item_id = item.id
+    # In with desk the item is ?
+    desk = db(db.desk.item_list.contains(item_id)).select().first()
+    user_desk = application.getUserDesk()  # current user desk
+    if desk.id == user_desk.id:
+        # completely remove the Item
+        # TODO: do content/type cleanup
+        del db.item[item_id]
+    else:
+        # move the item to the user desk.
+        owner = db.auth_user(item.created_by)
+        owner_desk = application.getUserDesk(user=owner)
+        owner_desk.item_list.append(item_id)
+        owner_desk.update_record()
+
+    desk.item_list.remove(item_id)
+    desk.update_record()
+
+    return locals()
+
+
+@auth.requires(lambda: application.canUpdateItem(request.args(0)))
 def share():
     """
     Show the list of desk to with the item can be push
