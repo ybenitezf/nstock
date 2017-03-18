@@ -44,6 +44,17 @@ def item_list():
         session.org_id = None
     session.desk_id = desk.id
 
+    if not request.vars.item_per_load:
+        item_per_load = 5
+    else:
+        item_per_load = int(request.vars.item_per_load)
+
+    # make a query and load the items
+    item_list = db(db.item.id.belongs(desk.item_list)).select(
+        orderby=[~db.item.created_on],
+        limitby=(0, item_per_load+1)
+    )
+
     return locals()
 
 

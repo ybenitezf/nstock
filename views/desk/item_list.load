@@ -4,18 +4,42 @@
 </div>
 
 <div class="container-fluid">
-
+  {{if item_list:}}
     <div class="row item-rows">
         {{in_all_items = True}}
-        {{for m_id in desk.item_list:}}
-          {{ item = db.item(m_id) }}
-          {{ if item: }}
-            {{ if application.canReadItem(item.unique_id) or application.canUpdateItem(item.unique_id): }}
-            {{ include 'item/preview.html' }}
-            {{ pass }}
+        {{for i, item in enumerate(item_list):}}
+          {{if i==item_per_load: break}}
+          {{ if application.canReadItem(item.unique_id) or application.canUpdateItem(item.unique_id): }}
+          {{ include 'item/preview.html' }}
           {{ pass }}
         {{pass}}
     </div>
+
+    {{ if len(item_list) > item_per_load: }}
+    <div class="row">
+
+      <div class="col-md-12">
+        <button id="load_more" type="button" class="btn btn-primary center-block">
+          {{=T("Load more")}}
+        </button>
+      </div>
+
+      <script>
+      $(function() {
+
+        $('#load_more').click(function(e) {
+          e.stopPropagation();
+          Pace.start();
+          web2py_component("{{=URL('desk', 'item_list.load', args=[desk.id], vars=dict(item_per_load=item_per_load+5))}}", target='main');
+          Pace.stop();
+          // var elmnt = document.getElementById("main");
+          // elmnt.scrollIntoView();
+        });
+
+      });
+      </script>
+    </div>
+    {{pass}}
 
 
     <!-- preview tools -->
@@ -60,4 +84,13 @@
         jQuery('#main').get(0).reload();
       });
     </script>
+  {{else:}}
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4">
+        <div class="alert alert-info center-block">
+          {{=T("There are no Items on this desk.")}}
+        </div>
+      </div>
+    </div>
+  {{pass}}
 </div>
