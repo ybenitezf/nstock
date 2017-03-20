@@ -22,8 +22,6 @@
 {{end}}
 
 {{block left_sidebar}}
-  {{include 'item/add_items.html'}}
-
   <!-- desk management -->
   {{include 'desk/desk_menu.html'}}
 {{end}}
@@ -67,7 +65,13 @@
 </table>
 </div>
 {{else:}}
-<div class="alert alert-warning">
-  {{=T("Warning!")}} {{=T("The organization don't have any user.")}}
+<div class="container-fluid">
+  <div class="row">
+    <div class="alert alert-warning col-md-5 col-md-offset-3">
+      <p><strong>{{=T("Warning!")}}</strong></p>
+      <p>{{=T("The organization don't have any user.")}}</p>
+    </div>
+  </div>
 </div>
+
 {{pass}}
