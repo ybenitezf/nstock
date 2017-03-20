@@ -159,7 +159,7 @@ def add_rendition():
         rend.color = im.mode
         rend.update_record()
         # --------------------------------
-        size = (500, 500)
+        size = (700, 700)
         im.thumbnail(size)
         fl = NamedTemporaryFile(suffix=".jpg", delete=True)
         fl.close()
