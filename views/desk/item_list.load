@@ -20,7 +20,7 @@
 
       <div class="col-md-12">
         <button id="load_more" type="button" class="btn btn-primary center-block">
-          {{=T("Load more")}}
+          {{=T("Load more")}} <li class="fa fa-arrow-down"></li>
         </button>
       </div>
 

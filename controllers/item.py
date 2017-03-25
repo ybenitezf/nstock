@@ -10,6 +10,7 @@ if False:
     from db import auth, db
     from dc import application
 
+from z_whoosh import Whoosh
 import shutil
 import os
 import tempfile
@@ -20,6 +21,21 @@ def index():
     Make it the same as all_items or search views but showing only one item.
     """
     item = application.getItemByUUID(request.args(0))
+
+    return locals()
+
+
+@auth.requires_login()
+def search():
+    if len(request.args):
+        page = int(request.args(0))
+    else:
+        page = 1
+
+    items_per_page=10
+
+    search_keys = request.vars.search_keys
+    results = Whoosh().search(search_keys, page, pagelen=items_per_page+1)
 
     return locals()
 
@@ -256,6 +272,10 @@ def delete():
     """
     item = application.getItemByUUID(request.args(0))
     item_id = item.id
+
+    # remove the item from the index
+    # TODO: move this to Application if needed
+    Whoosh().remove(item.unique_id)
 
     db(db.item.id == item.id).delete()
 

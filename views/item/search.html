@@ -1,0 +1,102 @@
+{{left_sidebar_enabled=True}}
+{{search_sidebar_enabled=True}}
+{{extend 'layout.html'}}
+
+{{block header}}
+<ol class="breadcrumb">
+  <li>
+    <a href="{{=URL('default', 'index')}}">{{=T('Home')}}</a>
+  </li>
+  <li class="active">
+    {{=T("Search")}}
+  </li>
+</ol>
+{{end}}
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      {{if results:}}
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <th>{{=T('Type')}}</th>
+            <th>{{=T('Headline')}}</th>
+            <th>{{=T('By')}}</th>
+            <th>{{=T('Desk')}}</th>
+            <th>{{=T('Date')}}</th>
+          </thead>
+
+          {{for i,r in enumerate(results):}}
+            {{if i == items_per_page: break}}
+            {{item = application.getItemByUUID(r)}}
+            {{ct = application.getContentType(item.item_type)}}
+            {{if item:}}
+            <tr>
+              <td>{{=ct.get_icon()}} {{=ct.get_name()}}</td>
+              <td>
+                {{if application.canReadItem(item.unique_id):}}
+                  <a href="{{=URL('item', 'index.html', args=[item.unique_id], vars=request.vars)}}">
+                   {{=item.headline}}
+                  </a>
+                {{else:}}
+                  {{=item.headline}}
+                {{pass}}
+              </td>
+              <td>
+                {{=db.auth_user(item.created_by).first_name}}
+                {{=db.auth_user(item.created_by).last_name}}
+              </td>
+              <td>
+                {{desk = db(db.desk.item_list.contains(item.id)).select().first()}}
+                {{if auth.has_permission('read', db.desk, desk.id) or auth.has_permission('update', db.desk, desk.id) or auth.has_permission('update_items', db.desk, desk.id):}}
+                <a class="" href="{{=URL('desk', 'index', args=[desk.id])}}">
+                  {{=desk.name}}
+                </a>
+                {{else:}}
+                  {{=desk.name}}
+                {{pass}}
+              </td>
+              <td>{{=item.created_on}}</td>
+            </tr>
+            {{pass}}
+          {{pass}}
+        </table>
+        <nav aria-label="...">
+          <ul class="pager">
+            {{if page == 1:}}
+            <li class="previous disabled">
+              <a href="#"><span class="fa fa-arrow-left"></span> {{=T('Previous')}}</a>
+            </li>
+            {{else:}}
+            <li class="previous">
+              <a href="{{=URL('search', args=[page-1], vars=request.vars)}}">
+              <span class="fa fa-arrow-left"></span> {{=T('Previous')}}
+              </a>
+            </li>
+            {{pass}}
+
+            {{if len(results) > items_per_page:}}
+              <li class="next">
+                <a href="{{=URL('search', args=[page+1], vars=request.vars)}}">
+                  {{=T('Next')}}
+                  <span class="fa fa-arrow-right"></span>
+                </a>
+              </li>
+            {{else:}}
+              <li class="next disabled"><a href="#">{{=T('Next')}} <span class="fa fa-arrow-right"></span></a></li>
+            {{pass}}
+          </ul>
+        </nav>
+      </div>
+      {{else:}}
+        <div class="col-md-4 col-md-offset-4">
+          <div class="alert alert-info center-block">
+            {{=T("There are no results.")}}
+          </div>
+        </div>
+      {{pass}}
+    </div>
+  </div>
+</div>

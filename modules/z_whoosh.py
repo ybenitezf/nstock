@@ -20,11 +20,20 @@ class Whoosh(object):
         else:
             self.ix = open_dir(self.index)
 
+
     def add_to_index(self, item_id, text):
         from whoosh.writing import AsyncWriter
         writer = AsyncWriter(self.ix)
         writer.update_document(id=item_id, text=text.lower())
         writer.commit()
+
+
+    def remove(self, item_id):
+        from whoosh.writing import AsyncWriter
+        writer = AsyncWriter(self.ix)
+        writer.delete_by_term('id', item_id)
+        writer.commit()
+
 
     def search(self, text, page=1, pagelen=500):
         from whoosh.qparser import QueryParser

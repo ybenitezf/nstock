@@ -46,6 +46,7 @@
     mc2 = 'col-md-6'
     left_sidebar_enabled = globals().get('left_sidebar_enabled', False)
     right_sidebar_enabled = globals().get('right_sidebar_enabled', False)
+    search_sidebar_enabled = globals().get('search_sidebar_enabled', False)
     middle_column = {0: mc0, 1: mc1, 2: mc2}[
     (left_sidebar_enabled and 1 or 0)+(right_sidebar_enabled and 1 or 0)]
     }}
@@ -114,10 +115,48 @@
               <p></p>
               {{end}}
             <!-- </div> -->
+            {{if search_sidebar_enabled:}}
+            <form class="form" action="{{=URL('item', 'search.html')}}" enctype="multipart/form-data" method="get">
+              <div class="input-group">
+                {{if 'search_keys' in request.vars:}}
+                <input type="text" class="form-control" placeholder="{{=T('Search for...')}}" name='search_keys' value="{{=request.vars.search_keys}}">
+                {{else:}}
+                <input type="text" class="form-control" placeholder="{{=T('Search for...')}}" name='search_keys'>
+                {{pass}}
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="submit">
+                    <li class="fa fa-search"></li>
+                  </button>
+                </span>
+              </div>
+            </form>
+            {{pass}}
           </div>
       {{pass}}
 
       <div class="{{=middle_column}}">
+
+        {{if search_sidebar_enabled:}}
+        <div class="panel panel-default hidden-md hidden-lg">
+          <div class="panel-body">
+            <form class="form" action="{{=URL('item', 'search.html')}}" enctype="multipart/form-data" method="get">
+              <div class="input-group">
+                {{if 'search_keys' in globals():}}
+                <input type="text" class="form-control" placeholder="{{=T('Search for...')}}" name='search_keys' value="{{=search_keys}}">
+                {{else:}}
+                <input type="text" class="form-control" placeholder="{{=T('Search for...')}}" name='search_keys'>
+                {{pass}}
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="submit">
+                    <li class="fa fa-search"></li>
+                  </button>
+                </span>
+              </div>
+            </form>
+          </div>
+        </div>
+        {{pass}}
+
         {{block center}}
         {{include}}
         {{end}}
