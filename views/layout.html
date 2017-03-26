@@ -116,20 +116,7 @@
               {{end}}
             <!-- </div> -->
             {{if search_sidebar_enabled:}}
-            <form class="form" action="{{=URL('item', 'search.html')}}" enctype="multipart/form-data" method="get">
-              <div class="input-group">
-                {{if 'search_keys' in request.vars:}}
-                <input type="text" class="form-control" placeholder="{{=T('Search for...')}}" name='search_keys' value="{{=request.vars.search_keys}}">
-                {{else:}}
-                <input type="text" class="form-control" placeholder="{{=T('Search for...')}}" name='search_keys'>
-                {{pass}}
-                <span class="input-group-btn">
-                  <button class="btn btn-default" type="submit">
-                    <li class="fa fa-search"></li>
-                  </button>
-                </span>
-              </div>
-            </form>
+              {{include 'item/search_bar.html'}}
             {{pass}}
           </div>
       {{pass}}

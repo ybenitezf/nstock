@@ -75,14 +75,10 @@ class ContentVideo(ContentPlugin):
         return URL('plugin_video', 'changelog', args=[item.unique_id])
 
     def get_full_text(self, item):
-        """Return full text document, mean for plugins"""
-        from html2text import html2text
-
-        info = self.db.plugin_video_content(item_id=item.unique_id)
-        output = "{}\n{}".format(
-            info.credit_line,
-            html2text(info.description.decode('utf-8')),
-        )
+        content = db.plugin_video_content(item_id=item.unique_id)
+        output = self.response.render(
+            'plugin_video/full_text.txt',
+            dict(content=content, item=item))
         return unicode(output.decode('utf-8'))
 
 

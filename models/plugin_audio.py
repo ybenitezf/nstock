@@ -44,7 +44,11 @@ class ContentAudio(ContentPlugin):
 
     def get_full_text(self, item):
         """Return full text document, mean for plugins"""
-        return unicode('')
+        content = db.plugin_audio_content(item_id=item.unique_id)
+        output = self.response.render(
+            'plugin_audio/full_text.txt',
+            dict(content=content, item=item))
+        return unicode(output.decode('utf-8'))
 
 
     def export(self, item, export_dir):

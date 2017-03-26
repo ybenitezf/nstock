@@ -16,6 +16,7 @@
     </div>
 
     {{ if len(item_list) > item_per_load: }}
+      {{request.vars.item_per_load = item_per_load + 5}}
     <div class="row">
 
       <div class="col-md-12">
@@ -30,7 +31,7 @@
         $('#load_more').click(function(e) {
           e.stopPropagation();
           Pace.start();
-          web2py_component("{{=URL('desk', 'item_list.load', args=[desk.id], vars=dict(item_per_load=item_per_load+5))}}", target='main');
+          web2py_component("{{=URL(request.controller, request.function, args=request.args, vars=request.vars)}}", target='main');
           Pace.stop();
           // var elmnt = document.getElementById("main");
           // elmnt.scrollIntoView();
@@ -88,7 +89,7 @@
     <div class="row">
       <div class="col-md-4 col-md-offset-4">
         <div class="alert alert-info center-block">
-          {{=T("There are no Items on this desk.")}}
+          {{=T("There are no results.")}}
         </div>
       </div>
     </div>

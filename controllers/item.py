@@ -27,16 +27,35 @@ def index():
 
 @auth.requires_login()
 def search():
-    if len(request.args):
-        page = int(request.args(0))
+    if not request.vars.item_per_load:
+        item_per_load = 5
     else:
-        page = 1
+        item_per_load = int(request.vars.item_per_load)
 
-    items_per_page=10
+    desk = db.desk(session.desk_id)
 
     search_keys = request.vars.search_keys
-    results = Whoosh().search(search_keys, page, pagelen=items_per_page+1)
+    results = Whoosh().search(search_keys, 1, pagelen=item_per_load+1)
 
+    # remove from result the item not accesible for the user
+    # TODO: e more elegant way of doing this
+    results = [x for x in results if application.canReadItem(x)]
+    # --
+    query = db.item.unique_id.belongs(results)
+
+    if request.vars.opt == 'desk':
+        # search only in desk
+        query &= db.item.id.belongs(desk.item_list)
+
+    item_list = db(
+        query
+    ).select(
+        orderby=[~db.item.created_on],
+        limitby=(0, item_per_load+1)
+    )
+
+
+    response.view = 'desk/item_list.load'
     return locals()
 
 

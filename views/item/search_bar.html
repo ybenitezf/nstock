@@ -1,0 +1,53 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{=T('Search for...')}}</h3>
+  </div>
+
+  <div class="panel-body">
+    <form id="searchForm">
+      <div class="input-group">
+        <input type="text" class="form-control" name='search_keys'>
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" id='doSearch'>
+            <li class="fa fa-search"></li>
+          </button>
+        </span>
+      </div>
+      <div class="radio">
+        <label>
+          <input type="radio" name="opt" id="optionsRadios1" value="global" checked>
+          {{=T('Global search')}}.
+        </label>
+      </div>
+      <div class="radio">
+        <label>
+          <input type="radio" name="opt" id="optionsRadios2" value="desk">
+          {{=T('In this desk')}}.
+        </label>
+      </div>
+    </form>
+
+    <script>
+    $(function() {
+
+      $('#doSearch').click(function(e) {
+        e.stopPropagation();
+        Pace.start();
+        web2py_component("{{=URL('item','search.load')}}?" + $( "#searchForm" ).serialize(), "main");
+        Pace.stop();
+      });
+
+      $('#searchForm').submit(function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        Pace.start();
+        web2py_component("{{=URL('item','search.load')}}?" + $( "#searchForm" ).serialize(), "main");
+        Pace.stop();
+      });
+
+    });
+    </script>
+
+  </div>
+
+</div>
