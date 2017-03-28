@@ -77,7 +77,7 @@ class ContentPlugin(object):
         raise NotImplementedError
 
     def shareItem(self, item_id, src_desk, dst_desk):
-        """Share item with user, given the perms"""
+        """Move the item betwen desks"""
         self.app.shareItem(item_id, src_desk, dst_desk)
         # some content plugins may whant to do some stuff before or after
         # sharing an item. For example package-type items. Remember call

@@ -316,19 +316,50 @@ def share():
     posible_desk = db(query).select()
 
     fld_to_desk = Field('to_desk', 'integer')
-    fld_to_desk.label = T("Push to")
+    fld_to_desk.label = T("Push to organization desk")
     fld_to_desk.comment = T("Select where to push the item")
-    fld_to_desk.requires = IS_IN_SET(
+    fld_to_desk.requires = IS_EMPTY_OR(IS_IN_SET(
         [(desk.id, desk.name) for desk in posible_desk]
-    )
+    ))
+
+    fld_personal_desk = Field('to_person_desk', 'integer')
+    fld_personal_desk.label = T("Push to other person desk")
+    fld_personal_desk.comment = T("Select a person from the list.")
+    # list of person on orgs
+    persons = []
+    # search up all the persons
+    orgs = db(db.organization.users.contains(auth.user.id)).select()
+    for org in orgs:
+        x = [db.auth_user(id=y) for y in org.users if y != auth.user.id]
+        persons.extend(x)
+    persons = list(set(persons))
+    fld_personal_desk.requires = IS_EMPTY_OR(IS_IN_SET(
+        [(per.id, "{} {}".format(per.first_name, per.last_name)) for per in persons]
+    ))
+
+    fld_cond = Field('cond', 'boolean', default=False)
+    fld_cond.label = T('To other person?')
+
     form = SQLFORM.factory(
         fld_to_desk,
+        fld_personal_desk,
+        fld_cond,
         submit_button=T("Send"),
         table_name='share')
     if form.process().accepted:
-        # send the item to the selected desk
-        ct = application.getContentType(item.item_type)
-        ct.shareItem(item.unique_id, session.desk_id, form.vars.to_desk)
+        src = session.desk_id
+        if form.vars.cond:
+            # send the item to other user
+            other_user = db.auth_user(form.vars.to_person_desk)
+            target = application.getUserDesk(other_user).id
+        else:
+            # send the item to the selected desk
+            target = form.vars.to_desk
+
+        if target:
+            ct = application.getContentType(item.item_type)
+            ct.shareItem(item.unique_id, src, target)
         response.js = "$('#metaModal').modal('hide');"
+        response.flash = None
 
     return locals()

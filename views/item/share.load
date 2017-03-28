@@ -1,18 +1,39 @@
-{{if posible_desk:}}
   <p><strong>{{=T("Headline")}}</strong>: {{=item.headline}}</p>
   <hr />
   <form data-w2p_target="{{=request.cid}}" action="#" method="POST" enctype="multipart/form-data">
 
-  <div class="form-group">
-    <label for="share_to_desk">{{=form.custom.label.to_desk}}</label>
-    {{=form.custom.widget.to_desk}}
-    <span class="help-block">{{=form.custom.comment.to_desk}}</span>
-  </div>
+    <div class="checkbox">
+      <label>
+        {{=form.custom.widget.cond}} {{=form.custom.label.cond}}
+      </label>
+    </div>
+
+    <div class="form-group" id="to_desk_fields">
+      <label for="share_to_desk">{{=form.custom.label.to_desk}}</label>
+      {{=form.custom.widget.to_desk}}
+      <span class="help-block">{{=form.custom.comment.to_desk}}</span>
+    </div>
+
+    <div class="form-group" id="to_person_desk_fields">
+      <label for="share_to_person_desk">{{=form.custom.label.to_person_desk}}</label>
+      {{=form.custom.widget.to_person_desk}}
+      <span class="help-block">{{=form.custom.comment.to_person_desk}}</span>
+    </div>
+
+    <script type="text/javascript">
+      //hidden for default
+      $( '#to_person_desk_fields' ).hide();
+      $( '#share_cond' ).change(function(){
+        // hidde/show the fields
+        if ( $('#share_cond').prop('checked') ) {
+          $( '#to_desk_fields' ).hide();
+          $( '#to_person_desk_fields' ).show();
+        } else {
+          $( '#to_desk_fields' ).show();
+          $( '#to_person_desk_fields' ).hide();
+        }
+      });
+    </script>
 
   {{=form.custom.submit}}
   {{=form.custom.end}}
-{{else:}}
-<div class="alert alert-warning">
-  {{=T("Warning !")}} {{=T("You can't push this item to any other Desk")}}
-</div>
-{{pass}}
