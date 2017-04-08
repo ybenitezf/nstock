@@ -26,6 +26,3 @@ http://YOUR.SITE.NAME/nstock/appadmin
 
 And give the permission ```create_org``` to the user group.
 
-## SC
-
-![nStock Desk](https://i.screenshot.net/x52m9tx)
